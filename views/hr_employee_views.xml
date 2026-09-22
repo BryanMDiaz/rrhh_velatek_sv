@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_employee_form_velatek_sv" model="ir.ui.view">
+            <field name="name">hr.employee.form.velatek.sv</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='personal_information']/group/group[1]" position="before">
+                    <group string="DATOS PERSONALES">
+                        <field name="velatek_codigo"/>
+                        <field name="velatek_nombre_pila"/>
+                        <field name="velatek_primer_apellido"/>
+                        <field name="velatek_segundo_apellido"/>
+                        <field name="velatek_apellido_casada"/>
+                        <field name="velatek_profesion"/>
+                        <field name="velatek_nombre_afp"/>
+                        <field name="velatek_cuenta_bancaria"/>
+                    </group>
+                    <group string="DATOS DE IDENTIFICACIÓN">
+                        <field name="velatek_dui"/>
+                        <field name="velatek_lugar_expedicion_dui"/>
+                        <field name="velatek_fecha_expedicion_dui"/>
+                        <field name="velatek_nit"/>
+                        <field name="velatek_nup"/>
+                        <field name="velatek_isss"/>
+                    </group>
+                </xpath>
+                
+                <xpath expr="//page[@name='personal_information']" position="after">
+                    <page name="beneficiarios" string="Beneficiarios" groups="hr.group_hr_user">
+                        <field name="velatek_beneficiary_ids">
+                            <list editable="bottom" string="Beneficiarios">
+                                <field name="name"/>
+                                <field name="relationship"/>
+                                <field name="birthdate"/>
+                                <field name="percentage"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
