@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Form View -->
+        <record id="view_hr_employee_loan_type_form" model="ir.ui.view">
+            <field name="name">hr.employee.loan.type.form</field>
+            <field name="model">hr.employee.loan.type</field>
+            <field name="arch" type="xml">
+                <form string="Tipo de Préstamo">
+                    <sheet>
+                        <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" invisible="active"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1><field name="name" placeholder="Ej. Préstamo Interno"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="active" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="max_installments"/>
+                                <field name="max_capacity_percentage" widget="percentage"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Condiciones" name="conditions">
+                                <group>
+                                    <group>
+                                        <field name="default_interest_type"/>
+                                        <field name="default_interest_rate" invisible="default_interest_type == 'none'"/>
+                                    </group>
+                                    <group>
+                                        <field name="requires_attachment"/>
+                                        <field name="requires_authorization"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Notas" name="notes">
+                                <field name="notes" nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_hr_employee_loan_type_tree" model="ir.ui.view">
+            <field name="name">hr.employee.loan.type.tree</field>
+            <field name="model">hr.employee.loan.type</field>
+            <field name="arch" type="xml">
+                <list string="Tipos de Préstamo">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="default_interest_type"/>
+                    <field name="max_capacity_percentage" widget="percentage"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_hr_employee_loan_type" model="ir.actions.act_window">
+            <field name="name">Tipos de Préstamo</field>
+            <field name="res_model">hr.employee.loan.type</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo tipo de préstamo
+              </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

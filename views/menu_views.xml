@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Menú Principal de Operación Mensual -->
+        <menuitem id="menu_hr_monthly_operation"
+                  name="Operación mensual"
+                  parent="hr.menu_hr_root"
+                  sequence="6"/>
+
+        <menuitem id="menu_hr_employee_data_velatek"
+                  name="Datos de los empleados"
+                  parent="hr.menu_hr_root"
+                  action="action_hr_employee_data_velatek"
+                  sequence="8"/>
+
+        <!-- Submenús de Operación Mensual -->
+        <menuitem id="menu_hr_prepayroll"
+                  name="Preplanillas"
+                  parent="menu_hr_monthly_operation"
+                  action="action_hr_prepayroll"
+                  sequence="10"/>
+
+        <menuitem id="menu_hr_payroll"
+                  name="Planillas"
+                  parent="menu_hr_monthly_operation"
+                  action="action_hr_payroll"
+                  sequence="15"/>
+
+        <menuitem id="menu_hr_production"
+                  name="Producción"
+                  parent="menu_hr_monthly_operation"
+                  action="action_hr_employee_production"
+                  sequence="20"/>
+
+        <menuitem id="menu_hr_incident"
+                  name="Incidencias"
+                  parent="menu_hr_monthly_operation"
+                  action="action_hr_employee_incident"
+                  sequence="30"/>
+
+        <menuitem id="menu_hr_employee_loan"
+                  name="Préstamos"
+                  parent="menu_hr_monthly_operation"
+                  sequence="40"/>
+
+        <menuitem id="menu_hr_employee_loan_sub"
+                  name="Préstamos"
+                  parent="menu_hr_employee_loan"
+                  action="action_hr_employee_loan"
+                  sequence="10"/>
+
+        <menuitem id="menu_hr_employee_loan_installment"
+                  name="Cuotas"
+                  parent="menu_hr_employee_loan"
+                  action="action_hr_employee_loan_installment"
+                  sequence="20"/>
+
+        <!-- Submenús de Configuración -->
+        <!-- Incidencias -->
+        <menuitem id="menu_hr_configuration_incident"
+                  name="Incidencias"
+                  parent="hr.menu_human_resources_configuration"
+                  sequence="80"/>
+
+        <menuitem id="menu_hr_incident_reason"
+                  name="Motivos de Incidencia"
+                  parent="menu_hr_configuration_incident"
+                  action="action_hr_incident_reason"
+                  sequence="10"/>
+
+        <menuitem id="menu_hr_incident_concept"
+                  name="Conceptos de Incidencia"
+                  parent="menu_hr_configuration_incident"
+                  action="action_hr_incident_concept"
+                  sequence="20"/>
+
+        <!-- Planillas -->
+        <menuitem id="menu_hr_configuration_payroll"
+                  name="Planillas"
+                  parent="hr.menu_human_resources_configuration"
+                  sequence="85"/>
+
+        <menuitem id="menu_hr_sv_labor_rate"
+                  name="Tasas y Multiplicadores Laborales"
+                  parent="menu_hr_configuration_payroll"
+                  action="action_hr_sv_labor_rate"
+                  sequence="10"/>
+
+        <!-- Préstamos -->
+        <menuitem id="menu_hr_configuration_loan"
+                  name="Préstamos"
+                  parent="hr.menu_human_resources_configuration"
+                  sequence="90"/>
+
+        <menuitem id="menu_hr_employee_loan_type"
+                  name="Tipos de Préstamo"
+                  parent="menu_hr_configuration_loan"
+                  action="action_hr_employee_loan_type"
+                  sequence="10"/>
+
+        <menuitem id="menu_hr_employee_loan_template"
+                  name="Plantillas de Préstamo"
+                  parent="menu_hr_configuration_loan"
+                  action="action_hr_employee_loan_template"
+                  sequence="20"/>
+    </data>
+</odoo>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista Formulario de Incidencia -->
+        <record id="hr_employee_incident_view_form" model="ir.ui.view">
+            <field name="name">hr.employee.incident.form</field>
+            <field name="model">hr.employee.incident</field>
+            <field name="arch" type="xml">
+                <form string="Incidencia del Empleado">
+                    <header>
+                        <button name="action_submit" groups="hr.group_hr_user" string="Enviar a Aprobar" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                        <button name="action_approve" groups="rrhh_velatek_sv.group_hr_responsible" string="Aprobar" type="object" class="oe_highlight" invisible="state != 'to_approve'"/>
+                        <button name="action_generate_night_overtime" string="Generar Extra Nocturna" type="object" class="btn-warning" invisible="incident_type != 'night_work' or night_overtime_hours == 0"/>
+                        <button name="action_draft" groups="hr.group_hr_manager" string="Volver a Borrador" type="object" invisible="state in ('draft', 'processed')"/>
+                        <button name="action_cancel" groups="hr.group_hr_manager" string="Cancelar" type="object" invisible="state in ('processed', 'cancelled')"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,to_approve,approved,processed"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id" domain="[('contract_ids.state', '=', 'open')]"/>
+                                <field name="contract_id" domain="[('employee_id', '=', employee_id), ('state', '=', 'open')]"/>
+                                <field name="date" invisible="incident_type in ('paid_leave', 'unpaid_leave', 'unjustified_absence', 'sick_leave', 'suspension')"/>
+                                <field name="date_from" invisible="incident_type not in ('paid_leave', 'unpaid_leave', 'unjustified_absence', 'sick_leave', 'suspension')" required="incident_type in ('paid_leave', 'unpaid_leave', 'unjustified_absence', 'sick_leave', 'suspension')"/>
+                                <field name="date_to" invisible="incident_type not in ('paid_leave', 'unpaid_leave', 'unjustified_absence', 'sick_leave', 'suspension')" required="incident_type in ('paid_leave', 'unpaid_leave', 'unjustified_absence', 'sick_leave', 'suspension')"/>
+                                <field name="day_count_mode" invisible="incident_type not in ('paid_leave', 'unpaid_leave', 'unjustified_absence', 'sick_leave', 'suspension')"/>
+                                <field name="period_scope" readonly="1"/>
+                                <field name="period_name"/>
+                                <field name="incident_type"/>
+                                <field name="viatic_treatment" widget="radio" invisible="incident_type != 'viaticos'" required="incident_type == 'viaticos'" readonly="state not in ('draft', 'to_approve') or reason_code == 'sv_expense_reimbursement'"/>
+                                <field name="reason_id" domain="['|', ('incident_type', '=', False), ('incident_type', '=', incident_type)]"/>
+                                <field name="reason_code" invisible="not reason_code"/>
+                                <field name="reason_legal_guidance" invisible="not reason_legal_guidance"/>
+                                <field name="concept_id" invisible="incident_type not in ('bonus', 'commission', 'other_income', 'viaticos', 'deduction', 'other')" required="incident_type == 'deduction'" domain="['|', ('incident_category', '=', False), ('incident_category', '=', incident_type)]"/>
+                                <field name="deduction_concept_id" invisible="incident_type != 'deduction'" required="incident_type == 'deduction'" domain="['|', ('incident_category', '=', False), ('incident_category', '=', 'deduction')]"/>
+                            </group>
+                            <group>
+                                <field name="quantity_days" invisible="incident_type not in ('paid_leave', 'unpaid_leave', 'unjustified_absence', 'sick_leave', 'suspension', 'holiday_work', 'weekly_rest_work', 'other')"/>
+                                <field name="quantity_hours" invisible="incident_type not in ('paid_leave', 'unpaid_leave', 'unjustified_absence', 'sick_leave', 'suspension', 'overtime', 'night_work', 'holiday_work', 'weekly_rest_work', 'other')" string="Horas (Registradas si es nocturno)"/>
+                                <field name="ordinary_night_hours" invisible="incident_type != 'night_work'"/>
+                                <field name="night_overtime_hours" invisible="incident_type != 'night_work'"/>
+                                <field name="sick_leave_type" invisible="incident_type != 'sick_leave'"/>
+                                <field name="issuing_entity" invisible="incident_type != 'sick_leave'"/>
+                                <field name="certificate_reference" invisible="incident_type != 'sick_leave'"/>
+                                <field name="support_filename" invisible="1"/>
+                                <field name="support_file" filename="support_filename" widget="binary"
+                                       invisible="not incident_type and not support_file"
+                                       readonly="state not in ('draft', 'to_approve')"
+                                       help="Suba el certificado médico, acta, factura u otro comprobante de esta incidencia."/>
+                                <field name="sick_ordinary_daily" invisible="incident_type != 'sick_leave'"/>
+                                <field name="sick_employer_daily" invisible="incident_type != 'sick_leave'"/>
+                                <field name="sick_isss_daily" invisible="incident_type != 'sick_leave'"/>
+                                <field name="sick_employer_affects_isss" invisible="incident_type != 'sick_leave' or not sick_employer_daily"/>
+                                <field name="sick_employer_affects_afp" invisible="incident_type != 'sick_leave' or not sick_employer_daily"/>
+                                <field name="sick_employer_affects_isr" invisible="incident_type != 'sick_leave' or not sick_employer_daily"/>
+                                <field name="sick_settlement_reviewed" invisible="incident_type != 'sick_leave'"/>
+                                <field name="attachment_id" string="Respaldo registrado anteriormente"
+                                       invisible="not attachment_id" readonly="1"/>
+                                <field name="authorization_reference" invisible="incident_type not in ('suspension', 'deduction', 'holiday_work')"/>
+                                <field name="authorization_date" invisible="incident_type not in ('suspension', 'deduction')"/>
+                                <field name="authorized_by_id" invisible="incident_type not in ('suspension', 'deduction')"/>
+                                <field name="beneficiary_name" invisible="incident_type != 'deduction'"/>
+                                <field name="beneficiary_partner_id" invisible="incident_type != 'deduction'"/>
+                                <field name="overtime_type" invisible="incident_type != 'overtime'" required="incident_type == 'overtime'"/>
+                                <field name="overtime_day_context" invisible="incident_type != 'overtime'"/>
+                                <field name="remuneration_mode" invisible="1"/>
+                                <field name="verified_hourly_rate"
+                                       invisible="remuneration_mode not in ('production', 'mixed') or incident_type not in ('overtime', 'night_work', 'holiday_work', 'weekly_rest_work')"
+                                       readonly="state not in ('draft', 'to_approve')"/>
+                                <field name="overtime_base_wage" invisible="incident_type != 'overtime'"/>
+                                <field name="overtime_hours_per_day" invisible="incident_type != 'overtime'"/>
+                                <field name="overtime_hourly_rate" invisible="incident_type != 'overtime'"/>
+                                <field name="overtime_multiplier" invisible="incident_type != 'overtime'"/>
+                                <field name="night_work_base_wage" invisible="incident_type != 'night_work'"/>
+                                <field name="night_work_hours_per_day" invisible="incident_type != 'night_work'"/>
+                                <field name="night_work_hourly_rate" invisible="incident_type != 'night_work'"/>
+                                <field name="night_work_percentage" invisible="incident_type != 'night_work'"/>
+                                <field name="holiday_work_base_wage" invisible="incident_type != 'holiday_work'"/>
+                                <field name="holiday_work_hours_per_day" invisible="incident_type != 'holiday_work'"/>
+                                <field name="holiday_work_daily_rate" invisible="incident_type != 'holiday_work'"/>
+                                <field name="holiday_work_hourly_rate" invisible="incident_type != 'holiday_work'"/>
+                                <field name="weekly_rest_work_base_wage" invisible="incident_type != 'weekly_rest_work'"/>
+                                <field name="weekly_rest_work_hours_per_day" invisible="incident_type != 'weekly_rest_work'"/>
+                                <field name="weekly_rest_work_daily_rate" invisible="incident_type != 'weekly_rest_work'"/>
+                                <field name="weekly_rest_work_hourly_rate" invisible="incident_type != 'weekly_rest_work'"/>
+                                <field name="rate_parameter_id" invisible="incident_type not in ('overtime', 'night_work', 'holiday_work', 'weekly_rest_work')"/>
+                                <field name="rate_snapshot" invisible="incident_type not in ('overtime', 'night_work', 'holiday_work', 'weekly_rest_work')"/>
+                                <field name="compensatory_rest_date" invisible="incident_type != 'weekly_rest_work' and reason_code != 'sv_holiday_weekly_rest'"/>
+                                <field name="compensatory_rest_granted" invisible="incident_type != 'weekly_rest_work' and reason_code != 'sv_holiday_weekly_rest'"/>
+                                <field name="absence_base_wage" invisible="incident_type not in ('unpaid_leave', 'unjustified_absence', 'suspension')"/>
+                                <field name="absence_hours_per_day" invisible="incident_type not in ('unpaid_leave', 'unjustified_absence', 'suspension')"/>
+                                <field name="absence_total_hours" invisible="incident_type not in ('unpaid_leave', 'unjustified_absence', 'suspension')"/>
+                                <field name="absence_daily_rate" invisible="incident_type not in ('unpaid_leave', 'unjustified_absence', 'suspension')"/>
+                                <field name="absence_hourly_rate" invisible="incident_type not in ('unpaid_leave', 'unjustified_absence', 'suspension')"/>
+                                <field name="amount" invisible="incident_type not in ('overtime', 'holiday_work', 'weekly_rest_work', 'unpaid_leave', 'unjustified_absence', 'suspension', 'bonus', 'commission', 'viaticos', 'other_income', 'deduction', 'other')" readonly="incident_type in ('overtime', 'holiday_work', 'weekly_rest_work', 'unpaid_leave', 'unjustified_absence', 'suspension')" required="incident_type in ('overtime', 'holiday_work', 'weekly_rest_work', 'unpaid_leave', 'unjustified_absence', 'suspension', 'bonus', 'commission', 'viaticos', 'other_income', 'deduction')"/>
+                                <field name="amount" string="Importe de Nocturnidad" invisible="incident_type != 'night_work'" readonly="1"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Notas">
+                                <field name="notes" placeholder="Detalles de la incidencia..." required="incident_type == 'other'"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista Lista (Tree) de Incidencia -->
+        <record id="hr_employee_incident_view_tree" model="ir.ui.view">
+            <field name="name">hr.employee.incident.tree</field>
+            <field name="model">hr.employee.incident</field>
+            <field name="arch" type="xml">
+                <list string="Incidencias" decoration-info="state == 'draft'" decoration-success="state == 'processed'" decoration-warning="state == 'to_approve'" decoration-muted="state == 'cancelled'">
+                    <field name="date"/>
+                    <field name="date_from" optional="show"/>
+                    <field name="date_to" optional="show"/>
+                    <field name="period_name" optional="show"/>
+                    <field name="employee_id"/>
+                    <field name="contract_id"/>
+                    <field name="incident_type"/>
+                    <field name="reason_id" optional="show"/>
+                    <field name="concept_id" optional="show"/>
+                    <field name="overtime_type" optional="show"/>
+                    <field name="quantity_days" optional="show"/>
+                    <field name="quantity_hours" optional="show"/>
+                    <field name="amount" optional="show"/>
+                    <field name="state" widget="badge"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Filtros y Búsqueda -->
+        <record id="hr_employee_incident_view_search" model="ir.ui.view">
+            <field name="name">hr.employee.incident.search</field>
+            <field name="model">hr.employee.incident</field>
+            <field name="arch" type="xml">
+                <search string="Incidencias">
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <field name="period_name"/>
+                    <filter string="Por Aprobar" name="to_approve" domain="[('state', '=', 'to_approve')]"/>
+                    <filter string="Aprobado" name="approved" domain="[('state', '=', 'approved')]"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Empleado" name="group_employee" context="{'group_by':'employee_id'}"/>
+                        <filter string="Tipo" name="group_type" context="{'group_by':'incident_type'}"/>
+                        <filter string="Estado" name="group_state" context="{'group_by':'state'}"/>
+                        <filter string="Mes" name="group_month" context="{'group_by':'date:month'}"/>
+                        <filter string="Período de incidencia" name="group_period" context="{'group_by':'period_name'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción de Incidencia -->
+        <record id="action_hr_employee_incident" model="ir.actions.act_window">
+            <field name="name">Incidencias</field>
+            <field name="res_model">hr.employee.incident</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="hr_employee_incident_view_search"/>
+            <field name="context">{'search_default_group_period': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Registrar incidencia del empleado
+                </p>
+                <p>
+                    Registre permisos, ausencias, horas extra, bonos y deducciones para procesar en la preplanilla.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

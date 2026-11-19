@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="rrhh_velatek_sv.PayrollSpreadsheetWidget">
+        <div class="o_payroll_spreadsheet_wrapper">
+            <t t-if="state.isLoading">
+                <div class="text-center p-4">
+                    <i class="fa fa-spin fa-spinner fa-2x me-2"/> Cargando Vista de Planilla...
+                </div>
+            </t>
+            <t t-else="">
+                <!-- Encabezado de la Planilla -->
+                <div class="o_payroll_header_banner text-center my-3">
+                    <h2 class="fw-bold mb-1 text-uppercase text-dark" t-esc="state.companyName || 'EMPRESA'"/>
+                    <h5 class="fw-semibold text-secondary tracking-wide text-uppercase" t-esc="state.periodTitle"/>
+                </div>
+
+                <!-- Tabla Empresarial con Sticky Columns y Agrupación por Departamento -->
+                <div class="o_payroll_table_responsive">
+                    <table class="table table-bordered table-sm o_payroll_sheet_table">
+                        <thead>
+                            <!-- Fila 1: Grupos Principales de Encabezado -->
+                            <tr class="o_payroll_header_group">
+                                <th colspan="2" class="text-center bg-sky-100 text-dark font-bold border-end sticky-col-group">EMPLEADO</th>
+                                <t t-if="baseColspan > 0">
+                                    <th t-att-colspan="baseColspan" class="text-center bg-indigo-100 text-dark font-bold border-end" t-esc="getHeaderLabel('base_group')"/>
+                                </t>
+                                <t t-if="devengosColspan > 0">
+                                    <th t-att-colspan="devengosColspan" class="text-center bg-emerald-100 text-dark font-bold border-end" t-esc="getHeaderLabel('devengos_group')"/>
+                                </t>
+                                <t t-if="descuentosColspan > 0">
+                                    <th t-att-colspan="descuentosColspan" class="text-center bg-rose-100 text-dark font-bold border-end" t-esc="getHeaderLabel('descuentos_group')"/>
+                                </t>
+                                <t t-if="pagoColspan > 0">
+                                    <th t-att-colspan="pagoColspan" class="text-center bg-amber-100 text-dark font-bold" t-esc="getHeaderLabel('pago_group')"/>
+                                </t>
+                            </tr>
+
+                            <!-- Fila 2: Columnas Detalladas -->
+                            <tr class="o_payroll_header_cols">
+                                <!-- Empleado -->
+                                <th class="sticky-col sticky-col-1 text-center bg-sky-50">No.</th>
+                                <th class="sticky-col sticky-col-2 text-start bg-sky-50 border-end">Nombre Empleado</th>
+
+                                <!-- Base Salarial -->
+                                <th t-if="isColVisible('base_wage')" t-att-class="'text-end bg-indigo-50 ' + (isLastInGroup('base', 'base_wage') ? 'border-end' : '')" t-esc="getHeaderLabel('base_wage')"/>
+                                <th t-if="isColVisible('viaticos_amount')" t-att-class="'text-end bg-indigo-50 ' + (isLastInGroup('base', 'viaticos_amount') ? 'border-end' : '')" t-esc="getHeaderLabel('viaticos_amount')"/>
+                                <th t-if="isColVisible('worked_days')" t-att-class="'text-center bg-indigo-50 ' + (isLastInGroup('base', 'worked_days') ? 'border-end' : '')" t-esc="getHeaderLabel('worked_days')"/>
+                                <th t-if="isColVisible('extra_days')" t-att-class="'text-center bg-indigo-50 ' + (isLastInGroup('base', 'extra_days') ? 'border-end' : '')" t-esc="getHeaderLabel('extra_days')"/>
+                                <th t-if="isColVisible('holiday_days')" t-att-class="'text-center bg-indigo-50 ' + (isLastInGroup('base', 'holiday_days') ? 'border-end' : '')" t-esc="getHeaderLabel('holiday_days')"/>
+                                <th t-if="isColVisible('period_wage')" t-att-class="'text-end bg-indigo-50 ' + (isLastInGroup('base', 'period_wage') ? 'border-end' : '')" t-esc="getHeaderLabel('period_wage')"/>
+                                <th t-if="isColVisible('daily_salary')" t-att-class="'text-end bg-indigo-50 ' + (isLastInGroup('base', 'daily_salary') ? 'border-end' : '')" t-esc="getHeaderLabel('daily_salary')"/>
+
+                                <!-- Devengos -->
+                                <th t-if="isColVisible('production_amount')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('production_amount')"/>
+                                <th t-if="isColVisible('holiday_amount')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('holiday_amount')"/>
+                                <th t-if="isColVisible('vacation_amount')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('vacation_amount')"/>
+                                <th t-if="isColVisible('overtime_amount')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('overtime_amount')"/>
+                                <th t-if="isColVisible('night_overtime_amount')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('night_overtime_amount')"/>
+                                <th t-if="isColVisible('night_work_amount')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('night_work_amount')"/>
+                                <th t-if="isColVisible('weekly_rest_work_amount')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('weekly_rest_work_amount')"/>
+                                <th t-if="isColVisible('bonus_amount')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('bonus_amount')"/>
+                                <th t-if="isColVisible('commission_amount')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('commission_amount')"/>
+                                <th t-if="isColVisible('other_income')" class="text-end bg-emerald-50" t-esc="getHeaderLabel('other_income')"/>
+                                <th t-if="isColVisible('total_earned')" class="text-end bg-emerald-100 fw-bold border-end" t-esc="getHeaderLabel('total_earned')"/>
+
+                                <!-- Descuentos -->
+                                <th t-if="isColVisible('isss_employee_amount')" class="text-end bg-rose-50" t-esc="getHeaderLabel('isss_employee_amount')"/>
+                                <th t-if="isColVisible('afp_employee_amount')" class="text-end bg-rose-50" t-esc="getHeaderLabel('afp_employee_amount')"/>
+                                <th t-if="isColVisible('income_tax_amount')" class="text-end bg-rose-50" t-esc="getHeaderLabel('income_tax_amount')"/>
+                                <th t-if="isColVisible('loan_deduction_amount')" class="text-end bg-rose-50" t-esc="getHeaderLabel('loan_deduction_amount')"/>
+                                <th t-if="isColVisible('other_withholdings_amount')" class="text-end bg-rose-50" t-esc="getHeaderLabel('other_withholdings_amount')"/>
+                                <th t-if="isColVisible('other_deductions')" class="text-end bg-rose-50" t-esc="getHeaderLabel('other_deductions')"/>
+                                <th t-if="isColVisible('total_deductions')" class="text-end bg-rose-100 fw-bold border-end" t-esc="getHeaderLabel('total_deductions')"/>
+
+                                <!-- Pago -->
+                                <th t-if="isColVisible('salary_advance_amount')" class="text-end bg-amber-50" t-esc="getHeaderLabel('salary_advance_amount')"/>
+                                <th t-if="isColVisible('payment_amount')" class="text-end bg-amber-50" t-esc="getHeaderLabel('payment_amount')"/>
+                                <th t-if="isColVisible('outside_payment_amount')" class="text-end bg-amber-50" t-esc="getHeaderLabel('outside_payment_amount')"/>
+                                <th t-if="isColVisible('total_to_settle')" class="text-end bg-amber-200 fw-bold" t-esc="getHeaderLabel('total_to_settle')"/>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-if="!state.departments || state.departments.length === 0">
+                                <tr>
+                                    <td t-att-colspan="totalTableColspan" class="text-center text-muted py-4">
+                                        <i class="fa fa-info-circle me-1"/> No hay líneas registradas en esta planilla. Presione "Cargar Empleados" o "Generar Planilla".
+                                    </td>
+                                </tr>
+                            </t>
+
+                            <t t-foreach="state.departments" t-as="dept" t-key="dept.name">
+                                <!-- Encabezado de Departamento -->
+                                <tr class="o_payroll_dept_header">
+                                    <td t-att-colspan="totalTableColspan" class="fw-bold text-uppercase bg-orange-100 py-2 ps-3 border-top border-bottom text-dark">
+                                        <span class="sticky-dept-title">
+                                            <i class="fa fa-folder-open me-2 text-warning"/> <t t-esc="dept.name"/>
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <!-- Filas de Empleados del Departamento -->
+                                <t t-foreach="dept.lines" t-as="line" t-key="line.id">
+                                    <tr class="o_payroll_row">
+                                        <td class="sticky-col sticky-col-1 text-center bg-light" t-esc="line.displayIndex"/>
+                                        <td class="sticky-col sticky-col-2 text-start bg-light fw-medium border-end" t-att-title="line.employeeName">
+                                            <span class="o_payroll_employee_name" t-esc="line.employeeName"/>
+                                        </td>
+
+                                        <td t-if="isColVisible('base_wage')" t-att-class="'text-end ' + (isLastInGroup('base', 'base_wage') ? 'border-end' : '')" t-esc="formatCurrency(line.base_wage)"/>
+                                        <td t-if="isColVisible('viaticos_amount')" t-att-class="'text-end ' + (isLastInGroup('base', 'viaticos_amount') ? 'border-end' : '')" t-esc="formatCurrency(line.viaticos_amount)"/>
+                                        <td t-if="isColVisible('worked_days')" t-att-class="'text-center ' + (isLastInGroup('base', 'worked_days') ? 'border-end' : '')" t-esc="formatNumber(line.worked_days)"/>
+                                        <td t-if="isColVisible('extra_days')" t-att-class="'text-center ' + (isLastInGroup('base', 'extra_days') ? 'border-end' : '')" t-esc="formatNumber(line.extra_days)"/>
+                                        <td t-if="isColVisible('holiday_days')" t-att-class="'text-center ' + (isLastInGroup('base', 'holiday_days') ? 'border-end' : '')" t-esc="formatNumber(line.holiday_days)"/>
+                                        <td t-if="isColVisible('period_wage')" t-att-class="'text-end ' + (isLastInGroup('base', 'period_wage') ? 'border-end' : '')" t-esc="formatCurrency(line.period_wage)"/>
+                                        <td t-if="isColVisible('daily_salary')" t-att-class="'text-end text-muted fs-7 ' + (isLastInGroup('base', 'daily_salary') ? 'border-end' : '')" t-esc="formatCurrency(line.daily_salary)"/>
+
+                                        <td t-if="isColVisible('production_amount')" class="text-end" t-esc="formatCurrency(line.production_amount)"/>
+                                        <td t-if="isColVisible('holiday_amount')" class="text-end" t-esc="formatCurrency(line.holiday_amount)"/>
+                                        <td t-if="isColVisible('vacation_amount')" class="text-end" t-esc="formatCurrency(line.vacation_amount)"/>
+                                        <td t-if="isColVisible('overtime_amount')" class="text-end" t-esc="formatCurrency(line.overtime_amount)"/>
+                                        <td t-if="isColVisible('night_overtime_amount')" class="text-end" t-esc="formatCurrency(line.night_overtime_amount)"/>
+                                        <td t-if="isColVisible('night_work_amount')" class="text-end" t-esc="formatCurrency(line.night_work_amount)"/>
+                                        <td t-if="isColVisible('weekly_rest_work_amount')" class="text-end" t-esc="formatCurrency(line.weekly_rest_work_amount)"/>
+                                        <td t-if="isColVisible('bonus_amount')" class="text-end" t-esc="formatCurrency(line.bonus_amount)"/>
+                                        <td t-if="isColVisible('commission_amount')" class="text-end" t-esc="formatCurrency(line.commission_amount)"/>
+                                        <td t-if="isColVisible('other_income')" class="text-end" t-esc="formatCurrency(line.other_income)"/>
+                                        <td t-if="isColVisible('total_earned')" class="text-end fw-bold text-success border-end bg-emerald-50" t-esc="formatCurrency(line.total_earned)"/>
+
+                                        <td t-if="isColVisible('isss_employee_amount')" class="text-end" t-esc="formatCurrency(line.isss_employee_amount)"/>
+                                        <td t-if="isColVisible('afp_employee_amount')" class="text-end" t-esc="formatCurrency(line.afp_employee_amount)"/>
+                                        <td t-if="isColVisible('income_tax_amount')" class="text-end" t-esc="formatCurrency(line.income_tax_amount)"/>
+                                        <td t-if="isColVisible('loan_deduction_amount')" class="text-end" t-esc="formatCurrency(line.loan_deduction_amount)"/>
+                                        <td t-if="isColVisible('other_withholdings_amount')" class="text-end">
+                                            <t t-if="state.isDraft">
+                                                <div class="d-inline-flex align-items-center o_payroll_compact_input">
+                                                    <span class="text-muted me-1">$</span>
+                                                    <input type="number" step="0.01" class="form-control form-control-sm text-end p-0 px-1"
+                                                           t-att-value="line.other_withholdings_amount"
+                                                           t-on-change="(ev) => this.onLineFieldChange(line.id, 'other_withholdings_amount', ev)"/>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="formatCurrency(line.other_withholdings_amount)"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="isColVisible('other_deductions')" class="text-end">
+                                            <t t-if="state.isDraft">
+                                                <div class="d-inline-flex align-items-center o_payroll_compact_input">
+                                                    <span class="text-muted me-1">$</span>
+                                                    <input type="number" step="0.01" class="form-control form-control-sm text-end p-0 px-1"
+                                                           t-att-value="line.other_deductions"
+                                                           t-on-change="(ev) => this.onLineFieldChange(line.id, 'deduction_amount', ev)"/>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="formatCurrency(line.other_deductions)"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="isColVisible('total_deductions')" class="text-end fw-bold text-danger border-end bg-rose-50" t-esc="formatCurrency(line.total_deductions)"/>
+
+                                        <td t-if="isColVisible('salary_advance_amount')" class="text-end fw-bold" t-esc="formatCurrency(line.salary_advance_amount)"/>
+                                        <td t-if="isColVisible('payment_amount')" class="text-end fw-bold" t-esc="formatCurrency(line.payment_amount)"/>
+                                        <td t-if="isColVisible('outside_payment_amount')" class="text-end">
+                                            <t t-if="state.isDraft">
+                                                <div class="d-inline-flex align-items-center o_payroll_compact_input">
+                                                    <span class="text-muted me-1">$</span>
+                                                    <input type="number" step="0.01" class="form-control form-control-sm text-end p-0 px-1"
+                                                           t-att-value="line.outside_payment_amount"
+                                                           t-on-change="(ev) => this.onOutsidePaymentChange(line.id, ev)"/>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="formatCurrency(line.outside_payment_amount)"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="isColVisible('total_to_settle')" class="text-end fw-bold bg-amber-100 text-dark" t-esc="formatCurrency(line.total_to_settle)"/>
+                                    </tr>
+                                </t>
+
+                                <!-- Fila de Subtotal por Departamento -->
+                                <tr class="o_payroll_subtotal_row fw-bold bg-gray-200">
+                                    <td colspan="2" class="sticky-col-group text-start bg-slate-200 ps-3">
+                                        SUBTOTAL <t t-esc="dept.name"/>
+                                    </td>
+                                    <td t-if="isColVisible('base_wage')" t-att-class="'text-end ' + (isLastInGroup('base', 'base_wage') ? 'border-end' : '')" t-esc="formatCurrency(dept.totals.base_wage)"/>
+                                    <td t-if="isColVisible('viaticos_amount')" t-att-class="'text-end ' + (isLastInGroup('base', 'viaticos_amount') ? 'border-end' : '')" t-esc="formatCurrency(dept.totals.viaticos_amount)"/>
+                                    <td t-if="isColVisible('worked_days')" t-att-class="'text-center ' + (isLastInGroup('base', 'worked_days') ? 'border-end' : '')" t-esc="formatNumber(dept.totals.worked_days)"/>
+                                    <td t-if="isColVisible('extra_days')" t-att-class="'text-center ' + (isLastInGroup('base', 'extra_days') ? 'border-end' : '')" t-esc="formatNumber(dept.totals.extra_days)"/>
+                                    <td t-if="isColVisible('holiday_days')" t-att-class="'text-center ' + (isLastInGroup('base', 'holiday_days') ? 'border-end' : '')" t-esc="formatNumber(dept.totals.holiday_days)"/>
+                                    <td t-if="isColVisible('period_wage')" t-att-class="'text-end ' + (isLastInGroup('base', 'period_wage') ? 'border-end' : '')" t-esc="formatCurrency(dept.totals.period_wage)"/>
+                                    <td t-if="isColVisible('daily_salary')" t-att-class="'text-end ' + (isLastInGroup('base', 'daily_salary') ? 'border-end' : '')">-</td>
+
+                                    <td t-if="isColVisible('production_amount')" class="text-end" t-esc="formatCurrency(dept.totals.production_amount)"/>
+                                    <td t-if="isColVisible('holiday_amount')" class="text-end" t-esc="formatCurrency(dept.totals.holiday_amount)"/>
+                                    <td t-if="isColVisible('vacation_amount')" class="text-end" t-esc="formatCurrency(dept.totals.vacation_amount)"/>
+                                    <td t-if="isColVisible('overtime_amount')" class="text-end" t-esc="formatCurrency(dept.totals.overtime_amount)"/>
+                                    <td t-if="isColVisible('night_overtime_amount')" class="text-end" t-esc="formatCurrency(dept.totals.night_overtime_amount)"/>
+                                    <td t-if="isColVisible('night_work_amount')" class="text-end" t-esc="formatCurrency(dept.totals.night_work_amount)"/>
+                                    <td t-if="isColVisible('weekly_rest_work_amount')" class="text-end" t-esc="formatCurrency(dept.totals.weekly_rest_work_amount)"/>
+                                    <td t-if="isColVisible('bonus_amount')" class="text-end" t-esc="formatCurrency(dept.totals.bonus_amount)"/>
+                                    <td t-if="isColVisible('commission_amount')" class="text-end" t-esc="formatCurrency(dept.totals.commission_amount)"/>
+                                    <td t-if="isColVisible('other_income')" class="text-end" t-esc="formatCurrency(dept.totals.other_income)"/>
+                                    <td t-if="isColVisible('total_earned')" class="text-end text-success border-end" t-esc="formatCurrency(dept.totals.total_earned)"/>
+
+                                    <td t-if="isColVisible('isss_employee_amount')" class="text-end" t-esc="formatCurrency(dept.totals.isss_employee_amount)"/>
+                                    <td t-if="isColVisible('afp_employee_amount')" class="text-end" t-esc="formatCurrency(dept.totals.afp_employee_amount)"/>
+                                    <td t-if="isColVisible('income_tax_amount')" class="text-end" t-esc="formatCurrency(dept.totals.income_tax_amount)"/>
+                                    <td t-if="isColVisible('loan_deduction_amount')" class="text-end" t-esc="formatCurrency(dept.totals.loan_deduction_amount)"/>
+                                    <td t-if="isColVisible('other_withholdings_amount')" class="text-end" t-esc="formatCurrency(dept.totals.other_withholdings_amount)"/>
+                                    <td t-if="isColVisible('other_deductions')" class="text-end" t-esc="formatCurrency(dept.totals.other_deductions)"/>
+                                    <td t-if="isColVisible('total_deductions')" class="text-end text-danger border-end" t-esc="formatCurrency(dept.totals.total_deductions)"/>
+
+                                    <td t-if="isColVisible('salary_advance_amount')" class="text-end" t-esc="formatCurrency(dept.totals.salary_advance_amount)"/>
+                                    <td t-if="isColVisible('payment_amount')" class="text-end" t-esc="formatCurrency(dept.totals.payment_amount)"/>
+                                    <td t-if="isColVisible('outside_payment_amount')" class="text-end" t-esc="formatCurrency(dept.totals.outside_payment_amount)"/>
+                                    <td t-if="isColVisible('total_to_settle')" class="text-end bg-amber-300 text-dark" t-esc="formatCurrency(dept.totals.total_to_settle)"/>
+                                </tr>
+                            </t>
+                        </tbody>
+
+                        <!-- Totales Generales -->
+                        <tfoot>
+                            <tr class="o_payroll_grand_total_row text-uppercase fw-bold text-dark fs-6">
+                                <th colspan="2" class="sticky-col-group text-start bg-dark text-white ps-3">
+                                    TOTALES GENERALES
+                                </th>
+                                <th t-if="isColVisible('base_wage')" t-att-class="'text-end bg-dark text-white ' + (isLastInGroup('base', 'base_wage') ? 'border-end' : '')" t-esc="formatCurrency(state.grandTotals.base_wage)"/>
+                                <th t-if="isColVisible('viaticos_amount')" t-att-class="'text-end bg-dark text-white ' + (isLastInGroup('base', 'viaticos_amount') ? 'border-end' : '')" t-esc="formatCurrency(state.grandTotals.viaticos_amount)"/>
+                                <th t-if="isColVisible('worked_days')" t-att-class="'text-center bg-dark text-white ' + (isLastInGroup('base', 'worked_days') ? 'border-end' : '')" t-esc="formatNumber(state.grandTotals.worked_days)"/>
+                                <th t-if="isColVisible('extra_days')" t-att-class="'text-center bg-dark text-white ' + (isLastInGroup('base', 'extra_days') ? 'border-end' : '')" t-esc="formatNumber(state.grandTotals.extra_days)"/>
+                                <th t-if="isColVisible('holiday_days')" t-att-class="'text-center bg-dark text-white ' + (isLastInGroup('base', 'holiday_days') ? 'border-end' : '')" t-esc="formatNumber(state.grandTotals.holiday_days)"/>
+                                <th t-if="isColVisible('period_wage')" t-att-class="'text-end bg-dark text-white ' + (isLastInGroup('base', 'period_wage') ? 'border-end' : '')" t-esc="formatCurrency(state.grandTotals.period_wage)"/>
+                                <th t-if="isColVisible('daily_salary')" t-att-class="'text-end bg-dark text-white ' + (isLastInGroup('base', 'daily_salary') ? 'border-end' : '')">-</th>
+
+                                <th t-if="isColVisible('production_amount')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.production_amount)"/>
+                                <th t-if="isColVisible('holiday_amount')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.holiday_amount)"/>
+                                <th t-if="isColVisible('vacation_amount')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.vacation_amount)"/>
+                                <th t-if="isColVisible('overtime_amount')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.overtime_amount)"/>
+                                <th t-if="isColVisible('night_overtime_amount')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.night_overtime_amount)"/>
+                                <th t-if="isColVisible('night_work_amount')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.night_work_amount)"/>
+                                <th t-if="isColVisible('weekly_rest_work_amount')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.weekly_rest_work_amount)"/>
+                                <th t-if="isColVisible('bonus_amount')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.bonus_amount)"/>
+                                <th t-if="isColVisible('commission_amount')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.commission_amount)"/>
+                                <th t-if="isColVisible('other_income')" class="text-end bg-emerald-800 text-white" t-esc="formatCurrency(state.grandTotals.other_income)"/>
+                                <th t-if="isColVisible('total_earned')" class="text-end bg-emerald-900 text-warning font-black border-end" t-esc="formatCurrency(state.grandTotals.total_earned)"/>
+
+                                <th t-if="isColVisible('isss_employee_amount')" class="text-end bg-rose-800 text-white" t-esc="formatCurrency(state.grandTotals.isss_employee_amount)"/>
+                                <th t-if="isColVisible('afp_employee_amount')" class="text-end bg-rose-800 text-white" t-esc="formatCurrency(state.grandTotals.afp_employee_amount)"/>
+                                <th t-if="isColVisible('income_tax_amount')" class="text-end bg-rose-800 text-white" t-esc="formatCurrency(state.grandTotals.income_tax_amount)"/>
+                                <th t-if="isColVisible('loan_deduction_amount')" class="text-end bg-rose-800 text-white" t-esc="formatCurrency(state.grandTotals.loan_deduction_amount)"/>
+                                <th t-if="isColVisible('other_withholdings_amount')" class="text-end bg-rose-800 text-white" t-esc="formatCurrency(state.grandTotals.other_withholdings_amount)"/>
+                                <th t-if="isColVisible('other_deductions')" class="text-end bg-rose-800 text-white" t-esc="formatCurrency(state.grandTotals.other_deductions)"/>
+                                <th t-if="isColVisible('total_deductions')" class="text-end bg-rose-900 text-warning font-black border-end" t-esc="formatCurrency(state.grandTotals.total_deductions)"/>
+
+                                <th t-if="isColVisible('salary_advance_amount')" class="text-end bg-amber-800 text-white" t-esc="formatCurrency(state.grandTotals.salary_advance_amount)"/>
+                                <th t-if="isColVisible('payment_amount')" class="text-end bg-amber-800 text-white" t-esc="formatCurrency(state.grandTotals.payment_amount)"/>
+                                <th t-if="isColVisible('outside_payment_amount')" class="text-end bg-amber-800 text-white" t-esc="formatCurrency(state.grandTotals.outside_payment_amount)"/>
+                                <th t-if="isColVisible('total_to_settle')" class="text-end bg-amber-500 text-dark font-black" t-esc="formatCurrency(state.grandTotals.total_to_settle)"/>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Sección de Firmas Empresariales -->
+                <div class="row o_payroll_signatures mt-4 pt-3 border-top text-center">
+                    <div class="col-4">
+                        <div class="fw-bold mb-4 text-uppercase">ELABORADA POR</div>
+                        <div class="o_payroll_sign_line border-bottom border-dark mx-auto" style="max-width: 220px;"/>
+                        <div class="mt-2 text-muted" t-esc="state.preparedBy || '___________'"/>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold mb-4 text-uppercase">REVISADA POR</div>
+                        <div class="o_payroll_sign_line border-bottom border-dark mx-auto" style="max-width: 220px;"/>
+                        <div class="mt-2 text-muted" t-esc="state.reviewedBy || '___________'"/>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold mb-4 text-uppercase">AUTORIZADA POR</div>
+                        <div class="o_payroll_sign_line border-bottom border-dark mx-auto" style="max-width: 220px;"/>
+                        <div class="mt-2 text-muted" t-esc="state.approvedBy || '___________'"/>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

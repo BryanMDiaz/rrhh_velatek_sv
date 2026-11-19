@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_loan_template_preview_wizard_form" model="ir.ui.view">
+        <field name="name">hr.loan.template.preview.wizard.form</field>
+        <field name="model">hr.loan.template.preview.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Vista Previa de Plantilla de Préstamo">
+                <sheet>
+                    <field name="editing_loan_id" invisible="1"/>
+                    <div class="alert alert-info py-2" role="alert">
+                        <i class="fa fa-info-circle me-1"/>
+                        Puedes modificar el texto del contrato directamente. Al abrir desde un préstamo, pulsa Guardar contrato para conservar los cambios y utilizarlos al imprimir. Los cambios no modifican la plantilla ni los datos del préstamo.
+                    </div>
+                    <group>
+                        <group string="Plantilla y Empleado">
+                            <field name="template_id" readonly="1" options="{'no_create': True}"/>
+                            <field name="employee_id" readonly="editing_loan_id" placeholder="Seleccionar empleado de muestra..." options="{'no_create': True}"/>
+                        </group>
+                        <group string="Contrato y Préstamo (Datos de prueba)">
+                            <field name="contract_id" readonly="editing_loan_id" options="{'no_create': True}" placeholder="Contrato del empleado..."/>
+                            <field name="loan_id" readonly="editing_loan_id" options="{'no_create': True}" placeholder="Préstamo existente (opcional)..."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contenido del contrato" name="preview">
+                            <field name="preview_html" widget="html" options="{'style-inline': true, 'codeview': false, 'sandboxedPreview': false}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button name="action_save_contract" string="Guardar contrato" type="object" class="btn-primary" invisible="not editing_loan_id"/>
+                    <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_loan_template_preview_wizard" model="ir.actions.act_window">
+        <field name="name">Vista Previa de Plantilla</field>
+        <field name="res_model">hr.loan.template.preview.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

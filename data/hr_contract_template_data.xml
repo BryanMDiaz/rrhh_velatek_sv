@@ -1,0 +1,285 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo noupdate="1">
+    <record id="contract_template_sv_permanent" model="hr.contract.template">
+        <field name="name">CONTRATO INDIVIDUAL DE TRABAJO POR TIEMPO INDEFINIDO — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_permanent" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Formaliza una relación laboral subordinada de duración indefinida y documenta las funciones, la jornada, la remuneración y las obligaciones de ambas partes.</field>
+        <field name="body_html"><![CDATA[<div style="font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; color: #161616; font-size: 10.5pt; line-height: 1.36; max-width: 900px; margin: 0 auto;">
+<div style="text-align: center; margin: 0 0 10px; padding: 0 0 8px; border-bottom: 1px solid #444;">
+<p style="text-align: left; margin: 0 0 6px; font-size: 9.5pt; font-weight: bold; letter-spacing: 0.5px;"><span data-contract-company="1">{{ company.name }}</span></p>
+<h2 style="font-family: inherit; font-size: 17pt; font-weight: 700; color: #161616; line-height: 1.2; margin: 0 0 6px;">Contrato individual de trabajo por tiempo indefinido</h2>
+<p style="margin: 0; font-size: 9pt; color: #3c3c3c;">República de El Salvador &nbsp;·&nbsp; Contrato n.º {{ contract.name }}</p>
+</div>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Lugar y fecha</strong> &nbsp; {{ completar.ciudad de firma }}, El Salvador · {{ signature_date }}</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Comparecencia</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Parte empleadora.</strong> {{ company.name }}, NIT {{ company.vat }}, con domicilio en {{ company.address }}. Comparece en su representación {{ legal_representative.name }}. Calidad y acreditación: {{ completar.calidad y documento de representación }}.</p>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Representación.</strong> Sexo: {{ completar.sexo del representante }} · Edad: {{ legal_representative.age }} · Estado civil: {{ completar.estado civil del representante }} · Profesión u oficio: {{ legal_representative.profession }} · Nacionalidad: {{ completar.nacionalidad del representante }}.<br/>
+Domicilio: {{ legal_representative.address }} · Residencia: {{ completar.residencia del representante }}.<br/>
+Documento de identidad: {{ legal_representative.dui }} · Lugar de expedición: {{ completar.lugar de expedición del DUI del representante }} · Fecha de expedición: {{ completar.fecha de expedición del DUI del representante }}.</p>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Persona trabajadora.</strong> {{ employee.name }}. Sexo: {{ employee.gender }} · Edad: {{ employee.age }} · Estado civil: {{ employee.marital }} · Profesión u oficio: {{ employee.profession }} · Nacionalidad: {{ employee.nationality }}.<br/>
+Domicilio: {{ employee.private_address }} · Residencia: {{ completar.residencia de la persona trabajadora }}.<br/>
+Documento de identidad: {{ employee.dui }} · Lugar de expedición: {{ employee.dui_place }} · Fecha de expedición: {{ employee.dui_date }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">1. Cargo y vigencia.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">La persona trabajadora prestará servicios bajo la dirección de la parte empleadora como&nbsp;<strong>{{ job.name }}</strong>. Funciones: {{ completar.funciones del cargo }}. La relación se pacta por tiempo indefinido. Fecha de inicio de la prestación de servicios: <strong>{{ contract.date_start }}</strong>.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">2. Lugar y jornada.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Centro de trabajo: {{ completar.dirección del lugar de trabajo }}.<br/>Alojamiento y dirección: {{ completar.alojamiento y dirección, o ninguno }}.<br/>Tipo de jornada: {{ contract.work_schedule_type }}. Horario: {{ completar.horario detallado }}. Descanso semanal: {{ completar.descanso semanal }}. El tiempo extraordinario se reconocerá y remunerará conforme a la ley.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">3. Remuneración.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Salario: {{ completar.salario pactado }}. Periodicidad: {{ contract.payment_frequency }}. Forma de pago: {{ employee.payment_method }}. Lugar de pago: {{ completar.lugar de pago }}. Se respetarán los mínimos legales y únicamente se aplicarán descuentos autorizados.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">4. Herramientas y dependientes.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Bienes entregados (cantidad, calidad y estado): {{ completar.herramientas entregadas o referencia al inventario }}. Nombres y apellidos de quienes dependen económicamente de la persona trabajadora: {{ completar.personas dependientes y sus datos, o ninguna }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">5. Obligaciones y derechos.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">La parte empleadora pagará oportunamente la remuneración y las prestaciones, proveerá los medios para el trabajo y mantendrá condiciones adecuadas de seguridad y salud. La persona trabajadora cumplirá las funciones convenidas, las instrucciones lícitas y las medidas de prevención. Se mantienen los derechos mínimos y las condiciones más favorables aplicables.</p>
+<div style="page-break-inside: avoid;">
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">6. Terminación y formalización.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">La terminación y sus efectos se regirán por el Código de Trabajo. Cada parte conservará un ejemplar y la parte empleadora remitirá el tercero a la Dirección General de Trabajo dentro del plazo legal.</p>
+<div data-contract-signatures="1" style="page-break-inside: avoid; margin-top: 14px; font-size: 9.5pt;">
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Firmas</h3>
+<div style="display: inline-block; width: 44%; margin-right: 8%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La parte empleadora</strong><br/>{{ legal_representative.name }}</div>
+<div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La persona trabajadora</strong><br/>{{ employee.name }}</div>
+</div>
+</div>
+</div>]]></field>
+    </record>
+    <record id="contract_template_sv_temporary" model="hr.contract.template">
+        <field name="name">CONTRATO INDIVIDUAL DE TRABAJO A PLAZO — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_temporary" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Formaliza una relación laboral de duración determinada por una causa objetiva y documenta su inicio, vencimiento y condiciones de prestación.</field>
+        <field name="body_html" model="hr.contract.template" eval="(str(obj(ref('rrhh_velatek_sv.contract_template_sv_permanent')).body_html)&#10;        .replace('Contrato individual de trabajo por tiempo indefinido', 'Contrato individual de trabajo a plazo')&#10;        .replace('La relación se pacta por tiempo indefinido. Fecha de inicio de la prestación de servicios: &lt;strong&gt;{{ contract.date_start }}&lt;/strong&gt;.', 'Los servicios se prestarán del &lt;strong&gt;{{ contract.date_start }}&lt;/strong&gt; al &lt;strong&gt;{{ contract.fixed_end_date }}&lt;/strong&gt;. La causa objetiva que justifica el plazo y su vínculo con las labores es {{ completar.causa temporal y su relación con el plazo }}.'))" />
+    </record>
+    <record id="contract_template_sv_seasonal" model="hr.contract.template">
+        <field name="name">CONTRATO INDIVIDUAL DE TRABAJO POR TEMPORADA — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_seasonal" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Formaliza una contratación laboral vinculada a una temporada identificable y documenta su causa objetiva, las labores y el período pactado.</field>
+        <field name="body_html" model="hr.contract.template" eval="(str(obj(ref('rrhh_velatek_sv.contract_template_sv_permanent')).body_html)&#10;        .replace('Contrato individual de trabajo por tiempo indefinido', 'Contrato individual de trabajo por temporada')&#10;        .replace('La relación se pacta por tiempo indefinido. Fecha de inicio de la prestación de servicios: &lt;strong&gt;{{ contract.date_start }}&lt;/strong&gt;.', 'Los servicios se prestarán del &lt;strong&gt;{{ contract.date_start }}&lt;/strong&gt; al &lt;strong&gt;{{ contract.fixed_end_date }}&lt;/strong&gt;, para {{ completar.temporada y actividad estacional }}. Causa objetiva del plazo: {{ completar.causa objetiva de la temporada y su vínculo con las tareas }}.'))" />
+    </record>
+    <record id="contract_template_sv_full_time" model="hr.contract.template">
+        <field name="name">CONTRATO INDIVIDUAL DE TRABAJO A TIEMPO COMPLETO — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_full_time" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Formaliza una relación laboral con jornada a tiempo completo y establece de forma expresa su duración, las funciones y las condiciones de remuneración.</field>
+        <field name="body_html" model="hr.contract.template" eval="(str(obj(ref('rrhh_velatek_sv.contract_template_sv_permanent')).body_html)&#10;        .replace('Contrato individual de trabajo por tiempo indefinido', 'Contrato individual de trabajo a tiempo completo')&#10;        .replace('La relación se pacta por tiempo indefinido. Fecha de inicio de la prestación de servicios: &lt;strong&gt;{{ contract.date_start }}&lt;/strong&gt;.', 'Fecha de inicio de la prestación de servicios: &lt;strong&gt;{{ contract.date_start }}&lt;/strong&gt;. Duración pactada: {{ completar.duración indefinida o plazo, fecha y causa objetiva }}.'))" />
+    </record>
+    <record id="contract_template_sv_employee" model="hr.contract.template">
+        <field name="name">CONTRATO INDIVIDUAL DE TRABAJO — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_employee" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Formaliza las condiciones particulares de una relación laboral subordinada y deja constancia de la duración acordada y de las obligaciones recíprocas.</field>
+        <field name="body_html" model="hr.contract.template" eval="(str(obj(ref('rrhh_velatek_sv.contract_template_sv_permanent')).body_html)&#10;        .replace('Contrato individual de trabajo por tiempo indefinido', 'Contrato individual de trabajo')&#10;        .replace('La relación se pacta por tiempo indefinido. Fecha de inicio de la prestación de servicios: &lt;strong&gt;{{ contract.date_start }}&lt;/strong&gt;.', 'Fecha de inicio de la prestación de servicios: &lt;strong&gt;{{ contract.date_start }}&lt;/strong&gt;. Duración pactada: {{ completar.duración indefinida o plazo, fecha y causa objetiva }}.'))" />
+    </record>
+    <record id="contract_template_sv_intern" model="hr.contract.template">
+        <field name="name">CONVENIO DE PRÁCTICAS PROFESIONALES — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_part_time" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Establece las condiciones de una práctica profesional supervisada, sus objetivos, seguimiento, cobertura y cierre.</field>
+        <field name="body_html"><![CDATA[<div style="font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; color: #161616; font-size: 10.5pt; line-height: 1.36; max-width: 900px; margin: 0 auto;">
+<div style="text-align: center; margin: 0 0 10px; padding: 0 0 8px; border-bottom: 1px solid #444;">
+<p style="text-align: left; margin: 0 0 6px; font-size: 9.5pt; font-weight: bold; letter-spacing: 0.5px;"><span data-contract-company="1">{{ company.name }}</span></p>
+<h2 style="font-family: inherit; font-size: 17pt; font-weight: 700; color: #161616; line-height: 1.2; margin: 0 0 6px;">Convenio de prácticas profesionales</h2>
+<p style="margin: 0; font-size: 9pt; color: #3c3c3c;">República de El Salvador &nbsp;·&nbsp; Convenio n.º {{ contract.name }}</p>
+</div>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Lugar y fecha</strong> &nbsp; {{ completar.ciudad de firma }}, El Salvador · {{ signature_date }}</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Comparecencia</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Entidad.</strong> {{ company.name }}, NIT {{ company.vat }}, con domicilio en {{ company.address }}.<br/>
+Representación: {{ legal_representative.name }} · Documento de identidad: {{ legal_representative.dui }}.</p>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Persona participante.</strong> {{ employee.name }} · Documento de identidad: {{ employee.dui }}.<br/>
+Domicilio: {{ employee.private_address }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">1. Objeto.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">El convenio tiene por finalidad el desarrollo de competencias profesionales y aplicación práctica de conocimientos. Programa, actividades y entregables: {{ completar.programa, actividades y entregables }}. Institución educativa y tutor: {{ completar.institución académica, programa y tutor }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">2. Ejecución.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Del {{ contract.date_start }} al {{ contract.fixed_end_date }}, en {{ completar.dirección del lugar de trabajo }}. Horario: {{ completar.horario y dedicación }}. Responsable de supervisión: {{ completar.nombre y cargo del supervisor }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">3. Condiciones y responsabilidades.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Apoyo económico, forma de pago y seguro o cobertura: {{ completar.apoyo económico y cobertura aplicables }}. La entidad designará una persona supervisora, facilitará los medios convenidos e informará las medidas de prevención. La persona participante atenderá el plan, registrará sus actividades y usará la información únicamente para los fines autorizados.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Cierre.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Evaluación, constancia y cierre: {{ completar.evaluación, constancia y condiciones de cierre }}. En caso de cierre anticipado se comunicará la decisión a las partes y, cuando intervenga, a la institución educativa. Si en los hechos existe relación laboral, se aplicará el Código de Trabajo.</p>
+<div data-contract-signatures="1" style="page-break-inside: avoid; margin-top: 14px; font-size: 9.5pt;">
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Firmas</h3>
+<div style="display: inline-block; width: 44%; margin-right: 8%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La entidad</strong><br/>{{ legal_representative.name }}</div>
+<div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La persona participante</strong><br/>{{ employee.name }}</div>
+<div><div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La institución educativa</strong></div></div>
+</div>
+</div>]]></field>
+    </record>
+    <record id="contract_template_sv_student" model="hr.contract.template">
+        <field name="name">CONVENIO DE PRÁCTICA ESTUDIANTIL — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_student" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Establece el marco de una práctica vinculada al programa de estudios, bajo coordinación de la entidad receptora y de la institución educativa.</field>
+        <field name="body_html"><![CDATA[<div style="font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; color: #161616; font-size: 10.5pt; line-height: 1.36; max-width: 900px; margin: 0 auto;">
+<div style="text-align: center; margin: 0 0 10px; padding: 0 0 8px; border-bottom: 1px solid #444;">
+<p style="text-align: left; margin: 0 0 6px; font-size: 9.5pt; font-weight: bold; letter-spacing: 0.5px;"><span data-contract-company="1">{{ company.name }}</span></p>
+<h2 style="font-family: inherit; font-size: 17pt; font-weight: 700; color: #161616; line-height: 1.2; margin: 0 0 6px;">Convenio de práctica estudiantil</h2>
+<p style="margin: 0; font-size: 9pt; color: #3c3c3c;">República de El Salvador &nbsp;·&nbsp; Convenio n.º {{ contract.name }}</p>
+</div>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Lugar y fecha</strong> &nbsp; {{ completar.ciudad de firma }}, El Salvador · {{ signature_date }}</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Comparecencia</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Entidad.</strong> {{ company.name }}, NIT {{ company.vat }}, con domicilio en {{ company.address }}.<br/>
+Representación: {{ legal_representative.name }} · Documento de identidad: {{ legal_representative.dui }}.</p>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Persona participante.</strong> {{ employee.name }} · Documento de identidad: {{ employee.dui }}.<br/>
+Domicilio: {{ employee.private_address }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">1. Objeto.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">El convenio tiene por finalidad el cumplimiento de la práctica formativa vinculada al programa de estudios. Programa, actividades y entregables: {{ completar.programa, actividades y entregables }}. Institución educativa y tutor: {{ completar.institución académica, programa y tutor }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">2. Ejecución.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Del {{ contract.date_start }} al {{ contract.fixed_end_date }}, en {{ completar.dirección del lugar de trabajo }}. Horario: {{ completar.horario y dedicación }}. Responsable de supervisión: {{ completar.nombre y cargo del supervisor }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">3. Condiciones y responsabilidades.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Apoyo económico, forma de pago y seguro o cobertura: {{ completar.apoyo económico y cobertura aplicables }}. La entidad designará una persona supervisora, facilitará los medios convenidos e informará las medidas de prevención. La persona participante atenderá el plan, registrará sus actividades y usará la información únicamente para los fines autorizados.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Cierre.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Evaluación, constancia y cierre: {{ completar.evaluación, constancia y condiciones de cierre }}. En caso de cierre anticipado se comunicará la decisión a las partes y, cuando intervenga, a la institución educativa. Si en los hechos existe relación laboral, se aplicará el Código de Trabajo.</p>
+<div data-contract-signatures="1" style="page-break-inside: avoid; margin-top: 14px; font-size: 9.5pt;">
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Firmas</h3>
+<div style="display: inline-block; width: 44%; margin-right: 8%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La entidad</strong><br/>{{ legal_representative.name }}</div>
+<div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La persona participante</strong><br/>{{ employee.name }}</div>
+<div><div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La institución educativa</strong></div></div>
+</div>
+</div>]]></field>
+    </record>
+    <record id="contract_template_sv_thesis" model="hr.contract.template">
+        <field name="name">CONVENIO PARA DESARROLLO DE TESIS — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_thesis" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Establece las condiciones de colaboración para desarrollar un proyecto de tesis, incluido el acceso a información y el régimen acordado de publicación.</field>
+        <field name="body_html"><![CDATA[<div style="font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; color: #161616; font-size: 10.5pt; line-height: 1.36; max-width: 900px; margin: 0 auto;">
+<div style="text-align: center; margin: 0 0 10px; padding: 0 0 8px; border-bottom: 1px solid #444;">
+<p style="text-align: left; margin: 0 0 6px; font-size: 9.5pt; font-weight: bold; letter-spacing: 0.5px;"><span data-contract-company="1">{{ company.name }}</span></p>
+<h2 style="font-family: inherit; font-size: 17pt; font-weight: 700; color: #161616; line-height: 1.2; margin: 0 0 6px;">Convenio para desarrollo de tesis</h2>
+<p style="margin: 0; font-size: 9pt; color: #3c3c3c;">República de El Salvador &nbsp;·&nbsp; Convenio n.º {{ contract.name }}</p>
+</div>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Lugar y fecha</strong> &nbsp; {{ completar.ciudad de firma }}, El Salvador · {{ signature_date }}</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Comparecencia</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Entidad.</strong> {{ company.name }}, NIT {{ company.vat }}, con domicilio en {{ company.address }}.<br/>
+Representación: {{ legal_representative.name }} · Documento de identidad: {{ legal_representative.dui }}.</p>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Persona participante.</strong> {{ employee.name }} · Documento de identidad: {{ employee.dui }}.<br/>
+Domicilio: {{ employee.private_address }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">1. Objeto.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">El convenio tiene por finalidad el ejecución del proyecto de investigación y elaboración de la tesis. Programa, actividades y entregables: {{ completar.programa, actividades y entregables }}. Institución educativa y tutor: {{ completar.institución académica, programa y tutor }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">2. Ejecución.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Del {{ contract.date_start }} al {{ contract.fixed_end_date }}, en {{ completar.dirección del lugar de trabajo }}. Horario: {{ completar.horario y dedicación }}. Responsable de supervisión: {{ completar.nombre y cargo del supervisor }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">3. Condiciones y responsabilidades.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Apoyo económico, forma de pago y seguro o cobertura: {{ completar.apoyo económico y cobertura aplicables }}. La entidad designará una persona supervisora, facilitará los medios convenidos e informará las medidas de prevención. La persona participante atenderá el plan, registrará sus actividades y usará la información únicamente para los fines autorizados.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">4. Resultados.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">El uso, custodia y difusión de datos y resultados se ajustarán a la ley y a lo acordado sobre confidencialidad, autoría, revisión académica y publicación: {{ completar.condiciones de confidencialidad, autoría y publicación }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Cierre.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Evaluación, constancia y cierre: {{ completar.evaluación, constancia y condiciones de cierre }}. En caso de cierre anticipado se comunicará la decisión a las partes y, cuando intervenga, a la institución educativa. Si en los hechos existe relación laboral, se aplicará el Código de Trabajo.</p>
+<div data-contract-signatures="1" style="page-break-inside: avoid; margin-top: 14px; font-size: 9.5pt;">
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Firmas</h3>
+<div style="display: inline-block; width: 44%; margin-right: 8%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La entidad</strong><br/>{{ legal_representative.name }}</div>
+<div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La persona participante</strong><br/>{{ employee.name }}</div>
+<div><div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La institución educativa</strong></div></div>
+</div>
+</div>]]></field>
+    </record>
+    <record id="contract_template_sv_apprenticeship" model="hr.contract.template">
+        <field name="name">CONTRATO DE APRENDIZAJE — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_apprenticeship" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Establece la formación práctica y técnica en un oficio u ocupación, la retribución de la persona aprendiz y las formalidades de aprobación e inscripción.</field>
+        <field name="body_html"><![CDATA[<div style="font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; color: #161616; font-size: 10.5pt; line-height: 1.36; max-width: 900px; margin: 0 auto;">
+<div style="text-align: center; margin: 0 0 10px; padding: 0 0 8px; border-bottom: 1px solid #444;">
+<p style="text-align: left; margin: 0 0 6px; font-size: 9.5pt; font-weight: bold; letter-spacing: 0.5px;"><span data-contract-company="1">{{ company.name }}</span></p>
+<h2 style="font-family: inherit; font-size: 17pt; font-weight: 700; color: #161616; line-height: 1.2; margin: 0 0 6px;">Contrato de aprendizaje</h2>
+<p style="margin: 0; font-size: 9pt; color: #3c3c3c;">República de El Salvador &nbsp;·&nbsp; Contrato n.º {{ contract.name }}</p>
+</div>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Lugar y fecha</strong> &nbsp; {{ completar.ciudad de firma }}, El Salvador · {{ signature_date }}</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Comparecencia</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Entidad.</strong> {{ company.name }}, NIT {{ company.vat }}, con domicilio en {{ company.address }}.<br/>
+Representación: {{ legal_representative.name }} · Documento de identidad: {{ legal_representative.dui }}.</p>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Persona aprendiz.</strong> {{ employee.name }} · Documento de identidad: {{ employee.dui }}.<br/>
+Domicilio: {{ employee.private_address }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">1. Formación.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">La entidad enseñará técnica y práctica de {{ completar.oficio, arte u ocupación }}, conforme al plan {{ completar.plan, etapas y objetivos de aprendizaje }}. La persona aprendiz seguirá el plan bajo la supervisión de {{ completar.persona instructora }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">2. Plazo y lugar.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Del {{ contract.date_start }} al {{ contract.fixed_end_date }}, en {{ completar.dirección del lugar de trabajo }}. Horario {{ completar.horario detallado }} y descanso semanal {{ completar.descanso semanal }}. La entidad facilitará equipos, impartirá formación en las etapas previstas y asignará tareas propias del oficio. La persona aprendiz asistirá a la instrucción y observará las medidas de seguridad.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">3. Retribución y protección.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Monto, periodicidad, forma y lugar de pago: {{ completar.retribución, período, forma y lugar de pago }}. Se aplicarán el mínimo legal, las prestaciones y la cobertura de seguridad social y riesgos correspondientes.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">4. Aprobación y registro.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">La aprobación por el Ministerio de Trabajo y Previsión Social y la inscripción correspondiente se documentarán conforme al artículo 61 del Código de Trabajo. Referencias: {{ completar.aprobación e inscripción }}.</p>
+<div data-contract-signatures="1" style="page-break-inside: avoid; margin-top: 14px; font-size: 9.5pt;">
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Firmas</h3>
+<div style="display: inline-block; width: 44%; margin-right: 8%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La entidad</strong><br/>{{ legal_representative.name }}</div>
+<div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La persona aprendiz</strong><br/>{{ employee.name }}</div>
+</div>
+</div>]]></field>
+    </record>
+    <record id="contract_template_sv_statutory" model="hr.contract.template">
+        <field name="name">DOCUMENTO DE VINCULACIÓN ESTATUTARIA — EL SALVADOR</field>
+        <field name="version" eval="5" />
+        <field name="contract_type_id" ref="hr.contract_type_statutaire" />
+        <field name="company_id" eval="False" />
+        <field name="is_default" eval="True" />
+        <field name="description">Documenta una vinculación regida por el acto de designación y la normativa aplicable, con referencia a la autoridad, el cargo y las condiciones registradas.</field>
+        <field name="body_html"><![CDATA[<div style="font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; color: #161616; font-size: 10.5pt; line-height: 1.36; max-width: 900px; margin: 0 auto;">
+<div style="text-align: center; margin: 0 0 10px; padding: 0 0 8px; border-bottom: 1px solid #444;">
+<p style="text-align: left; margin: 0 0 6px; font-size: 9.5pt; font-weight: bold; letter-spacing: 0.5px;"><span data-contract-company="1">{{ company.name }}</span></p>
+<h2 style="font-family: inherit; font-size: 17pt; font-weight: 700; color: #161616; line-height: 1.2; margin: 0 0 6px;">Constancia de vinculación estatutaria</h2>
+<p style="margin: 0; font-size: 9pt; color: #3c3c3c;">República de El Salvador &nbsp;·&nbsp; Referencia n.º {{ contract.name }}</p>
+</div>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Lugar y fecha</strong> &nbsp; {{ completar.ciudad de firma }}, El Salvador · {{ signature_date }}</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">1. Identificación.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Entidad: {{ company.name }}. Persona designada: {{ employee.name }}, DUI {{ employee.dui }}. Cargo: {{ job.name }}. Dependencia: {{ department.name }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">2. Acto habilitante.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Autoridad emisora, referencia y fecha del acto de nombramiento o vinculación, y norma aplicable: {{ completar.norma, autoridad y acto habilitante }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">3. Condiciones.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Inicio registrado: {{ contract.date_start }}. Vigencia, funciones, jornada y retribución conforme al acto: {{ completar.condiciones y vigencia conforme al acto }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">4. Constancia.</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Se incorporará al expediente una copia del acto habilitante y los respaldos exigidos. La constancia identifica la documentación incorporada y acredita la recepción cuando corresponda. La vigencia, los derechos y las obligaciones se determinan conforme al acto habilitante y su régimen jurídico.</p>
+<div data-contract-signatures="1" style="page-break-inside: avoid; margin-top: 14px; font-size: 9.5pt;">
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Firmas</h3>
+<div style="display: inline-block; width: 44%; margin-right: 8%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La autoridad o persona responsable</strong><br/>{{ completar.autoridad firmante }}</div>
+<div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>La persona designada (recibido)</strong><br/>{{ employee.name }}</div>
+</div>
+</div>]]></field>
+    </record>
+    <record id="contract_template_sv_professional_services" model="hr.contract.template">
+        <field name="name">CONTRATO DE PRESTACIÓN DE SERVICIOS PROFESIONALES — EL SALVADOR</field>
+        <field name="contract_type_id" ref="rrhh_velatek_sv.contract_type_professional_services"/>
+        <field name="company_id" eval="False"/>
+        <field name="is_default" eval="True"/>
+        <field name="description">Formaliza un encargo profesional independiente y establece su alcance, entregables, honorarios, obligaciones y condiciones de terminación.</field>
+        <field name="body_html"><![CDATA[<div style="font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; color: #161616; font-size: 10.5pt; line-height: 1.36; max-width: 900px; margin: 0 auto;">
+<div style="text-align: center; margin: 0 0 10px; padding: 0 0 8px; border-bottom: 1px solid #444;">
+<p style="text-align: left; margin: 0 0 6px; font-size: 9.5pt; font-weight: bold; letter-spacing: 0.5px;"><span data-contract-company="1">{{ company.name }}</span></p>
+<h2 style="font-family: inherit; font-size: 17pt; font-weight: 700; color: #161616; line-height: 1.2; margin: 0 0 6px;">Contrato de prestación de servicios profesionales</h2>
+<p style="margin: 0; font-size: 9pt; color: #3c3c3c;">República de El Salvador &nbsp;·&nbsp; Contrato n.º {{ contract.name }}</p>
+</div>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>Lugar y fecha</strong> &nbsp; {{ completar.ciudad de firma }}, El Salvador · {{ signature_date }}</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Comparecencia</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>La contratante.</strong> {{ company.name }}, NIT {{ company.vat }}, con domicilio en {{ company.address }}, representada por {{ legal_representative.name }}, documento de identidad {{ legal_representative.dui }} y calidad y acreditación {{ completar.calidad y documento de representación }}.</p>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;"><strong>La persona prestadora.</strong> {{ employee.name }}, DUI {{ employee.dui }}, NIT {{ employee.nit }}, con domicilio en {{ employee.private_address }}.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">1. Objeto y entregables</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">La persona prestadora se obliga a ejecutar los servicios de {{ completar.servicios contratados }}. Alcance y entregables: {{ completar.entregables }}. Las partes podrán detallar el alcance en un anexo firmado.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">2. Vigencia y ejecución</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Inicio: {{ completar.fecha de inicio de los servicios }}. Vencimiento o hito de cierre: {{ completar.vencimiento o hito de cierre }}. Lugar o modalidad: {{ completar.lugar o modalidad de prestación }}. La persona prestadora conserva autonomía técnica y organiza sus medios, dentro del alcance y los plazos acordados.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">3. Honorarios y pago</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">Monto y moneda: {{ completar.honorarios }}. Hitos o periodicidad y plazo de pago: {{ completar.condiciones de pago }}. Medio de pago: {{ employee.payment_method }}. El pago se respaldará con el comprobante fiscal que corresponda y estará sujeto a los impuestos y retenciones aplicables. Los gastos reembolsables requerirán autorización previa por escrito.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">4. Obligaciones y confidencialidad</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">La contratante facilitará la información y el acceso pactados y revisará los entregables. La persona prestadora ejecutará el encargo con diligencia profesional, informará incidencias y usará la información reservada solo para el servicio. Al finalizar, devolverá los materiales de la contratante, salvo conservación exigida por ley.</p>
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">5. Terminación y ley aplicable</h3>
+<p style="margin: 0 0 6px; orphans: 2; widows: 2;">El contrato concluye por cumplimiento, vencimiento, mutuo acuerdo o incumplimiento sustancial comunicado por escrito. Se liquidarán los servicios efectivamente prestados y los gastos autorizados que correspondan. Se aplica la legislación salvadoreña, y la naturaleza de la relación se determina por sus condiciones reales de ejecución.</p>
+<div data-contract-signatures="1" style="page-break-inside: avoid; margin-top: 14px; font-size: 9.5pt;">
+<h3 style="font-family: inherit; font-size: 10.5pt; font-weight: 700; color: #161616; margin: 9px 0 3px; page-break-after: avoid;">Firmas</h3>
+<div style="display: inline-block; width: 44%; margin-right: 8%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>Por la contratante</strong><br/>{{ legal_representative.name }}</div>
+<div style="display: inline-block; width: 44%; vertical-align: top; margin-top: 24px; padding-top: 5px; border-top: 1px solid #292929;"><strong>Persona prestadora</strong><br/>{{ employee.name }}</div>
+</div>
+</div>]]></field>
+    </record>
+</odoo>

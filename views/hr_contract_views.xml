@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista Formulario de Contrato -->
+        <record id="hr_contract_view_form_velatek" model="ir.ui.view">
+            <field name="name">hr.contract.form.velatek</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <!-- Mantener la vista estándar y extenderla donde sea necesario -->
+                <xpath expr="//header" position="inside">
+                    <button name="action_generate_contract" string="Generar contrato" type="object" class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_open_generated_documents" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                        <field name="velatek_generated_document_count" widget="statinfo" string="Documentos contractuales"/>
+                    </button>
+                </xpath>
+                <xpath expr="//group[@name='salary_info']" position="inside">
+                    <group string="Remuneración y Producción" name="velatek_production_info">
+                        <field name="velatek_remuneration_mode"/>
+                        <field name="velatek_production_unit" invisible="velatek_remuneration_mode == 'fixed'"/>
+                        <field name="velatek_production_rate" invisible="velatek_remuneration_mode == 'fixed'"/>
+                    </group>
+                    <group string="Detalles de Pago y Ubicación" name="velatek_payment_info">
+                        <field name="velatek_payment_frequency"/>
+                        <field name="velatek_work_schedule_type"/>
+                        <field name="velatek_analytic_account_id"/>
+                        <field name="velatek_work_location_id"/>
+                        <field name="velatek_contract_template_id"/>
+                    </group>
+                </xpath>
+
+                <xpath expr="//label[@for='wage']" position="attributes">
+                    <attribute name="invisible">velatek_remuneration_mode == 'production'</attribute>
+                </xpath>
+                <xpath expr="//div[@name='wage']" position="attributes">
+                    <attribute name="invisible">velatek_remuneration_mode == 'production'</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Vista Lista de Contrato -->
+        <record id="hr_contract_view_tree_velatek" model="ir.ui.view">
+            <field name="name">hr.contract.tree.velatek</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='wage']" position="after">
+                    <field name="velatek_payment_frequency" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Menú de Contratos -->
+        <menuitem id="menu_hr_contract_velatek" name="Contratos" parent="hr.menu_hr_root" action="hr_contract.action_hr_contract" sequence="4"/>
+
+    </data>
+</odoo>

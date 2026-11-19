@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_salary_advance_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Solicitud y constancia de anticipo de salario</h2>
+                        <p>Referencia: <strong t-field="o.name"/></p>
+                        <p>Empresa: <span t-field="o.company_id.name"/></p>
+                        <p>Empleado: <span t-field="o.employee_id.name"/> — Documento: <span t-field="o.employee_id.velatek_dui"/></p>
+                        <p>Período salarial: <span t-field="o.advance_date_start"/> al <span t-field="o.advance_date_end"/></p>
+                        <table class="table table-borderless">
+                            <tr><td>Devengado del período</td><td><span t-field="o.advance_gross"/></td></tr>
+                            <tr><td>ISSS estimado</td><td><span t-field="o.advance_isss"/></td></tr>
+                            <tr><td>AFP estimado</td><td><span t-field="o.advance_afp"/></td></tr>
+                            <tr><td>ISR estimado</td><td><span t-field="o.advance_isr"/></td></tr>
+                            <tr><td>Otras deducciones del período</td><td><span t-field="o.advance_other_deductions"/></td></tr>
+                            <tr><td><strong>Neto solicitado como anticipo</strong></td><td><span t-field="o.advance_net"/></td></tr>
+                        </table>
+                        <p>El trabajador solicita el pago anticipado del neto del período indicado. Este pago no constituye
+                            una ausencia sin goce de salario ni genera intereses. En la planilla definitiva se conservarán
+                            los salarios devengados y las deducciones correspondientes y se identificará por separado el
+                            importe ya pagado. Las diferencias por incidencias posteriores deberán conciliarse.</p>
+                        <p>Este documento no autoriza descuentos de otras quincenas ni renuncia a derechos laborales.</p>
+                        <div t-if="o.state in ('active', 'paid')">
+                            <p>Entrega registrada el <span t-field="o.disbursement_date"/>.
+                                Referencia del pago: <strong t-field="o.advance_payment_reference"/>.</p>
+                            <p>Importe entregado: <strong t-field="o.principal_amount"/>.</p>
+                        </div>
+                        <p t-else="">Solicitud pendiente de entrega. Este documento por sí solo no acredita el desembolso.</p>
+                        <div style="margin-top:70px">
+                            <p>___________________________________</p>
+                            <p>Firma o huella del trabajador</p>
+                            <p>___________________________________</p>
+                            <p>Autorización de la empresa</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+    <record id="action_report_salary_advance" model="ir.actions.report">
+        <field name="name">Solicitud / Constancia de anticipo salarial</field>
+        <field name="model">hr.employee.loan</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">rrhh_velatek_sv.report_salary_advance_document</field>
+        <field name="print_report_name">'Anticipo salarial - %s' % object.name</field>
+    </record>
+</odoo>

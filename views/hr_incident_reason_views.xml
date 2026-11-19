@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista Formulario de Motivos de Incidencia -->
+        <record id="hr_incident_reason_view_form" model="ir.ui.view">
+            <field name="name">hr.incident.reason.form</field>
+            <field name="model">hr.incident.reason</field>
+            <field name="arch" type="xml">
+                <form string="Motivo de Incidencia">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="incident_type"/>
+                                <field name="active"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="legal_guidance"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista Lista de Motivos de Incidencia -->
+        <record id="hr_incident_reason_view_tree" model="ir.ui.view">
+            <field name="name">hr.incident.reason.tree</field>
+            <field name="model">hr.incident.reason</field>
+            <field name="arch" type="xml">
+                <list string="Motivos de Incidencia">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="incident_type"/>
+                    <field name="active"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Acción de Motivos de Incidencia -->
+        <record id="action_hr_incident_reason" model="ir.actions.act_window">
+            <field name="name">Motivos de Incidencia</field>
+            <field name="res_model">hr.incident.reason</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear el primer motivo de incidencia
+                </p>
+                <p>
+                    Permite clasificar los motivos de permisos y otras incidencias (ej. Permiso personal, Cita médica, Duelo, Matrimonio).
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

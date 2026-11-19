@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Form view for hr.loan.payment.wizard -->
+        <record id="view_hr_loan_payment_wizard_form" model="ir.ui.view">
+            <field name="name">hr.loan.payment.wizard.form</field>
+            <field name="model">hr.loan.payment.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Abono Extraordinario">
+                    <field name="is_partial_warning" invisible="1"/>
+                    <field name="suggested_amount" invisible="1"/>
+                    <div class="alert alert-warning text-center" role="alert" invisible="not is_partial_warning">
+                        <strong>¡Atención!</strong> El empleado intentará pagar una cantidad menor a la cuota sugerida (<field name="suggested_amount" widget="monetary" readonly="1" class="fw-bold"/>).
+                        <br/>
+                        ¿Está seguro que desea permitir este abono parcial? La cuota se mantendrá activa por el resto del saldo pendiente.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="loan_id" readonly="1"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="payment_method"/>
+                            <field name="reference"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                    <footer>
+                        <button name="action_register_payment" string="Sí, Permitir Abono Parcial" type="object" class="btn-warning" invisible="not is_partial_warning"/>
+                        <button name="action_register_payment" string="Registrar Abono" type="object" class="btn-primary" invisible="is_partial_warning"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_hr_loan_payment_wizard" model="ir.actions.act_window">
+            <field name="name">Abono Extraordinario</field>
+            <field name="res_model">hr.loan.payment.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_hr_employee_loan"/>
+            <field name="binding_view_types">form</field>
+        </record>
+
+        <!-- Form view for hr.loan.simulate.wizard -->
+        <record id="view_hr_loan_simulate_wizard_form" model="ir.ui.view">
+            <field name="name">hr.loan.simulate.wizard.form</field>
+            <field name="model">hr.loan.simulate.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Simulador de Préstamo">
+                    <group>
+                        <group string="Condiciones">
+                            <field name="principal_amount"/>
+                            <field name="interest_amount"/>
+                            <field name="total_financed"/>
+                        </group>
+                        <group string="Programación">
+                            <field name="desired_installment"/>
+                            <field name="payment_frequency"/>
+                            <field name="first_payment_date"/>
+                        </group>
+                    </group>
+                    <group string="Resultados">
+                        <group>
+                            <field name="estimated_installments"/>
+                            <field name="estimated_end_date"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_hr_loan_simulate_wizard" model="ir.actions.act_window">
+            <field name="name">Simulador de Préstamo</field>
+            <field name="res_model">hr.loan.simulate.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_hr_loan_additional_wizard_form" model="ir.ui.view">
+            <field name="name">hr.loan.additional.wizard.form</field>
+            <field name="model">hr.loan.additional.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Autorización de Préstamo Adicional">
+                    <sheet>
+                        <div class="alert alert-warning text-center" role="alert">
+                            <h4>¡Advertencia de Préstamo Activo!</h4>
+                            <p>El empleado ya tiene un préstamo activo en este momento.</p>
+                            <p>Préstamo Activo: <field name="active_loan_id" readonly="1" class="fw-bold"/></p>
+                        </div>
+                        <p class="text-muted text-center mt-3">
+                            ¿Está seguro que desea enviar a aprobación la creación de este nuevo préstamo adicional?
+                        </p>
+                        <field name="loan_id" invisible="1"/>
+                    </sheet>
+                    <footer>
+                        <button string="Confirmar" type="object" name="action_confirm" class="btn-warning"/>
+                        <button string="Cancelar" type="object" name="action_cancel_and_delete" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_hr_loan_additional_wizard" model="ir.actions.act_window">
+            <field name="name">Autorización de Préstamo Adicional</field>
+            <field name="res_model">hr.loan.additional.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo noupdate="1">
+    <record id="incident_reason_sv_public_duty" model="hr.incident.reason">
+        <field name="name">Obligación de carácter público</field>
+        <field name="code">sv_public_duty</field>
+        <field name="incident_type">paid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 29.6(a). Registra el tiempo necesario para la obligación legal u ordenada por autoridad competente y conserva la constancia. Corresponde remuneración ordinaria por ese tiempo.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_family_bereavement" model="hr.incident.reason">
+        <field name="name">Obligación familiar por fallecimiento</field>
+        <field name="code">sv_family_bereavement</field>
+        <field name="incident_type">paid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 29.6(b). Registra el tiempo necesario. Verifica el parentesco o la dependencia registrada y el saldo compartido con otras licencias familiares: hasta dos días remunerados por mes calendario y quince por año.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_family_illness" model="hr.incident.reason">
+        <field name="name">Obligación familiar por enfermedad grave</field>
+        <field name="code">sv_family_illness</field>
+        <field name="incident_type">paid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 29.6(b). Verifica el parentesco o la dependencia registrada. El límite remunerado se comparte con los demás motivos de obligación familiar: dos días por mes calendario y quince por año.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_family_excess" model="hr.incident.reason">
+        <field name="name">Obligación familiar fuera del saldo remunerado</field>
+        <field name="code">sv_family_excess</field>
+        <field name="incident_type">unpaid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 29.6(b). Úsalo solo para la parte que exceda el saldo de licencia remunerada, tras comprobar los días ya reconocidos y cualquier condición más favorable. La licencia se concede por el tiempo necesario.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_association_duty" model="hr.incident.reason">
+        <field name="name">Comisión de directivo de asociación profesional</field>
+        <field name="code">sv_association_duty</field>
+        <field name="incident_type">unpaid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 29.6(c). Registra el tiempo indispensable solicitado por la organización. Comprueba si existe una condición más favorable antes de aplicar una deducción.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_paternity_birth" model="hr.incident.reason">
+        <field name="name">Paternidad por nacimiento</field>
+        <field name="code">sv_paternity_birth</field>
+        <field name="incident_type">paid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 29.6(d). Tres días remunerados, continuos o distribuidos dentro de los primeros quince días desde el nacimiento. Respaldo: partida de nacimiento.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_paternity_adoption" model="hr.incident.reason">
+        <field name="name">Paternidad por adopción</field>
+        <field name="code">sv_paternity_adoption</field>
+        <field name="incident_type">paid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 29.6(d). Tres días remunerados, continuos o distribuidos dentro de los primeros quince días desde que queda firme la sentencia. Respaldo: certificación de la sentencia de adopción.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_protected_leave" model="hr.incident.reason">
+        <field name="name">Licencia protegida por violencia contra la trabajadora</field>
+        <field name="code">sv_protected_leave</field>
+        <field name="incident_type">paid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 29.6(e). Registra solo el tiempo de imposibilidad amparado por la constancia de autoridad competente. Conserva el respaldo de forma reservada y evita datos sensibles en las notas.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_protected_proceedings" model="hr.incident.reason">
+        <field name="name">Diligencias judiciales o administrativas amparadas</field>
+        <field name="code">sv_protected_proceedings</field>
+        <field name="incident_type">paid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 29.6(f). Verifica que la diligencia esté amparada por la disposición y registra el tiempo que dure. Conserva cualquier respaldo sensible de forma reservada.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_breastfeeding_break" model="hr.incident.reason">
+        <field name="name">Pausa remunerada por lactancia</field>
+        <field name="code">sv_breastfeeding_break</field>
+        <field name="incident_type">paid_leave</field>
+        <field name="legal_guidance">Ley Amor Convertido en Alimento, art. 37. Registra las horas de pausa como tiempo efectivo remunerado. Considera el período aplicable y las pausas adicionales cuando la jornada excepcional exceda ocho horas.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_annual_leave" model="hr.incident.reason">
+        <field name="name">Goce de vacaciones anuales</field>
+        <field name="code">sv_annual_leave</field>
+        <field name="incident_type">paid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 177 y siguientes. Registra el goce y verifica elegibilidad, saldo, aviso y liquidación de la remuneración y prima en el trámite de vacaciones. Esta incidencia registra tiempo.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_common_sickness" model="hr.incident.reason">
+        <field name="name">Enfermedad o accidente común con incapacidad</field>
+        <field name="code">sv_common_sickness</field>
+        <field name="incident_type">sick_leave</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 307–308, y Reglamento para la Aplicación del Régimen del Seguro Social, art. 24. Registra el período certificado y conserva el respaldo. Verifica la elegibilidad, los días cubiertos y la liquidación del subsidio por separado con el ISSS.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_occupational_sickness" model="hr.incident.reason">
+        <field name="name">Accidente de trabajo o enfermedad profesional</field>
+        <field name="code">sv_occupational_sickness</field>
+        <field name="incident_type">sick_leave</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 316–319. Registra la incapacidad certificada. Verifica el subsidio aplicable con el ISSS y, en caso de accidente laboral, guarda la constancia de notificación al MTPS cuando corresponda.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_maternity" model="hr.incident.reason">
+        <field name="name">Descanso por maternidad</field>
+        <field name="code">sv_maternity</field>
+        <field name="incident_type">sick_leave</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 309–311. Registra el descanso con soporte médico y verifica las fechas de parto, los períodos prenatal y posnatal y la liquidación aplicable entre empleador e ISSS.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_pregnancy_supplement" model="hr.incident.reason">
+        <field name="name">Descanso prenatal suplementario certificado</field>
+        <field name="code">sv_pregnancy_supplement</field>
+        <field name="incident_type">sick_leave</field>
+        <field name="legal_guidance">Código de Trabajo, art. 309. Registra separadamente el período indicado en el certificado médico por enfermedad derivada del embarazo y verifica la cobertura aplicable.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_chronic_treatment" model="hr.incident.reason">
+        <field name="name">Incapacidad por enfermedad crónica y tratamiento</field>
+        <field name="code">sv_chronic_treatment</field>
+        <field name="incident_type">sick_leave</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 308-A y 308-B. Registra la incapacidad con la validación médica correspondiente y verifica la cobertura del ISSS para el tratamiento o la recuperación.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_unpaid_agreement" model="hr.incident.reason">
+        <field name="name">Permiso particular acordado sin goce</field>
+        <field name="code">sv_unpaid_agreement</field>
+        <field name="incident_type">unpaid_leave</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 23 núm. 12, 24 y 29 núm. 6. Registra el acuerdo y el período. Verifica primero si existe licencia remunerada aplicable o una condición más favorable.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_unjustified_absence" model="hr.incident.reason">
+        <field name="name">Inasistencia sin permiso ni justificación acreditada</field>
+        <field name="code">sv_unjustified_absence</field>
+        <field name="incident_type">unjustified_absence</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 50 núm. 12, 171 y 203. Registra la jornada y revisa las justificaciones antes de clasificar. El art. 50 regula causales de terminación y la incidencia por sí sola no determina esa consecuencia.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_abandonment" model="hr.incident.reason">
+        <field name="name">Abandono parcial de la jornada</field>
+        <field name="code">sv_abandonment</field>
+        <field name="incident_type">unjustified_absence</field>
+        <field name="legal_guidance">Código de Trabajo, art. 32 núm. 1. Registra el tiempo sin laborar y verifica si hubo permiso o causa justificada.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_discipline_internal" model="hr.incident.reason">
+        <field name="name">Falta prevista en reglamento interno</field>
+        <field name="code">sv_discipline_internal</field>
+        <field name="incident_type">suspension</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 304(d) y 305. Identifica la disposición del reglamento interno vigente, documenta la falta y verifica el límite legal aplicable.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_discipline_authorized" model="hr.incident.reason">
+        <field name="name">Suspensión autorizada por Inspección del Trabajo</field>
+        <field name="code">sv_discipline_authorized</field>
+        <field name="incident_type">suspension</field>
+        <field name="legal_guidance">Código de Trabajo, art. 305. Adjunta la resolución o registra su referencia y aplica el período autorizado por la autoridad.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_overtime_regular" model="hr.incident.reason">
+        <field name="name">Prolongación ocasional de jornada ordinaria</field>
+        <field name="code">sv_overtime_regular</field>
+        <field name="incident_type">overtime</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 161 y 168–170. Registra las horas efectivas y selecciona si fueron diurnas o nocturnas. Verifica la jornada aplicable y el supuesto legal del recargo.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_overtime_coverage" model="hr.incident.reason">
+        <field name="name">Cobertura extraordinaria de turno</field>
+        <field name="code">sv_overtime_coverage</field>
+        <field name="incident_type">overtime</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 167–170. Verifica el descanso entre jornadas, el carácter de la extensión, las horas efectivas y la modalidad diurna o nocturna.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_ordinary_night" model="hr.incident.reason">
+        <field name="name">Horas nocturnas dentro de la jornada ordinaria</field>
+        <field name="code">sv_ordinary_night</field>
+        <field name="incident_type">night_work</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 161 y 168. Registra las horas nocturnas efectivas; corresponde como mínimo el recargo legal por igual trabajo diurno. Identifica por separado las horas extraordinarias.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_national_holiday" model="hr.incident.reason">
+        <field name="name">Asueto nacional trabajado</field>
+        <field name="code">sv_national_holiday</field>
+        <field name="incident_type">holiday_work</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 190–193. Confirma el asueto, el supuesto que permite trabajar y la jornada efectivamente laborada. Revisa el recargo y las horas extraordinarias si las hubo.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_local_holiday" model="hr.incident.reason">
+        <field name="name">Asueto local trabajado</field>
+        <field name="code">sv_local_holiday</field>
+        <field name="incident_type">holiday_work</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 190–193. Verifica que la fecha y el asueto apliquen al centro de trabajo. Registra las horas y revisa la remuneración que corresponda.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_holiday_weekly_rest" model="hr.incident.reason">
+        <field name="name">Asueto trabajado que coincide con descanso semanal</field>
+        <field name="code">sv_holiday_weekly_rest</field>
+        <field name="incident_type">holiday_work</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 192 y 194. Registra la coincidencia y verifica tanto la remuneración especial del asueto como el descanso compensatorio remunerado.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_weekly_rest_agreement" model="hr.incident.reason">
+        <field name="name">Trabajo acordado en el descanso semanal</field>
+        <field name="code">sv_weekly_rest_agreement</field>
+        <field name="incident_type">weekly_rest_work</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 175–176. Registra horas, recargo y descanso compensatorio remunerado. El descanso se concede en la misma semana laboral o en la siguiente.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_regular_bonus" model="hr.incident.reason">
+        <field name="name">Bonificación habitual por desempeño</field>
+        <field name="code">sv_regular_bonus</field>
+        <field name="incident_type">bonus</field>
+        <field name="legal_guidance">Código de Trabajo, art. 119. Si retribuye servicios, verifica su tratamiento salarial y las bases que correspondan. Conserva la política y el cálculo.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_occasional_bonus" model="hr.incident.reason">
+        <field name="name">Gratificación ocasional por mera liberalidad</field>
+        <field name="code">sv_occasional_bonus</field>
+        <field name="incident_type">bonus</field>
+        <field name="legal_guidance">Código de Trabajo, art. 119. Documenta el motivo, la frecuencia y si retribuye servicios. La denominación del pago no determina su clasificación.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_sales_commission" model="hr.incident.reason">
+        <field name="name">Comisión por ventas, cobros u operaciones</field>
+        <field name="code">sv_sales_commission</field>
+        <field name="incident_type">commission</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 119, 126(d) y 130 núm. 3. Conserva la liquidación individual, las operaciones y el período. Verifica el componente fijo cuando el salario se pactó por comisión.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_travel_expenses" model="hr.incident.reason">
+        <field name="name">Gastos de viaje, transporte, alimentación o estadía</field>
+        <field name="code">sv_travel_expenses</field>
+        <field name="incident_type">viaticos</field>
+        <field name="legal_guidance">Código de Trabajo, art. 119, y Ley de Impuesto sobre la Renta, art. 3 núm. 1. Registra el destino laboral y conserva respaldo de la necesidad y cuantía. Selecciona el tratamiento según la naturaleza real del pago.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_expense_reimbursement" model="hr.incident.reason">
+        <field name="name">Reintegro de gastos de trabajo comprobados</field>
+        <field name="code">sv_expense_reimbursement</field>
+        <field name="incident_type">viaticos</field>
+        <field name="legal_guidance">Código de Trabajo, art. 119, y Ley de Impuesto sobre la Renta, art. 3 núm. 1. Registre el importe efectivamente pagado por la persona trabajadora, documente el destino laboral y adjunte las facturas o comprobantes que correspondan. Verifique la necesidad y cuantía del gasto y que no haya sido reembolsado. Si el pago retribuye servicios, clasifíquelo como remuneración.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_viatic_allowance" model="hr.incident.reason">
+        <field name="name">Asignación de viaje con posible carácter salarial</field>
+        <field name="code">sv_viatic_allowance</field>
+        <field name="incident_type">viaticos</field>
+        <field name="legal_guidance">Código de Trabajo, art. 119. Revisa si cubre gastos de trabajo o retribuye servicios. Documenta la clasificación y las bases aplicables antes de calcular la planilla.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_salary_adjustment" model="hr.incident.reason">
+        <field name="name">Diferencia salarial o ajuste retroactivo</field>
+        <field name="code">sv_salary_adjustment</field>
+        <field name="incident_type">other_income</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 119, 127 y 130. Identifica el período de origen, la causa y el cálculo. Revisa las bases legales para evitar omisiones o duplicados.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_maintenance_order" model="hr.incident.reason">
+        <field name="name">Cuota alimenticia respaldada por orden</field>
+        <field name="code">sv_maintenance_order</field>
+        <field name="incident_type">deduction</field>
+        <field name="legal_guidance">Código de Trabajo, arts. 132–133. Conserva la orden aplicable, identifica al beneficiario y verifica su alcance y los límites antes de descontar.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_authorized_credit" model="hr.incident.reason">
+        <field name="name">Crédito con autorización escrita de descuento</field>
+        <field name="code">sv_authorized_credit</field>
+        <field name="incident_type">deduction</field>
+        <field name="legal_guidance">Código de Trabajo, art. 136, sujeto a los límites constitucionales vigentes. Verifica acreedor, autorización escrita, saldo y límites aplicables.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_union_dues" model="hr.incident.reason">
+        <field name="name">Cuota sindical aplicable</field>
+        <field name="code">sv_union_dues</field>
+        <field name="incident_type">deduction</field>
+        <field name="legal_guidance">Código de Trabajo, art. 132. Confirma el respaldo y las condiciones aplicables antes de registrar la retención.</field>
+        <field name="company_id" eval="False" />
+    </record>
+    <record id="incident_reason_sv_other_documented" model="hr.incident.reason">
+        <field name="name">Otra incidencia documentada</field>
+        <field name="code">sv_other_documented</field>
+        <field name="incident_type">other</field>
+        <field name="legal_guidance">Código de Trabajo, art. 24. Identifica el artículo, reglamento, contrato o convenio aplicable al hecho y documenta la decisión. Este motivo sirve para registrar el caso y no autoriza un pago o descuento.</field>
+        <field name="company_id" eval="False" />
+    </record>
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="labor_rate_overtime_day" model="hr.sv.labor.rate">
+            <field name="name">Horas extra diurnas (200%)</field>
+            <field name="code">overtime_day</field>
+            <field name="rate_type">multiplier</field>
+            <field name="value">2.0</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="legal_reference">Código de Trabajo Art. 169</field>
+        </record>
+
+        <record id="labor_rate_overtime_night" model="hr.sv.labor.rate">
+            <field name="name">Horas extra nocturnas (250%)</field>
+            <field name="code">overtime_night</field>
+            <field name="rate_type">multiplier</field>
+            <field name="value">2.5</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="legal_reference">Código de Trabajo Art. 169</field>
+        </record>
+
+        <record id="labor_rate_night_work" model="hr.sv.labor.rate">
+            <field name="name">Recargo nocturno (25%)</field>
+            <field name="code">night_work</field>
+            <field name="rate_type">percentage</field>
+            <field name="value">25.0</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="legal_reference">Código de Trabajo Art. 168</field>
+        </record>
+
+        <record id="labor_rate_holiday_work" model="hr.sv.labor.rate">
+            <field name="name">Trabajo en día de asueto (200%)</field>
+            <field name="code">holiday_work</field>
+            <field name="rate_type">multiplier</field>
+            <field name="value">2.0</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="legal_reference">Código de Trabajo Art. 192</field>
+        </record>
+
+        <record id="labor_rate_weekly_rest_work" model="hr.sv.labor.rate">
+            <field name="name">Trabajo en día de descanso (150%)</field>
+            <field name="code">weekly_rest_work</field>
+            <field name="rate_type">multiplier</field>
+            <field name="value">1.5</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="legal_reference">Código de Trabajo Art. 175</field>
+        </record>
+    </data>
+</odoo>

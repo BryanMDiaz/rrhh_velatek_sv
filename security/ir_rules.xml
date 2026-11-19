@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             REGLAS MULTIEMPRESA — MÓDULO RRHH VELATEK
+             Patrón estándar Odoo: company_id in user.company_ids
+             noupdate="1" para no sobreescribir en actualizaciones
+        ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- hr.prepayroll -->
+        <record id="hr_prepayroll_rule_company" model="ir.rule">
+            <field name="name">Preplanilla: solo compañía del usuario</field>
+            <field name="model_id" ref="model_hr_prepayroll"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- hr.prepayroll.line — hereda company via prepayroll_id, store=True -->
+        <record id="hr_prepayroll_line_rule_company" model="ir.rule">
+            <field name="name">Línea de Preplanilla: solo compañía del usuario</field>
+            <field name="model_id" ref="model_hr_prepayroll_line"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- hr.employee.production -->
+        <record id="hr_employee_production_rule_company" model="ir.rule">
+            <field name="name">Producción: solo compañía del usuario</field>
+            <field name="model_id" ref="model_hr_employee_production"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- hr.employee.incident -->
+        <record id="hr_employee_incident_rule_company" model="ir.rule">
+            <field name="name">Incidencias: solo compañía del usuario</field>
+            <field name="model_id" ref="model_hr_employee_incident"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             REGLAS DE SEGURIDAD PARA INFORMACIÓN SENSIBLE DE RRHH
+             Autoservicio para Empleados (solo ven sus propios datos)
+             Acceso total para RRHH (filtrado por compañía)
+        ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- hr.employee.beneficiary: Empleado solo ve sus propios beneficiarios -->
+        <record id="hr_employee_beneficiary_rule_employee" model="ir.rule">
+            <field name="name">Beneficiarios: empleado ve solo sus propios beneficiarios</field>
+            <field name="model_id" ref="model_hr_employee_beneficiary"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- hr.employee.beneficiary: RRHH ve beneficiarios de su compañía -->
+        <record id="hr_employee_beneficiary_rule_hr" model="ir.rule">
+            <field name="name">Beneficiarios: RRHH ve todos en sus compañías</field>
+            <field name="model_id" ref="model_hr_employee_beneficiary"/>
+            <field name="domain_force">['|', ('employee_id.company_id', '=', False), ('employee_id.company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- hr.employee.document: Empleado solo ve sus propios documentos -->
+        <record id="hr_employee_document_rule_employee" model="ir.rule">
+            <field name="name">Documentos: empleado ve solo sus propios documentos</field>
+            <field name="model_id" ref="model_hr_employee_document"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- hr.employee.document: RRHH ve documentos de su compañía -->
+        <record id="hr_employee_document_rule_hr" model="ir.rule">
+            <field name="name">Documentos: RRHH ve todos en sus compañías</field>
+            <field name="model_id" ref="model_hr_employee_document"/>
+            <field name="domain_force">['|', ('employee_id.company_id', '=', False), ('employee_id.company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- hr.contract.generated.document: Empleado solo ve sus propios contratos generados -->
+        <record id="hr_contract_generated_document_rule_employee" model="ir.rule">
+            <field name="name">Documentos Contractuales: empleado ve solo sus propios contratos</field>
+            <field name="model_id" ref="model_hr_contract_generated_document"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- hr.contract.generated.document: RRHH ve todos en sus compañías -->
+        <record id="hr_contract_generated_document_rule_hr" model="ir.rule">
+            <field name="name">Documentos Contractuales: RRHH ve todos en sus compañías</field>
+            <field name="model_id" ref="model_hr_contract_generated_document"/>
+            <field name="domain_force">['|', ('contract_id.company_id', '=', False), ('contract_id.company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- hr.contract.template: Plantillas de contrato multiempresa -->
+        <record id="hr_contract_template_rule_company" model="ir.rule">
+            <field name="name">Plantillas de Contrato: solo compañía del usuario</field>
+            <field name="model_id" ref="model_hr_contract_template"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

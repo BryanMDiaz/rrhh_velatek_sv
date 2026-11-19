@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_payslip_document">
+        <div class="article" t-att-data-oe-model="o._name" t-att-data-oe-id="o.id"
+             t-att-data-oe-lang="o.env.context.get('lang')">
+            <style>
+                table, tr, td, th, tbody, thead {
+                    border: none !important;
+                }
+                .b-box {
+                    border: 1px solid black !important;
+                }
+                .b-bottom {
+                    border-bottom: 1px solid black !important;
+                }
+                .b-top {
+                    border-top: 1px solid black !important;
+                }
+                .b-right {
+                    border-right: 1px solid black !important;
+                }
+                .b-left {
+                    border-left: 1px solid black !important;
+                }
+                .b-bottom-double {
+                    border-bottom: 3px double black !important;
+                }
+            </style>
+                <div class="page b-box" style="font-family: Arial, sans-serif; font-size: 13px; padding: 15px; width: 100%;">
+                    <div>
+                        
+                        <!-- HEADER -->
+                        <table style="width: 100%; margin-bottom: 10px;">
+                            <tr>
+                                <td style="width: 40%;">
+                                    <strong style="font-size: 16px;">Boleta de pago de salario.</strong>
+                                </td>
+                                <td style="width: 10%; text-align: right; padding-right: 10px;">
+                                    fecha:
+                                </td>
+                                <td class="b-bottom" style="width: 50%; text-align: center; font-weight: bold;">
+                                    <t t-esc="datetime.datetime.now().strftime('%d %m %Y')"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- EMPLOYEE NAME (Num 2 removed as requested) -->
+                        <div style="margin-top: 15px; margin-bottom: 20px; margin-left: 80px;">
+                            <strong style="font-size: 16px;"><t t-esc="o.employee_id.name.upper()"/></strong>
+                        </div>
+
+                        <!-- TEXT BLOCK -->
+                        <table style="width: 100%; margin-bottom: 20px; line-height: 1.4;">
+                            <tr>
+                                <td style="width: 60%; vertical-align: bottom;">
+                                    Recibí de <t t-esc="o.payroll_id.company_id.name.upper()"/>, la suma de:
+                                </td>
+                                <td class="b-bottom" style="width: 40%; text-align: center; vertical-align: bottom;">
+                                    $<t t-esc="'%.2f' % o.payment_amount"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align: bottom;">
+                                    en concepto de salario correspondiente al periodo del
+                                </td>
+                                <td style="text-align: center; vertical-align: bottom;">
+                                    <span style="display: inline-block; width: 40%; text-align: center; font-weight: bold;"><t t-esc="o.payroll_id.date_start.strftime('%d %m %Y')"/></span>
+                                    <span style="display: inline-block; width: 10%; text-align: center;">al</span>
+                                    <span style="display: inline-block; width: 40%; text-align: center; font-weight: bold;"><t t-esc="o.payroll_id.date_end.strftime('%d %m %Y')"/></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="vertical-align: bottom;">
+                                    del cual se efectuo las siguientes deducciones.
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- MAIN TABLE -->
+                        <table class="b-box" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                            <thead>
+                                <tr>
+                                    <th class="b-right b-bottom" style="width: 50%; padding: 5px;">Salario</th>
+                                    <th class="b-bottom" style="width: 50%; padding: 5px;">Deducciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="b-right" style="padding: 5px; vertical-align: top;">
+                                        <!-- Salario Items -->
+                                        <table style="width: 100%;">
+                                            <tr>
+                                                <td>Salario Ordinario</td>
+                                                <td style="width: 20px; text-align: center;">$</td>
+                                                <td style="text-align: right; width: 80px;"><t t-esc="'%.2f' % o.period_wage" t-if="o.period_wage"/> <t t-else="">-</t></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Asueto</td>
+                                                <td style="text-align: center;">$</td>
+                                                <td style="text-align: right;"><t t-esc="'%.2f' % o.holiday_amount" t-if="o.holiday_amount"/> <t t-else="">-</t></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Extras Diurnas</td>
+                                                <td style="text-align: center;">$</td>
+                                                <td style="text-align: right;"><t t-esc="'%.2f' % o.overtime_amount" t-if="o.overtime_amount"/> <t t-else="">-</t></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Extras Nocturnas</td>
+                                                <td style="text-align: center;">$</td>
+                                                <td style="text-align: right;"><t t-esc="'%.2f' % o.night_overtime_amount" t-if="o.night_overtime_amount"/> <t t-else="">-</t></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Nocturnidad</td>
+                                                <td style="text-align: center;">$</td>
+                                                <td style="text-align: right;"><t t-esc="'%.2f' % o.night_work_amount" t-if="o.night_work_amount"/> <t t-else="">-</t></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Vacaciones</td>
+                                                <td style="text-align: center;">$</td>
+                                                <td style="text-align: right;"><t t-esc="'%.2f' % o.vacation_amount" t-if="o.vacation_amount"/> <t t-else="">-</t></td>
+                                            </tr>
+                                            <tr><td colspan="3" style="height: 30px;"></td></tr> <!-- Spacer -->
+                                            <tr>
+                                                <td style="font-weight: bold;">Total salario</td>
+                                                <td class="b-top b-bottom-double" style="font-weight: bold; text-align: center;">$</td>
+                                                <td class="b-top b-bottom-double" style="font-weight: bold; text-align: right;"><t t-esc="'%.2f' % o.total_earned"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="padding: 5px; vertical-align: top;">
+                                        <!-- Deducciones Items -->
+                                        <table style="width: 100%;">
+                                            <tr>
+                                                <td>ISSS</td>
+                                                <td style="width: 20px; text-align: center;">$</td>
+                                                <td style="text-align: right; width: 80px;"><t t-esc="'%.2f' % o.isss_employee_amount" t-if="o.isss_employee_amount"/> <t t-else="">-</t></td>
+                                            </tr>
+                                            <tr>
+                                                <td>AFP</td>
+                                                <td style="text-align: center;">$</td>
+                                                <td style="text-align: right;"><t t-esc="'%.2f' % o.afp_employee_amount" t-if="o.afp_employee_amount"/> <t t-else="">-</t></td>
+                                            </tr>
+                                            <tr>
+                                                <td>ISR</td>
+                                                <td style="text-align: center;">$</td>
+                                                <td style="text-align: right;"><t t-esc="'%.2f' % o.income_tax_amount" t-if="o.income_tax_amount"/> <t t-else="">-</t></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Otros</td>
+                                                <td style="text-align: center;">$</td>
+                                                <td style="text-align: right;">
+                                                    <t t-set="otros_ded" t-value="o.loan_deduction_amount + o.other_withholdings_amount + o.deduction_amount"/>
+                                                    <t t-esc="'%.2f' % otros_ded" t-if="otros_ded"/> <t t-else="">-</t>
+                                                </td>
+                                            </tr>
+                                            <tr><td colspan="3" style="height: 30px;"></td></tr> <!-- Spacer -->
+                                            <tr>
+                                                <td style="font-weight: bold;">Total deducciones</td>
+                                                <td class="b-top b-bottom-double" style="font-weight: bold; text-align: center;">$</td>
+                                                <td class="b-top b-bottom-double" style="font-weight: bold; text-align: right;"><t t-esc="'%.2f' % o.total_deductions"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- TOTALS -->
+                        <table style="width: 100%;">
+                            <tr t-if="o.salary_advance_amount">
+                                <td>Neto del período antes del anticipo</td><td>$</td>
+                                <td style="text-align:right"><t t-esc="'%.2f' % o.net_before_advance"/></td>
+                            </tr>
+                            <tr t-if="o.salary_advance_amount">
+                                <td>Salario ya entregado como anticipo</td><td>$</td>
+                                <td style="text-align:right"><t t-esc="'%.2f' % o.salary_advance_amount"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; width: 70%;">Pendiente de pago (neto menos anticipo)</td>
+                                <td style="font-weight: bold; width: 10%; text-align: center;">$</td>
+                                <td style="font-weight: bold; width: 20%; text-align: right;"><t t-esc="'%.2f' % o.payment_amount"/></td>
+                            </tr>
+                            <tr>
+                                <td>Viáticos incluidos en el neto (informativo)</td>
+                                <td style="text-align: center;">$</td>
+                                <td style="text-align: right;"><t t-esc="'%.2f' % o.viaticos_amount" t-if="o.viaticos_amount"/> <t t-else="">-</t></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; text-transform: uppercase;">Total a recibir</td>
+                                <td class="b-bottom-double" style="font-weight: bold; text-align: center;">$</td>
+                                <td class="b-bottom-double" style="font-weight: bold; text-align: right;"><t t-esc="'%.2f' % o.total_to_settle"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- FOOTER / SIGNATURE -->
+                        <div style="margin-top: 50px; width: 100%; text-align: center;">
+                            <table style="width: 50%; margin: 0 auto;">
+                                <tr>
+                                    <td style="width: 5%; vertical-align: bottom;">F</td>
+                                    <td class="b-bottom" style="width: 95%;"></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="text-align: center; padding-top: 5px;">
+                                        <t t-esc="o.employee_id.name.upper()"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+        </div>
+    </template>
+
+    <template id="report_payslip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="rrhh_velatek_sv.report_payslip_document"/>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_payslip" model="ir.actions.report">
+        <field name="name">Boleta de Pago</field>
+        <field name="model">hr.payroll.line</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">rrhh_velatek_sv.report_payslip</field>
+        <field name="report_file">rrhh_velatek_sv.report_payslip</field>
+        <field name="print_report_name">'Boleta de Pago - %s' % (object.employee_id.name)</field>
+        <field name="binding_model_id" eval="False"/>
+    </record>
+</odoo>

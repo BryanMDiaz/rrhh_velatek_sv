@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form view for hr.employee.loan.template -->
+        <record id="view_hr_employee_loan_template_form" model="ir.ui.view">
+            <field name="name">hr.employee.loan.template.form</field>
+            <field name="model">hr.employee.loan.template</field>
+            <field name="arch" type="xml">
+                <form string="Plantilla de Préstamo">
+                    <header>
+                        <button name="action_preview_template" string="Vista Previa con Datos" type="object" class="oe_highlight" icon="fa-eye"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" invisible="active == True"/>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Nombre de la Plantilla"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="loan_type_id" options="{'no_create': True}"/>
+                                <field name="is_default"/>
+                                <field name="company_id" options="{'no_create': True}"/>
+                                <field name="active" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="version"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Contenido (HTML)" name="body">
+                                <field name="body_html" widget="html" options="{'style-inline': true}"/>
+                            </page>
+                            <page string="Descripción y Notas" name="notes">
+                                <field name="notes" placeholder="Notas internas..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree view for hr.employee.loan.template -->
+        <record id="view_hr_employee_loan_template_tree" model="ir.ui.view">
+            <field name="name">hr.employee.loan.template.tree</field>
+            <field name="model">hr.employee.loan.template</field>
+            <field name="arch" type="xml">
+                <list string="Plantillas de Préstamo">
+                    <field name="name"/>
+                    <field name="loan_type_id"/>
+                    <field name="version"/>
+                    <field name="company_id"/>
+                    <field name="is_default"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Action for hr.employee.loan.template -->
+        <record id="action_hr_employee_loan_template" model="ir.actions.act_window">
+            <field name="name">Plantillas de Préstamo</field>
+            <field name="res_model">hr.employee.loan.template</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crea tu primera plantilla de contrato o pagaré para préstamos.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

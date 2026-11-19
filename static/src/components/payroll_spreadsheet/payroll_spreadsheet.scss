@@ -1,0 +1,261 @@
+/* Form View Full-Width Expansion for HR Payroll */
+.o_form_view.o_hr_payroll_form {
+    .o_form_sheet_bg {
+        max-width: none !important;
+        width: 100% !important;
+        padding: 0 1rem !important;
+    }
+
+    .o_form_sheet {
+        max-width: none !important;
+        width: 100% !important;
+        min-height: calc(100vh - 120px) !important;
+        margin: 0 !important;
+        padding: 1.25rem !important;
+    }
+
+    .o_notebook {
+        width: 100% !important;
+    }
+
+    .o_notebook .tab-content {
+        width: 100% !important;
+        overflow: visible !important;
+    }
+
+    .o_notebook .tab-pane {
+        width: 100% !important;
+    }
+
+    .o_payroll_sheet_widget,
+    .o_payroll_detail_lines {
+        display: block;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .o_payroll_detail_lines .o_list_renderer {
+        overflow-x: auto;
+
+        .o_list_table {
+            min-width: 1450px;
+        }
+
+        th[data-name="employee_id"],
+        td[name="employee_id"] {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background-color: var(--o-view-background-color, #fff);
+            border-right: 1px solid #d9e0ea;
+        }
+    }
+}
+
+/* Corporate Spreadsheet View Layout & Scroll Styling */
+.o_payroll_spreadsheet_wrapper {
+    width: 100% !important;
+    min-width: 0;
+    overflow: hidden !important;
+    background-color: #ffffff;
+    padding: 0.5rem 0;
+
+    .o_payroll_header_banner {
+        margin-bottom: 1rem;
+        h2 {
+            font-size: 1.5rem;
+            letter-spacing: 0.05em;
+        }
+        h5 {
+            font-size: 1.05rem;
+            letter-spacing: 0.03em;
+        }
+    }
+
+    .o_payroll_table_responsive {
+        width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+        position: relative !important;
+        max-height: calc(100vh - 280px) !important;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+
+        /* Thin modern scrollbar */
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+
+        &::-webkit-scrollbar {
+            height: 10px;
+            width: 10px;
+        }
+        &::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 5px;
+        }
+        &::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    }
+
+    .o_payroll_sheet_table {
+        width: max-content !important;
+        min-width: 100% !important;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        font-size: 0.82rem;
+        white-space: nowrap !important;
+        table-layout: auto !important;
+
+        th, td {
+            vertical-align: middle !important;
+            padding: 5px 9px !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Sticky Columns */
+        .sticky-col {
+            position: sticky !important;
+            z-index: 10 !important;
+        }
+
+        .sticky-col-1 {
+            left: 0px !important;
+            width: 45px !important;
+            min-width: 45px !important;
+            max-width: 45px !important;
+            background-color: #f8fafc !important;
+        }
+
+        .sticky-col-2 {
+            left: 45px !important;
+            width: 320px !important;
+            min-width: 320px !important;
+            max-width: 320px !important;
+            background-color: #f8fafc !important;
+            box-shadow: 3px 0 6px -2px rgba(0, 0, 0, 0.15) !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+
+        .sticky-col-group {
+            position: sticky !important;
+            left: 0px !important;
+            width: 365px !important;
+            min-width: 365px !important;
+            max-width: 365px !important;
+            z-index: 11 !important;
+            box-shadow: 3px 0 6px -2px rgba(0, 0, 0, 0.15) !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+
+        .o_payroll_employee_name {
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .o_payroll_dept_header {
+            position: relative;
+            .sticky-dept-title {
+                position: sticky !important;
+                left: 15px !important;
+                display: inline-flex;
+                align-items: center;
+                z-index: 5 !important;
+            }
+        }
+
+        thead {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 25 !important;
+            background-color: #ffffff !important;
+
+            .sticky-col-1 {
+                z-index: 35 !important;
+                background-color: #f0f9ff !important;
+            }
+            .sticky-col-2 {
+                z-index: 35 !important;
+                background-color: #f0f9ff !important;
+            }
+            .sticky-col-group {
+                z-index: 35 !important;
+                background-color: #e0f2fe !important;
+            }
+        }
+
+        /* Distinct Header Colors */
+        .bg-sky-100 { background-color: #e0f2fe !important; }
+        .bg-sky-50 { background-color: #f0f9ff !important; }
+        .bg-indigo-100 { background-color: #e0e7ff !important; }
+        .bg-indigo-50 { background-color: #eef2ff !important; }
+        .bg-emerald-100 { background-color: #d1fae5 !important; }
+        .bg-emerald-50 { background-color: #ecfdf5 !important; }
+        .bg-emerald-800 { background-color: #065f46 !important; }
+        .bg-emerald-900 { background-color: #064e3b !important; }
+        .bg-rose-100 { background-color: #ffe4e6 !important; }
+        .bg-rose-50 { background-color: #fff1f2 !important; }
+        .bg-rose-800 { background-color: #9f1239 !important; }
+        .bg-rose-900 { background-color: #881337 !important; }
+        .bg-amber-100 { background-color: #fef3c7 !important; }
+        .bg-amber-200 { background-color: #fde68a !important; }
+        .bg-amber-300 { background-color: #fcd34d !important; }
+        .bg-amber-500 { background-color: #f59e0b !important; }
+        .bg-amber-800 { background-color: #92400e !important; }
+        .bg-amber-50 { background-color: #fffbeb !important; }
+        .bg-orange-100 { background-color: #ffedd5 !important; }
+        .bg-slate-200 { background-color: #e2e8f0 !important; }
+
+        .o_payroll_row:hover td {
+            background-color: #f1f5f9 !important;
+        }
+
+        .o_payroll_row:hover .sticky-col-1,
+        .o_payroll_row:hover .sticky-col-2 {
+            background-color: #e2e8f0 !important;
+        }
+    }
+
+    .o_payroll_compact_input {
+        width: 80px !important;
+        max-width: 80px !important;
+        margin: 0 auto;
+
+        span {
+            font-size: 0.8rem !important;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        input[type="number"] {
+            font-size: 0.8rem !important;
+            height: 24px !important;
+            padding: 1px 4px !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 3px !important;
+            background-color: #ffffff !important;
+            text-align: right !important;
+
+            &:focus {
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+                outline: none !important;
+            }
+        }
+    }
+
+    .o_payroll_signatures {
+        font-size: 0.85rem;
+        margin-top: 2rem;
+    }
+}

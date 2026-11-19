@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Instituciones Previsionales de El Salvador -->
+        <record id="afp_crecer" model="hr.afp">
+            <field name="name">AFP Crecer</field>
+            <field name="code">CRECER</field>
+        </record>
+        <record id="afp_confia" model="hr.afp">
+            <field name="name">AFP Confía</field>
+            <field name="code">CONFIA</field>
+        </record>
+        <record id="afp_inpep" model="hr.afp">
+            <field name="name">INPEP</field>
+            <field name="code">INPEP</field>
+        </record>
+        <record id="afp_ipsfa" model="hr.afp">
+            <field name="name">IPSFA</field>
+            <field name="code">IPSFA</field>
+        </record>
+        <record id="afp_isp" model="hr.afp">
+            <field name="name">ISP (Instituto Salvadoreño de Pensiones)</field>
+            <field name="code">ISP</field>
+        </record>
+        <record id="afp_none" model="hr.afp">
+            <field name="name">Ninguna</field>
+            <field name="code">NONE</field>
+        </record>
+    </data>
+</odoo>

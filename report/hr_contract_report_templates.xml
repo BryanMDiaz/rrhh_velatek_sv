@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_hr_contract_generated_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <div class="page">
+                        <t t-out="doc.content_snapshot"/>
+                        <div class="row mt-5" t-if="'data-contract-signatures=' not in (doc.content_snapshot or '')">
+                            <div class="col-6 text-center">
+                                <br/><br/><br/>
+                                <hr style="border-top: 1px solid black; width: 80%;"/>
+                                <strong><t t-esc="doc.contract_id.company_id.name"/></strong><br/>
+                                <span>EL EMPLEADOR</span>
+                            </div>
+                            <div class="col-6 text-center">
+                                <br/><br/><br/>
+                                <hr style="border-top: 1px solid black; width: 80%;"/>
+                                <strong><t t-esc="doc.employee_id.name"/></strong><br/>
+                                <span>EL CONTRATISTA / EMPLEADO</span>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_contract_generated_document_view_form" model="ir.ui.view">
+        <field name="name">hr.contract.generated.document.form</field>
+        <field name="model">hr.contract.generated.document</field>
+        <field name="arch" type="xml">
+            <form string="Documento Generado">
+                <header>
+                    <button name="action_mark_signed" type="object" string="Marcar como Firmado" class="oe_highlight" invisible="state in ('signed', 'cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancelar" invisible="state in ('signed', 'cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" readonly="state != 'draft'"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="contract_id" readonly="state != 'draft'"/>
+                            <field name="employee_id"/>
+                            <field name="template_id" readonly="1"/>
+                            <field name="template_version" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="generated_date" readonly="1"/>
+                            <field name="generated_by_id" readonly="1"/>
+                            <field name="pdf_attachment_id" readonly="1"/>
+                            <field name="signature_date" readonly="state == 'signed'"/>
+                            <field name="signed_attachment_ids" widget="many2many_binary" invisible="state == 'cancelled'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contenido Final (Snapshot)" name="snapshot">
+                            <field name="content_snapshot" widget="html" readonly="1" options="{'style-inline': true}"/>
+                        </page>
+                        <page string="Notas" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_contract_generated_document_view_tree" model="ir.ui.view">
+        <field name="name">hr.contract.generated.document.tree</field>
+        <field name="model">hr.contract.generated.document</field>
+        <field name="arch" type="xml">
+            <list string="Documentos Generados">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="generated_date"/>
+                <field name="state" widget="badge" decoration-success="state == 'signed'" decoration-info="state == 'generated'" decoration-warning="state == 'pending_signature'" decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+</odoo>

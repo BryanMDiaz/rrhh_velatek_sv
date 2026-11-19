@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_contract_generate_confirm_wizard_view_form" model="ir.ui.view">
+        <field name="name">hr.contract.generate.confirm.wizard.form</field>
+        <field name="model">hr.contract.generate.confirm.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirmación de Generación">
+                <p>
+                    <strong>Advertencia:</strong> Ya existe un contrato firmado y subido para este empleado en este registro.
+                </p>
+                <p>
+                    ¿Estás seguro de que deseas generar uno nuevo?
+                </p>
+                <footer>
+                    <button name="action_confirm" string="Sí, generar nuevo" type="object" class="oe_highlight"/>
+                    <button string="No, cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_contract_generate_wizard_view_form" model="ir.ui.view">
+        <field name="name">hr.contract.generate.wizard.form</field>
+        <field name="model">hr.contract.generate.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generar Contrato">
+                <group>
+                    <group>
+                        <field name="contract_id" readonly="not context.get('contract_preview_only')"
+                               required="not context.get('contract_preview_only')"
+                               domain="[('company_id', '=', context.get('preview_company_id') or company_id), ('employee_id', '!=', False)]"
+                               placeholder="Selecciona un contrato para rellenar los datos"
+                               options="{'no_create': True, 'no_open': True}"/>
+                        <field name="template_id" readonly="context.get('contract_preview_only')" options="{'no_create': True}"/>
+                    </group>
+                    <group>
+                        <field name="signature_date"/>
+                        <field name="generated_name" invisible="context.get('contract_preview_only')"/>
+                        <field name="company_id" invisible="1"/>
+                    </group>
+                </group>
+                <div invisible="not warning_message" class="alert alert-warning" role="alert">
+                    <field name="warning_message" readonly="1"/>
+                </div>
+                <notebook>
+                    <page string="Vista previa">
+                        <field name="preview_html" widget="html" readonly="context.get('contract_preview_only')" options="{'style-inline': true}"/>
+                    </page>
+                </notebook>
+                <footer>
+                    <button name="action_generate" string="Generar y Guardar" type="object" class="oe_highlight" invisible="context.get('contract_preview_only')"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel" invisible="context.get('contract_preview_only')"/>
+                    <button string="Cerrar" class="btn-secondary" special="cancel" invisible="not context.get('contract_preview_only')"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

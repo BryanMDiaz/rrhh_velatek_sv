@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_company_view_form_velatek" model="ir.ui.view">
+        <field name="name">res.company.form.velatek</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Representante Legal (Velatek)" name="velatek_legal_rep">
+                    <group>
+                        <field name="velatek_legal_representative_id" context="{'default_is_company': False}"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Adding partner fields to base partner view -->
+    <record id="view_partner_form_velatek_rep" model="ir.ui.view">
+        <field name="name">res.partner.form.velatek.rep</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='internal_notes']" position="before">
+                <page string="Datos Legales (Velatek)" name="velatek_legal_data">
+                    <group>
+                        <field name="velatek_dui"/>
+                        <field name="velatek_profession"/>
+                        <field name="velatek_birth_date"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

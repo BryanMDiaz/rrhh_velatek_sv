@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista Formulario de Concepto de Incidencia Monetaria -->
+        <record id="hr_incident_concept_view_form" model="ir.ui.view">
+            <field name="name">hr.incident.concept.form</field>
+            <field name="model">hr.incident.concept</field>
+            <field name="arch" type="xml">
+                <form string="Concepto de Incidencia Monetaria">
+                    <sheet>
+                        <group>
+                            <group string="Información Principal">
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="incident_category"/>
+                                <field name="active"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                            <group string="Configuración Futura de Nómina">
+                                <field name="day_count_mode"/>
+                                <field name="is_salary_component"/>
+                                <field name="is_recurring"/>
+                                <field name="affects_isss"/>
+                                <field name="affects_afp"/>
+                                <field name="affects_isr"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista Lista de Conceptos de Incidencia -->
+        <record id="hr_incident_concept_view_tree" model="ir.ui.view">
+            <field name="name">hr.incident.concept.tree</field>
+            <field name="model">hr.incident.concept</field>
+            <field name="arch" type="xml">
+                <list string="Conceptos de Incidencia">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="incident_category"/>
+                    <field name="day_count_mode" optional="show"/>
+                    <field name="is_salary_component"/>
+                    <field name="is_recurring"/>
+                    <field name="active"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Acción de Conceptos de Incidencia -->
+        <record id="action_hr_incident_concept" model="ir.actions.act_window">
+            <field name="name">Conceptos de Incidencia</field>
+            <field name="res_model">hr.incident.concept</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear el primer concepto de incidencia monetaria
+                </p>
+                <p>
+                    Permite definir y clasificar conceptos específicos de bonos, comisiones, viáticos y deducciones.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <record id="loan_type_personal" model="hr.employee.loan.type">
+            <field name="name">Préstamo Personal</field>
+            <field name="code">PERS</field>
+            <field name="max_installments">24</field>
+            <field name="max_capacity_percentage">30.0</field>
+            <field name="default_interest_type">none</field>
+        </record>
+
+        <record id="loan_type_anticipo" model="hr.employee.loan.type">
+            <field name="name">Anticipo de Salario</field>
+            <field name="code">ANTI</field>
+            <field name="max_installments">1</field>
+            <field name="max_capacity_percentage">50.0</field>
+            <field name="default_interest_type">none</field>
+        </record>
+
+        <record id="loan_type_salud" model="hr.employee.loan.type">
+            <field name="name">Préstamo de Salud</field>
+            <field name="code">SALUD</field>
+            <field name="max_installments">12</field>
+            <field name="max_capacity_percentage">40.0</field>
+            <field name="default_interest_type">none</field>
+        </record>
+
+    </data>
+</odoo>

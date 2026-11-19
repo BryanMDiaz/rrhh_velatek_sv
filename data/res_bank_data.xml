@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Bancos de El Salvador -->
+        <record id="bank_agricola" model="res.bank">
+            <field name="name">Banco Agrícola</field>
+        </record>
+        <record id="bank_cuscatlan" model="res.bank">
+            <field name="name">Banco Cuscatlán</field>
+        </record>
+        <record id="bank_davivienda" model="res.bank">
+            <field name="name">Banco Davivienda</field>
+        </record>
+        <record id="bank_bac" model="res.bank">
+            <field name="name">BAC Credomatic</field>
+        </record>
+        <record id="bank_promerica" model="res.bank">
+            <field name="name">Banco Promerica</field>
+        </record>
+        <record id="bank_hipotecario" model="res.bank">
+            <field name="name">Banco Hipotecario</field>
+        </record>
+        <record id="bank_bfa" model="res.bank">
+            <field name="name">Banco de Fomento Agropecuario (BFA)</field>
+        </record>
+        <record id="bank_azul" model="res.bank">
+            <field name="name">Banco Azul</field>
+        </record>
+        <record id="bank_industrial" model="res.bank">
+            <field name="name">Banco Industrial</field>
+        </record>
+        <record id="bank_atlantida" model="res.bank">
+            <field name="name">Banco Atlántida</field>
+        </record>
+        <record id="bank_fedecredito" model="res.bank">
+            <field name="name">Sistema Fedecrédito</field>
+        </record>
+        <record id="bank_abank" model="res.bank">
+            <field name="name">Abank</field>
+        </record>
+        <record id="bank_citi" model="res.bank">
+            <field name="name">Citibank</field>
+        </record>
+        <record id="bank_procredit" model="res.bank">
+            <field name="name">Banco ProCredit</field>
+        </record>
+    </data>
+</odoo>

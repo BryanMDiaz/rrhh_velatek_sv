@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_partner_bank_form" model="ir.ui.view">
+        <field name="name">hr.partner.bank.form</field>
+        <field name="model">res.partner.bank</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="base.view_partner_bank_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="partner_id" position="after">
+                <field name="acc_holder_name" string="Nombre exacto en cuenta"/>
+            </field>
+        </field>
+    </record>
+</odoo>

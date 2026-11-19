@@ -6,40 +6,209 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//page[@name='personal_information']/group/group[1]" position="before">
-                    <group string="DATOS PERSONALES">
-                        <field name="velatek_codigo"/>
-                        <field name="velatek_nombre_pila"/>
-                        <field name="velatek_primer_apellido"/>
-                        <field name="velatek_segundo_apellido"/>
-                        <field name="velatek_apellido_casada"/>
-                        <field name="velatek_profesion"/>
-                        <field name="velatek_nombre_afp"/>
-                        <field name="velatek_cuenta_bancaria"/>
-                    </group>
-                    <group string="DATOS DE IDENTIFICACIÓN">
-                        <field name="velatek_dui"/>
-                        <field name="velatek_lugar_expedicion_dui"/>
-                        <field name="velatek_fecha_expedicion_dui"/>
-                        <field name="velatek_nit"/>
-                        <field name="velatek_nup"/>
-                        <field name="velatek_isss"/>
+                
+                <!-- Replace the entire content of Personal Information to restructure it as requested -->
+                <xpath expr="//page[@name='personal_information']/group" position="replace">
+                    <group>
+                        <!-- FILA 1 -->
+                        <group string="DATOS PERSONALES">
+                            <field name="velatek_codigo" help="Código interno único para identificar al empleado en Velatek."/>
+                            <field name="velatek_nombre_pila" help="Primeros nombres del empleado."/>
+                            <field name="velatek_primer_apellido" help="Primer apellido paterno."/>
+                            <field name="velatek_segundo_apellido" help="Segundo apellido materno."/>
+                            <field name="velatek_apellido_casada" help="Apellido de casada si aplica."/>
+                            <field name="velatek_profesion" help="Profesión u oficio en el que se especializa el empleado."/>
+                            <field name="birthday" help="Fecha de nacimiento oficial del empleado."/>
+                            <field name="place_of_birth" help="Ciudad o municipio donde nació el empleado."/>
+                            <field name="country_of_birth" help="País de origen del empleado."/>
+                            <field name="gender" help="Género del empleado."/>
+                            <field name="marital" help="Estado civil actual."/>
+                            <field name="country_id" string="Nacionalidad" help="Nacionalidad legal del empleado."/>
+                        </group>
+                        <group string="DATOS DE IDENTIFICACIÓN">
+                            <label for="velatek_dui"/>
+                            <div class="o_row">
+                                <field name="velatek_dui" placeholder="00000000-0" help="Documento Único de Identidad salvadoreño. Formato: 00000000-0"/>
+                                <field name="velatek_is_homologated" widget="boolean_toggle" help="Si está activo, el NIT será igual al DUI."/>
+                                <span>DUI homologado</span>
+                            </div>
+                            <field name="velatek_lugar_expedicion_dui" help="Municipio o Alcaldía donde se emitió el DUI."/>
+                            <field name="velatek_fecha_expedicion_dui" help="Fecha en que se emitió el DUI actual."/>
+                            <field name="velatek_fecha_vencimiento_dui" help="Fecha en la que expira la vigencia del DUI."/>
+                            <field name="velatek_nit" placeholder="0000-000000-000-0" help="Número de Identificación Tributaria (Se autocompletará automáticamente si el DUI está Homologado)."/>
+                            <field name="velatek_nup" help="Número Único Previsional (Número de afiliación a la AFP)."/>
+                            <field name="velatek_isss" help="Número de afiliación al Seguro Social (ISSS)."/>
+                            <field name="passport_id" help="Número de pasaporte en caso de viajes o ser extranjero."/>
+                        </group>
+
+                        <!-- FILA 2 -->
+                        <group string="CONTACTO PRIVADO">
+                            <label for="private_street" string="Dirección Privada" help="Dirección de residencia actual del empleado."/>
+                            <div class="o_address_format" help="Dirección de residencia actual del empleado.">
+                                <field name="private_street" placeholder="Calle..." class="o_address_street" help="Dirección de residencia actual del empleado."/>
+                                <field name="private_street2" placeholder="Calle 2..." class="o_address_street"/>
+                                <field name="private_city" placeholder="Ciudad" class="o_address_city"/>
+                                <field name="private_state_id" class="o_address_state" placeholder="Estado" options='{"no_open": True, "no_quick_create": True}' context="{'country_id': private_country_id}"/>
+                                <field name="private_zip" placeholder="C.P." class="o_address_zip"/>
+                                <field name="private_country_id" placeholder="País" class="o_address_country" options='{"no_open": True, "no_quick_create": True}'/>
+                            </div>
+                            <field name="private_email" help="Correo electrónico personal."/>
+                            <field name="private_phone" help="Número de teléfono móvil personal."/>
+                            <field name="km_home_work" help="Distancia aproximada desde la casa hasta la oficina."/>
+                            <field name="private_car_plate" help="Número de placa del vehículo personal si posee."/>
+                        </group>
+                        <group string="INFORMACIÓN PREVISIONAL">
+                            <field name="velatek_afp_id" help="Institución Administradora de Fondos de Pensiones a la que cotiza."/>
+                            <field name="velatek_nombre_afp" invisible="1"/> <!-- Legacy -->
+                            <field name="velatek_previsional_state" help="Estado actual en el sistema de pensiones."/>
+                        </group>
+
+                        <!-- FILA 3 -->
+                        <group string="INFORMACIÓN BANCARIA">
+                            <field name="velatek_payment_method" help="Forma preferida para recibir su pago o salario."/>
+                            <field name="velatek_bank_id" help="Institución bancaria (Ej. Banco Agrícola)."/>
+                            <field name="work_contact_id" invisible="1"/>
+                            <field name="velatek_short_name" invisible="1"/>
+                            <field name="bank_account_id" help="Número de cuenta bancaria donde se depositará el salario." context="{'default_partner_id': work_contact_id, 'default_bank_id': velatek_bank_id, 'default_acc_holder_name': velatek_short_name, 'form_view_ref': 'rrhh_velatek_sv.view_hr_partner_bank_form'}"/>
+                            <field name="velatek_cuenta_bancaria" invisible="1"/> <!-- Legacy -->
+                            <field name="velatek_bank_account_type" help="Indica si la cuenta bancaria es de ahorro o corriente."/>
+                        </group>
+                        <group string="INFORMACIÓN ADMINISTRATIVA">
+                            <field name="velatek_company_entry_date" help="Fecha exacta en que el empleado comenzó a laborar en la empresa."/>
+                            <field name="velatek_employment_type" help="Categoría del contrato (Permanente, Temporal, etc.)."/>
+                            <field name="work_location_id" help="Sucursal física u oficina donde el empleado ejerce sus labores."/>
+                            <field name="velatek_analytic_account_id" help="Centro de costo contable al que pertenece el salario del empleado."/>
+                            <field name="velatek_employee_file_status" help="Se actualiza según los seis archivos de Documentos Migrados. La validación se realiza manualmente."/>
+                            <button name="action_validate_employee_file" string="Validar expediente" type="object"
+                                    invisible="velatek_employee_file_status != 'complete'" class="btn-link"/>
+                        </group>
+                        <group string="CONTRATO ACTUAL" invisible="not contract_id">
+                            <field name="contract_id" readonly="1" string="Contrato actualmente activo"/>
+                        </group>
+
+                        <!-- FILA 4 -->
+                        <group string="CONTACTO DE EMERGENCIA">
+                            <field name="emergency_contact" help="Nombre completo de la persona a contactar en caso de emergencia."/>
+                            <field name="velatek_emergency_relation" help="Vínculo o parentesco que tiene el empleado con este contacto."/>
+                            <field name="emergency_phone" help="Número de teléfono directo de la persona de emergencia."/>
+                        </group>
+                        <group string="SITUACIÓN FAMILIAR">
+                            <field name="children" help="Cantidad de hijos dependientes registrados."/>
+                        </group>
+
+                        <!-- FILA 5 -->
+                        <group string="EDUCACIÓN">
+                            <field name="certificate" help="Nivel académico más alto alcanzado."/>
+                            <field name="study_field" help="Carrera o especialidad de sus estudios."/>
+                            <field name="study_school" help="Institución o universidad donde estudió."/>
+                        </group>
                     </group>
                 </xpath>
-                
+
+                <!-- Beneficiarios y Documentación Legal -->
                 <xpath expr="//page[@name='personal_information']" position="after">
                     <page name="beneficiarios" string="Beneficiarios" groups="hr.group_hr_user">
                         <field name="velatek_beneficiary_ids">
                             <list editable="bottom" string="Beneficiarios">
-                                <field name="name"/>
-                                <field name="relationship"/>
-                                <field name="birthdate"/>
-                                <field name="percentage"/>
+                                <field name="name" help="Nombre completo del beneficiario."/>
+                                <field name="relationship" help="Parentesco con el empleado (ej. Hijo, Esposa)."/>
+                                <field name="birthdate" help="Fecha de nacimiento del beneficiario."/>
+                                <field name="percentage" help="Porcentaje de beneficio asignado (La suma total de todos los beneficiarios no debe pasar de 100%)."/>
                             </list>
                         </field>
                     </page>
+                    <page name="documentacion_legal" string="Documentación Legal" groups="hr.group_hr_user">
+                        <group>
+                            <group string="Documentos Migrados (Legado)">
+                                <field name="velatek_cv_file" filename="velatek_cv_filename"/>
+                                <field name="velatek_cv_filename" invisible="1"/>
+                                <field name="velatek_dui_file" filename="velatek_dui_filename"/>
+                                <field name="velatek_dui_filename" invisible="1"/>
+                                <field name="velatek_isss_afp_file" filename="velatek_isss_afp_filename"/>
+                                <field name="velatek_isss_afp_filename" invisible="1"/>
+                                <field name="velatek_contract_file" filename="velatek_contract_filename"/>
+                                <field name="velatek_contract_filename" invisible="1"/>
+                                <field name="velatek_warning_letter_file" filename="velatek_warning_letter_filename"/>
+                                <field name="velatek_warning_letter_filename" invisible="1"/>
+                                <field name="velatek_resignation_file" filename="velatek_resignation_filename"/>
+                                <field name="velatek_resignation_filename" invisible="1"/>
+                            </group>
+                        </group>
+                        <group string="Nuevo Gestor Documental">
+                            <field name="velatek_document_ids" nolabel="1" colspan="2">
+                                <list>
+                                    <field name="document_type_id" string="Tipo" help="Seleccione la categoría del documento que está subiendo."/>
+                                    <field name="name" string="Descripción" help="Breve nota o descripción sobre este archivo específico."/>
+                                    <field name="document_number"/>
+                                    <field name="issue_date" string="Emisión" help="Fecha en que se emitió el documento original."/>
+                                    <field name="expiration_date" string="Vencimiento" help="Fecha en que este documento pierde validez (si aplica)."/>
+                                    <field name="state" widget="badge" decoration-success="state == 'valid'" decoration-danger="state == 'expired'" decoration-warning="state == 'expiring'" decoration-info="state == 'no_expiration'"/>
+                                    <field name="verified"/>
+                                    <field name="attachment_file" filename="attachment_filename" string="Archivo (Legacy)" help="Haga clic aquí para subir el archivo (PDF, Imagen, etc.) desde su computadora."/>
+                                    <field name="attachment_filename" column_invisible="True"/>
+                                    <field name="attachment_id" string="Archivo Adjunto"/>
+                                </list>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="document_type_id"/>
+                                            <field name="name"/>
+                                            <field name="document_number"/>
+                                            <field name="issuing_entity"/>
+                                            <field name="attachment_file" filename="attachment_filename" string="Archivo (Legacy)"/>
+                                            <field name="attachment_filename" invisible="1"/>
+                                            <field name="attachment_id" string="Archivo Adjunto"/>
+                                        </group>
+                                        <group>
+                                            <field name="issue_date"/>
+                                            <field name="expiration_date"/>
+                                            <field name="state"/>
+                                            <field name="verified"/>
+                                            <field name="verified_by_id" force_save="1"/>
+                                            <field name="verified_date" force_save="1"/>
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <field name="notes" placeholder="Observaciones adicionales..."/>
+                                    </group>
+                                </form>
+                            </field>
+                        </group>
+                    </page>
                 </xpath>
             </field>
+        </record>
+
+        <!-- Vista Árbol para Datos de Empleados -->
+        <record id="view_employee_tree_velatek_sv_data" model="ir.ui.view">
+            <field name="name">hr.employee.tree.velatek.sv.data</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <list string="Datos de los Empleados">
+                    <field name="velatek_codigo" string="Código"/>
+                    <field name="name" string="Nombre del empleado"/>
+                    <field name="department_id" string="Departamento"/>
+                    <field name="job_id" string="Puesto de trabajo"/>
+                    <field name="bank_account_id" string="Número de cuenta bancaria"/>
+                    <field name="velatek_bank_id" string="Tipo de banco"/>
+                    <field name="velatek_bank_account_type" string="Tipo de cuenta"/>
+                    <field name="velatek_dui" string="DUI"/>
+                    <field name="velatek_afp_id" string="AFP"/>
+                    <field name="velatek_nup" string="Número NUP"/>
+                    <field name="velatek_isss" string="ISSS"/>
+                    <field name="velatek_nit" string="NIT"/>
+                    <field name="private_phone" string="Teléfono personal"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Acción para la nueva vista -->
+        <record id="action_hr_employee_data_velatek" model="ir.actions.act_window">
+            <field name="name">Datos de los empleados</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('contract_id', '!=', False)]</field>
+            <field name="view_id" ref="view_employee_tree_velatek_sv_data"/>
         </record>
     </data>
 </odoo>

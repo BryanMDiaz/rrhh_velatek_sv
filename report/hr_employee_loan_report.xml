@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_hr_employee_loan_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11.5px; line-height: 1.65; color: #1e293b;">
+                        <style>
+                            .loan-contract-container {
+                                width: 100%;
+                            }
+                            .loan-contract-container h1 {
+                                font-size: 17px;
+                                font-weight: 700;
+                                text-align: center;
+                                color: #0f172a;
+                                letter-spacing: 0.5px;
+                                border-bottom: 2px solid #1e293b;
+                                padding-bottom: 8px;
+                                margin-bottom: 20px;
+                                text-transform: uppercase;
+                            }
+                            .loan-contract-container h2 {
+                                font-size: 13px;
+                                font-weight: 700;
+                                color: #1e293b;
+                                text-transform: uppercase;
+                                margin-top: 18px;
+                                margin-bottom: 6px;
+                                padding-left: 6px;
+                                border-left: 3px solid #0284c7;
+                            }
+                            .loan-contract-container p {
+                                margin-bottom: 8px;
+                                text-align: justify;
+                            }
+                            .meta-box {
+                                background: #f8fafc;
+                                border: 0;
+                                border-radius: 6px;
+                                padding: 12px 18px;
+                                margin-bottom: 18px;
+                            }
+                            .meta-table {
+                                width: 100%;
+                                font-size: 11.5px;
+                            }
+                            .meta-table td {
+                                padding: 4px 6px;
+                                vertical-align: top;
+                            }
+                            .signature-section {
+                                margin-top: 40px;
+                                width: 100%;
+                                page-break-inside: avoid;
+                            }
+                            .signature-box {
+                                width: 45%;
+                                display: inline-block;
+                                vertical-align: top;
+                                text-align: center;
+                            }
+                            .signature-line {
+                                border-top: 1px solid #334155;
+                                margin: 55px auto 8px auto;
+                                width: 85%;
+                            }
+                        </style>
+                        <t t-set="rendered_content" t-value="o._get_rendered_contract_html()"/>
+                        <t t-if="rendered_content">
+                            <div class="loan-contract-container" t-out="rendered_content"/>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-warning">
+                                No se ha definido contenido en la plantilla de préstamo seleccionada.
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_hr_employee_loan_contract" model="ir.actions.report">
+        <field name="name">Contrato de Préstamo</field>
+        <field name="model">hr.employee.loan</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">rrhh_velatek_sv.report_hr_employee_loan_document</field>
+        <field name="report_file">rrhh_velatek_sv.report_hr_employee_loan_document</field>
+        <field name="print_report_name">'Contrato de Préstamo - %s' % (object.employee_id.name)</field>
+        <field name="binding_model_id" ref="model_hr_employee_loan"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

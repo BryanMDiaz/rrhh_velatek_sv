@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista Formulario de Preplanilla -->
+        <record id="hr_prepayroll_view_form" model="ir.ui.view">
+            <field name="name">hr.prepayroll.form</field>
+            <field name="model">hr.prepayroll</field>
+            <field name="arch" type="xml">
+                <form string="Preplanilla" class="o_hr_prepayroll_form">
+                    <header>
+                        <button name="action_load_employees" groups="hr.group_hr_user" string="Cargar Empleados" type="object" class="oe_highlight" invisible="state not in ('draft', 'loaded')"/>
+                        <button name="action_update_data" groups="hr.group_hr_user" string="Actualizar Datos" type="object" class="btn-secondary" invisible="state not in ('draft', 'loaded')"/>
+                        <button name="action_validate" groups="rrhh_velatek_sv.group_hr_responsible" string="Validar" type="object" class="oe_highlight" invisible="state != 'loaded'"/>
+                        <button name="action_close" groups="hr.group_hr_manager" string="Cerrar Período" type="object" class="oe_highlight" invisible="state != 'validated'"/>
+                        <button name="action_generate_payroll" groups="hr.group_hr_user" string="Generar Planilla" type="object" class="oe_highlight" invisible="state != 'closed'"/>
+                        <button name="action_draft" groups="hr.group_hr_manager" string="Volver a Borrador" type="object" invisible="state in ('draft', 'closed')"/>
+                        <button name="action_cancel" groups="hr.group_hr_manager" string="Cancelar" type="object" invisible="state in ('closed', 'cancelled')"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,loaded,validated,closed"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_payroll" type="object" class="oe_stat_button" icon="fa-money" invisible="payroll_count == 0">
+                                <field name="payroll_count" widget="statinfo" string="Planilla"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="state in ('validated', 'closed', 'cancelled')" placeholder="Ej: Preplanilla Septiembre 2026"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="date_start" readonly="state != 'draft'"/>
+                                <field name="date_end" readonly="state != 'draft'"/>
+                                <field name="is_test" readonly="id" help="Active esta opción al crear el registro para simular el período."/>
+                                <field name="payment_frequency" readonly="state != 'draft'"/>
+                                <field name="prepayroll_type" readonly="state != 'draft'"/>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
+                                <field name="notes" readonly="state in ('validated', 'closed', 'cancelled')" placeholder="Notas sobre el período..."/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Líneas de Preplanilla">
+                                <!-- Vista tipo lista editable ('bottom') integrada en el form -->
+                                <field name="line_ids" widget="velatek_prepayroll_lines" class="o_hr_prepayroll_lines" readonly="state in ('validated', 'closed', 'cancelled')">
+                                    <list editable="bottom" create="false" default_order="department_id, id" decoration-muted="state == 'closed'">
+                                        <field name="employee_id" readonly="1" width="290px"/>
+                                        <field name="department_id" column_invisible="1"/>
+                                        <field name="department_name" column_invisible="1"/>
+                                        <field name="contract_id" readonly="1" column_invisible="1"/>
+                                        <field name="currency_id" column_invisible="1"/>
+                                        <field name="incident_cell_details" column_invisible="1"/>
+                                        <field name="net_days_to_pay" readonly="1" sum="Total"/>
+                                        <field name="period_wage" string="Salario del período" readonly="1" sum="Total salario" widget="monetary" options="{'currency_field': 'currency_id'}" width="122px"/>
+                                        <field name="viaticos_amount" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="period_wage_with_viaticos" sum="Total devengos con viáticos" widget="monetary" options="{'currency_field': 'currency_id'}" width="122px"/>
+                                        <field name="preliminary_deductions_total" sum="Total Descuentos Preliminares" widget="monetary" options="{'currency_field': 'currency_id'}" width="122px" string="Descuentos"/>
+                                        <field name="preliminary_balance" string="Balance preliminar" sum="Total Balance Preliminar" widget="monetary" options="{'currency_field': 'currency_id'}" width="122px"/>
+                                        <field name="production_quantity" class="o_prepayroll_production o_prepayroll_section_start" sum="Total" optional="show" string="Unid. prod." width="112px"/>
+                                        <field name="production_amount" class="o_prepayroll_production" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show" string="Importe prod." width="112px"/>
+                                        <field name="overtime_hours" class="o_prepayroll_hours o_prepayroll_section_start" sum="Total" string="H.E. Diurnas" optional="show" width="112px"/>
+                                        <field name="overtime_amount" class="o_prepayroll_hours" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" string="$ H.E. Diurnas" optional="show" width="112px"/>
+                                        <field name="night_overtime_hours" class="o_prepayroll_hours" sum="Total" string="H.E. Nocturnas" optional="show" width="112px"/>
+                                        <field name="night_overtime_amount" class="o_prepayroll_hours" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" string="$ H.E. Nocturnas" optional="show" width="112px"/>
+                                        <field name="night_work_hours" class="o_prepayroll_hours" sum="Total" string="H. Nocturnidad" optional="show" width="112px"/>
+                                        <field name="night_work_amount" class="o_prepayroll_hours" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" string="$ Nocturnidad" optional="show" width="112px"/>
+                                        <field name="holiday_work_hours" class="o_prepayroll_hours" sum="Total" optional="show" string="H. asueto" width="112px"/>
+                                        <field name="holiday_work_amount" class="o_prepayroll_hours" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show" string="Importe asueto" width="112px"/>
+                                        <field name="weekly_rest_work_hours" class="o_prepayroll_hours" sum="Total" optional="show" string="H. descanso" width="112px"/>
+                                        <field name="weekly_rest_work_amount" class="o_prepayroll_hours" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show" string="Importe descanso" width="112px"/>
+                                        <field name="absence_days" class="o_prepayroll_absences o_prepayroll_section_start" sum="Total" optional="show" string="Días ausencia" width="112px"/>
+                                        <field name="absence_hours" class="o_prepayroll_absences" sum="Total" optional="show" string="H. ausencia" width="112px"/>
+                                        <field name="absence_amount" class="o_prepayroll_absences" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show" string="Desc. ausencia" width="112px"/>
+                                        <field name="paid_leave_days" class="o_prepayroll_absences" sum="Total" optional="show" string="Días permiso" width="112px"/>
+                                        <field name="paid_leave_hours" class="o_prepayroll_absences" sum="Total" optional="show" string="H. permiso" width="112px"/>
+                                        <field name="sick_leave_days" class="o_prepayroll_absences" sum="Total" optional="show" string="Días incapacidad" width="112px"/>
+                                        <field name="sick_leave_hours" class="o_prepayroll_absences" sum="Total" optional="show" string="H. incapacidad" width="112px"/>
+                                        <field name="sick_ordinary_amount" readonly="1" optional="hide" sum="Total"/>
+                                        <field name="sick_employer_amount" readonly="1" optional="hide" sum="Total"/>
+                                        <field name="sick_isss_amount" readonly="1" optional="hide" sum="Total"/>
+                                        <field name="suspension_days" class="o_prepayroll_absences" sum="Total" optional="show" string="Días suspensión" width="112px"/>
+                                        <field name="suspension_hours" class="o_prepayroll_absences" sum="Total" optional="show" string="H. suspensión" width="112px"/>
+                                        <field name="bonus_amount" class="o_prepayroll_adjustments o_prepayroll_section_start" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show" width="112px"/>
+                                        <field name="commission_amount" class="o_prepayroll_adjustments" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show" width="112px"/>
+                                        <field name="other_income" class="o_prepayroll_adjustments" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show" width="112px"/>
+                                        <field name="deduction_amount" class="o_prepayroll_adjustments" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show" string="Otras deducciones" width="112px"/>
+                                        <field name="loan_deduction_amount" class="o_prepayroll_adjustments" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show" string="Préstamos" width="112px"/>
+                                        <field name="remuneration_mode" readonly="1" optional="hide"/>
+                                        <field name="base_wage" readonly="1" optional="hide"/>
+                                        <field name="loan_installment_ids" widget="many2many_tags" optional="hide"/>
+                                        <field name="production_ids" widget="many2many_tags" optional="hide"/>
+                                        <field name="incident_ids" widget="many2many_tags" optional="hide"/>
+                                        <field name="gross_total" column_invisible="1"/>
+                                        <field name="state" column_invisible="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista Lista (Tree) de Preplanilla -->
+        <record id="hr_prepayroll_view_tree" model="ir.ui.view">
+            <field name="name">hr.prepayroll.tree</field>
+            <field name="model">hr.prepayroll</field>
+            <field name="arch" type="xml">
+                <list string="Preplanillas" decoration-info="state == 'draft'" decoration-success="state == 'closed'" decoration-muted="state == 'cancelled'">
+                    <field name="name"/>
+                    <field name="period_name" optional="show"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="payment_frequency"/>
+                    <field name="state" widget="badge"/>
+                    <field name="is_test" optional="show"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Filtros y Búsqueda -->
+        <record id="hr_prepayroll_view_search" model="ir.ui.view">
+            <field name="name">hr.prepayroll.search</field>
+            <field name="model">hr.prepayroll</field>
+            <field name="arch" type="xml">
+                <search string="Preplanillas">
+                    <field name="name"/>
+                    <field name="period_name"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <filter string="En curso / Validando" name="active_prepayrolls" domain="[('state', 'in', ('draft', 'loaded', 'validated'))]"/>
+                    <filter string="Cerradas" name="closed_prepayrolls" domain="[('state', '=', 'closed')]"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Período de preplanilla" name="group_period" context="{'group_by':'period_name'}"/>
+                        <filter string="Mes" name="group_month" context="{'group_by':'date_start:month'}"/>
+                        <filter string="Estado" name="group_state" context="{'group_by':'state'}"/>
+                        <filter string="Frecuencia" name="group_frequency" context="{'group_by':'payment_frequency'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción de Preplanilla -->
+        <record id="action_hr_prepayroll" model="ir.actions.act_window">
+            <field name="name">Preplanillas</field>
+            <field name="res_model">hr.prepayroll</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="hr_prepayroll_view_search"/>
+            <field name="context">{'search_default_group_period': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear la primera preplanilla
+                </p>
+                <p>
+                    Las preplanillas agrupan a los empleados activos y consolidan su producción e incidencias.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

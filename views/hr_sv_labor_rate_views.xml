@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form View -->
+        <record id="hr_sv_labor_rate_view_form" model="ir.ui.view">
+            <field name="name">hr.sv.labor.rate.form</field>
+            <field name="model">hr.sv.labor.rate</field>
+            <field name="arch" type="xml">
+                <form string="Tasa / Multiplicador Laboral">
+                    <sheet>
+                        <group>
+                            <group string="Información General">
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="concept_type"/>
+                                <field name="active"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                            <group string="Configuración de Tasa">
+                                <field name="rate_type"/>
+                                <field name="value"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="legal_reference"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Notas">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- List View -->
+        <record id="hr_sv_labor_rate_view_tree" model="ir.ui.view">
+            <field name="name">hr.sv.labor.rate.tree</field>
+            <field name="model">hr.sv.labor.rate</field>
+            <field name="arch" type="xml">
+                <list string="Tasas y Multiplicadores Laborales">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="concept_type"/>
+                    <field name="rate_type"/>
+                    <field name="value"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="active"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_hr_sv_labor_rate" model="ir.actions.act_window">
+            <field name="name">Tasas y Multiplicadores Laborales</field>
+            <field name="res_model">hr.sv.labor.rate</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear la primera tasa o multiplicador laboral
+                </p>
+                <p>
+                    Permite parametrizar las tasas y multiplicadores aplicables a horas extra, recargos nocturnos, días de asueto y descansos semanales.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

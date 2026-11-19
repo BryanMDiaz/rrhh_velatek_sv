@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Form View for Installments -->
+        <record id="view_hr_employee_loan_installment_form" model="ir.ui.view">
+            <field name="name">hr.employee.loan.installment.form</field>
+            <field name="model">hr.employee.loan.installment</field>
+            <field name="arch" type="xml">
+                <form string="Cuota de Préstamo" create="0" edit="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="loan_id" readonly="1"/>
+                                <field name="sequence" readonly="1"/>
+                                <field name="scheduled_date" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="amount" readonly="1"/>
+                                <field name="paid_amount" readonly="1"/>
+                                <field name="remaining_amount" readonly="1"/>
+                                <field name="state" readonly="1" widget="badge"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View for Installments -->
+        <record id="view_hr_employee_loan_installment_tree" model="ir.ui.view">
+            <field name="name">hr.employee.loan.installment.tree</field>
+            <field name="model">hr.employee.loan.installment</field>
+            <field name="arch" type="xml">
+                <list string="Cuotas de Préstamo" create="0" edit="0" decoration-success="state=='paid'" decoration-info="state=='scheduled'" decoration-muted="state=='cancelled'">
+                    <field name="sequence" string="No."/>
+                    <field name="scheduled_date"/>
+                    <field name="amount"/>
+                    <field name="paid_amount"/>
+                    <field name="remaining_amount"/>
+                    <field name="state" widget="badge" decoration-success="state=='paid'" decoration-info="state=='scheduled'" decoration-muted="state=='cancelled'"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View for Loan -->
+        <record id="view_hr_employee_loan_form" model="ir.ui.view">
+            <field name="name">hr.employee.loan.form</field>
+            <field name="model">hr.employee.loan</field>
+            <field name="arch" type="xml">
+                <form string="Préstamo de Empleado">
+                    <header>
+                        <button name="action_calculate_salary_advance" string="Calcular anticipo neto" type="object" class="oe_highlight" invisible="not is_salary_advance or state != 'draft'"/>
+                        <button name="action_print_salary_advance" string="Imprimir solicitud / comprobante de anticipo" type="object" invisible="not is_salary_advance or not advance_calculated_at"/>
+                        <button name="action_activate" string="Confirmar entrega del anticipo" type="object" groups="hr.group_hr_manager" class="oe_highlight" invisible="not is_salary_advance or state != 'approved'"/>
+
+                        <button name="action_preview_contract" string="Vista Previa de Contrato" type="object" icon="fa-eye" invisible="not loan_template_id or is_salary_advance"/>
+                        <button name="action_print_contract" string="Imprimir Contrato" type="object" invisible="not loan_template_id or is_salary_advance"/>
+                        <button name="action_submit" string="Enviar por Aprobar" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                        <button name="action_approve" string="Aprobar" type="object" class="oe_highlight" invisible="state != 'submitted'"/>
+                        <button name="action_activate" string="Activar Cobro" type="object" class="oe_highlight" invisible="state != 'approved' or is_salary_advance"/>
+                        <button name="action_generate_calendar" string="Generar Calendario" type="object" invisible="state not in ('draft', 'submitted') or is_salary_advance"/>
+                        <button name="action_cancel" string="Cancelar" type="object" invisible="state in ('paid', 'cancelled')"/>
+                        <!-- Extra Payment Wizard Action -->
+                        <button name="%(action_hr_loan_payment_wizard)d" string="Registrar Abono" type="action" class="oe_highlight" invisible="state != 'active' or is_salary_advance" context="{'default_loan_id': id}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,active,paid" invisible="is_salary_advance"/>
+                        <field name="advance_stage" widget="statusbar" statusbar_visible="draft,submitted,approved,active,paid" invisible="not is_salary_advance"/>
+                    </header>
+                    <sheet>
+                        <field name="is_salary_advance" invisible="1"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group name="general_data" string="DATOS DEL EMPLEADO">
+                            <group>
+                                <field name="employee_id" readonly="state != 'draft'"/>
+                                <field name="contract_id" invisible="1"/>
+                                <field name="company_id" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="loan_type_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                                <field name="loan_template_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                                <field name="request_date" readonly="state != 'draft'"/>
+                                <field name="approval_date" invisible="state in ('draft', 'submitted')"/>
+                                <field name="disbursement_date" invisible="state in ('draft', 'submitted')" readonly="state not in ('draft', 'submitted', 'approved')"/>
+                            </group>
+                        </group>
+                        <group string="ANTICIPO NETO DE QUINCENA" invisible="not is_salary_advance">
+                            <div class="alert alert-info" colspan="2">
+                                Prepare y actualice la preplanilla de la quincena. El anticipo usa su salario, incidencias y deducciones de ley.
+                                Al confirmar la entrega, registre la referencia del pago realizado. La planilla conservará los devengos y deducciones,
+                                y restará el neto ya entregado. No se realiza ninguna transferencia bancaria desde este botón.
+                            </div>
+                            <group>
+                                <field name="advance_prepayroll_id" domain="[('company_id', '=', company_id), ('payment_frequency', '=', 'biweekly'), ('prepayroll_type', '=', 'regular'), ('state', '!=', 'cancelled')]" options="{'no_create': True}" readonly="state != 'draft'" required="is_salary_advance"/>
+                                <field name="advance_date_start"/>
+                                <field name="advance_date_end"/>
+                                <field name="advance_gross"/>
+                                <field name="advance_isss"/>
+                                <field name="advance_afp"/>
+                                <field name="advance_isr"/>
+                            </group>
+                            <group>
+                                <field name="advance_other_deductions"/>
+                                <field name="advance_net" class="fw-bold"/>
+                                <field name="advance_calculated_at"/>
+                                <field name="advance_payment_reference" readonly="state in ('active', 'paid', 'cancelled')"/>
+                                <field name="advance_settled_payroll_id"/>
+                            </group>
+                        </group>
+                        <group name="conditions" string="DATOS DEL PRÉSTAMO" invisible="is_salary_advance">
+                            <group>
+                                <field name="principal_amount" string="Monto del Préstamo" readonly="state not in ('draft', 'submitted')" help="Cantidad que la empresa entregará al empleado."/>
+                                <field name="interest_amount" readonly="state not in ('draft', 'submitted')"/>
+                                <field name="total_financed" string="Total a Pagar"/>
+                            </group>
+                            <group>
+                                <field name="payment_frequency" string="Forma de Descuento" readonly="state not in ('draft', 'submitted')" help="Define cada cuánto se aplicará la cuota."/>
+                                <field name="installment_interval" string="Descontar cada N períodos" invisible="payment_frequency != 'custom_interval'" readonly="state not in ('draft', 'submitted')"/>
+                                <field name="estimated_installments" string="Cantidad de Cuotas" readonly="state not in ('draft', 'submitted')"/>
+                                <field name="first_payment_date" string="Primer Descuento" readonly="state not in ('draft', 'submitted')" help="Fecha a partir de la cual comenzará a descontarse el préstamo."/>
+                            </group>
+                        </group>
+                        <group name="estimation" invisible="is_salary_advance">
+                            <group>
+                                <field name="approved_installment" string="Cuota por Descuento" readonly="1" help="Cantidad que se descontará en cada período de pago."/>
+                                <field name="last_installment_amount" readonly="1"/>
+                                <field name="estimated_end_date" string="Fecha Estimada de Finalización" readonly="1"/>
+                            </group>
+                            <group></group>
+                        </group>
+                        <group name="documents" string="DOCUMENTOS DE RESPALDO">
+                            <group>
+                                <field name="signed_contract_filename" invisible="1"/>
+                                <field name="signed_contract_document" filename="signed_contract_filename" widget="binary" readonly="state not in ('draft', 'submitted')"/>
+                            </group>
+                            <group></group>
+                        </group>
+                        <group name="capacity" string="CAPACIDAD DE DESCUENTO" invisible="is_salary_advance">
+                            <group>
+                                <field name="reference_income" string="Ingreso usado para evaluación"/>
+                                <field name="capacity_percentage" string="Porcentaje máximo recomendado (%)" readonly="1"/>
+                                <field name="maximum_recommended_deduction" string="Máximo recomendado por período"/>
+                                <field name="existing_loan_commitments" string="Cuotas de otros préstamos"/>
+                            </group>
+                            <group>
+                                <field name="available_payment_capacity" string="Capacidad disponible" help="Máximo recomendado disponible después de considerar otros préstamos activos."/>
+                                <field name="approved_installment" string="Nueva cuota" readonly="1"/>
+                                <!-- Disponible después del préstamo is available_payment_capacity - approved_installment -->
+                                <field name="capacity_status" string="Resultado" widget="badge" decoration-warning="capacity_status == 'pending'" decoration-success="capacity_status == 'ok'" decoration-danger="capacity_status == 'exceeded'"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Calendario de Pagos" name="installments">
+                                <field name="installment_ids" readonly="1">
+                                    <list>
+                                        <field name="currency_id" column_invisible="True"/>
+                                        <field name="sequence" string="No."/>
+                                        <field name="scheduled_date" string="Fecha de Descuento"/>
+                                        <field name="amount" string="Cuota" sum="Total Cuotas"/>
+                                        <field name="state" string="Estado"/>
+                                        <field name="payment_origin" string="Planilla"/>
+                                        <field name="paid_amount" string="Pagado" sum="Total Pagado"/>
+                                        <field name="remaining_amount" string="Saldo de Cuota" sum="Saldo Restante"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Resumen y Saldos" name="summary">
+                                <group>
+                                    <group>
+                                        <field name="principal_amount" string="Monto del Préstamo" readonly="1"/>
+                                        <field name="total_financed" string="Total a Pagar" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="total_paid" string="Total Pagado"/>
+                                        <field name="remaining_balance" string="Saldo Pendiente" class="oe_inline fw-bold text-success"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Notas" name="notes">
+                                <field name="notes" placeholder="Notas adicionales..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_hr_employee_loan_tree" model="ir.ui.view">
+            <field name="name">hr.employee.loan.tree</field>
+            <field name="model">hr.employee.loan</field>
+            <field name="arch" type="xml">
+                <list string="Préstamos de Empleados" decoration-success="state=='paid'" decoration-info="state=='active'" decoration-muted="state=='cancelled'">
+                    <field name="name" string="Referencia"/>
+                    <field name="employee_id"/>
+                    <field name="loan_type_id"/>
+                    <field name="currency_id" column_invisible="True"/>
+                    <field name="total_financed" sum="Total"/>
+                    <field name="approved_installment" sum="Cuota"/>
+                    <field name="payment_frequency"/>
+                    <field name="total_paid" sum="Total Pagado"/>
+                    <field name="remaining_balance" sum="Saldo Pendiente" class="fw-bold"/>
+                    <field name="state" widget="badge" decoration-success="state=='paid'" decoration-info="state=='active'" decoration-muted="state=='cancelled'"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_hr_employee_loan_search" model="ir.ui.view">
+            <field name="name">hr.employee.loan.search</field>
+            <field name="model">hr.employee.loan</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Préstamos">
+                    <field name="name" string="Referencia"/>
+                    <field name="employee_id"/>
+                    <separator/>
+                    <filter string="Borrador" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Por Aprobar" name="filter_submitted" domain="[('state', '=', 'submitted')]"/>
+                    <filter string="Aprobado" name="filter_approved" domain="[('state', '=', 'approved')]"/>
+                    <filter string="En Cobro" name="filter_active" domain="[('state', '=', 'active')]"/>
+                    <filter string="Pagado" name="filter_paid" domain="[('state', '=', 'paid')]"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Empleado" name="group_employee" context="{'group_by': 'employee_id'}"/>
+                        <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Mes de Solicitud" name="group_month" context="{'group_by': 'request_date:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_hr_employee_loan" model="ir.actions.act_window">
+            <field name="name">Préstamos</field>
+            <field name="res_model">hr.employee.loan</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_hr_employee_loan_search"/>
+            <field name="context">{'search_default_group_month': 1}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo Préstamo
+              </p>
+            </field>
+        </record>
+
+        <record id="action_hr_employee_loan_installment" model="ir.actions.act_window">
+            <field name="name">Cuotas de Préstamo</field>
+            <field name="res_model">hr.employee.loan.installment</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('loan_id.state', '=', 'active')]</field>
+        </record>
+
+    </data>
+</odoo>

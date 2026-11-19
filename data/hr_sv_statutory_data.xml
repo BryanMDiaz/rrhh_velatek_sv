@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Parámetro ISSS -->
+        <record id="isss_parameter_default" model="hr.sv.social.security.parameter">
+            <field name="name">ISSS General 2026</field>
+            <field name="code">isss_general</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="employee_rate">3.0</field>
+            <field name="employer_rate">7.5</field>
+            <field name="min_base">0.0</field>
+            <field name="max_base">1000.0</field>
+            <field name="legal_reference">Ley del Seguro Social / Reglamento ISSS</field>
+        </record>
+
+        <!-- Parámetro AFP -->
+        <record id="afp_parameter_default" model="hr.sv.pension.parameter">
+            <field name="name">AFP General 2026</field>
+            <field name="code">afp_general</field>
+            <field name="date_from">2023-01-01</field>
+            <field name="employee_rate">7.25</field>
+            <field name="employer_rate">8.75</field>
+            <field name="min_base">0.0</field>
+            <field name="max_base">0.0</field>
+            <field name="legal_reference">Ley Integral del Sistema de Pensiones, arts. 14 y 16; sin techo desde enero de 2023</field>
+        </record>
+
+        <!-- Tabla ISR Mensual -->
+        <record id="isr_table_monthly" model="hr.sv.isr.table">
+            <field name="name">Tabla ISR Mensual 2026</field>
+            <field name="code">isr_table_monthly</field>
+            <field name="payment_frequency">monthly</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="legal_reference">Ley de Impuesto sobre la Renta - El Salvador</field>
+        </record>
+        <record id="isr_bracket_monthly_1" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_monthly"/>
+            <field name="sequence">10</field>
+            <field name="name">Tramo I (Exento)</field>
+            <field name="from_amount">0.0</field>
+            <field name="to_amount">550.00</field>
+            <field name="excess_over">0.0</field>
+            <field name="fixed_fee">0.0</field>
+            <field name="rate">0.0</field>
+        </record>
+        <record id="isr_bracket_monthly_2" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_monthly"/>
+            <field name="sequence">20</field>
+            <field name="name">Tramo II (10%)</field>
+            <field name="from_amount">550.00</field>
+            <field name="to_amount">895.24</field>
+            <field name="excess_over">550.00</field>
+            <field name="fixed_fee">17.67</field>
+            <field name="rate">10.0</field>
+        </record>
+        <record id="isr_bracket_monthly_3" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_monthly"/>
+            <field name="sequence">30</field>
+            <field name="name">Tramo III (20%)</field>
+            <field name="from_amount">895.24</field>
+            <field name="to_amount">2038.10</field>
+            <field name="excess_over">895.24</field>
+            <field name="fixed_fee">60.00</field>
+            <field name="rate">20.0</field>
+        </record>
+        <record id="isr_bracket_monthly_4" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_monthly"/>
+            <field name="sequence">40</field>
+            <field name="name">Tramo IV (30%)</field>
+            <field name="from_amount">2038.10</field>
+            <field name="to_amount">0.0</field>
+            <field name="excess_over">2038.10</field>
+            <field name="fixed_fee">288.57</field>
+            <field name="rate">30.0</field>
+        </record>
+
+        <!-- Tabla ISR Quincenal -->
+        <record id="isr_table_biweekly" model="hr.sv.isr.table">
+            <field name="name">Tabla ISR Quincenal 2026</field>
+            <field name="code">isr_table_biweekly</field>
+            <field name="payment_frequency">biweekly</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="legal_reference">Ley de Impuesto sobre la Renta - El Salvador</field>
+        </record>
+        <record id="isr_bracket_biweekly_1" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_biweekly"/>
+            <field name="sequence">10</field>
+            <field name="name">Tramo I (Exento)</field>
+            <field name="from_amount">0.0</field>
+            <field name="to_amount">275.00</field>
+            <field name="excess_over">0.0</field>
+            <field name="fixed_fee">0.0</field>
+            <field name="rate">0.0</field>
+        </record>
+        <record id="isr_bracket_biweekly_2" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_biweekly"/>
+            <field name="sequence">20</field>
+            <field name="name">Tramo II (10%)</field>
+            <field name="from_amount">275.00</field>
+            <field name="to_amount">447.62</field>
+            <field name="excess_over">275.00</field>
+            <field name="fixed_fee">8.84</field>
+            <field name="rate">10.0</field>
+        </record>
+        <record id="isr_bracket_biweekly_3" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_biweekly"/>
+            <field name="sequence">30</field>
+            <field name="name">Tramo III (20%)</field>
+            <field name="from_amount">447.62</field>
+            <field name="to_amount">1019.05</field>
+            <field name="excess_over">447.62</field>
+            <field name="fixed_fee">30.00</field>
+            <field name="rate">20.0</field>
+        </record>
+        <record id="isr_bracket_biweekly_4" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_biweekly"/>
+            <field name="sequence">40</field>
+            <field name="name">Tramo IV (30%)</field>
+            <field name="from_amount">1019.05</field>
+            <field name="to_amount">0.0</field>
+            <field name="excess_over">1019.05</field>
+            <field name="fixed_fee">144.29</field>
+            <field name="rate">30.0</field>
+        </record>
+
+        <!-- Tabla ISR Semanal -->
+        <record id="isr_table_weekly" model="hr.sv.isr.table">
+            <field name="name">Tabla ISR Semanal 2026</field>
+            <field name="code">isr_table_weekly</field>
+            <field name="payment_frequency">weekly</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="legal_reference">Ley de Impuesto sobre la Renta - El Salvador</field>
+        </record>
+        <record id="isr_bracket_weekly_1" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_weekly"/>
+            <field name="sequence">10</field>
+            <field name="name">Tramo I (Exento)</field>
+            <field name="from_amount">0.0</field>
+            <field name="to_amount">137.50</field>
+            <field name="excess_over">0.0</field>
+            <field name="fixed_fee">0.0</field>
+            <field name="rate">0.0</field>
+        </record>
+        <record id="isr_bracket_weekly_2" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_weekly"/>
+            <field name="sequence">20</field>
+            <field name="name">Tramo II (10%)</field>
+            <field name="from_amount">137.50</field>
+            <field name="to_amount">223.81</field>
+            <field name="excess_over">137.50</field>
+            <field name="fixed_fee">4.42</field>
+            <field name="rate">10.0</field>
+        </record>
+        <record id="isr_bracket_weekly_3" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_weekly"/>
+            <field name="sequence">30</field>
+            <field name="name">Tramo III (20%)</field>
+            <field name="from_amount">223.81</field>
+            <field name="to_amount">509.53</field>
+            <field name="excess_over">223.81</field>
+            <field name="fixed_fee">15.00</field>
+            <field name="rate">20.0</field>
+        </record>
+        <record id="isr_bracket_weekly_4" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_weekly"/>
+            <field name="sequence">40</field>
+            <field name="name">Tramo IV (30%)</field>
+            <field name="from_amount">509.53</field>
+            <field name="to_amount">0.0</field>
+            <field name="excess_over">509.53</field>
+            <field name="fixed_fee">72.14</field>
+            <field name="rate">30.0</field>
+        </record>
+
+        <!-- Tabla ISR Catorcenal -->
+        <record id="isr_table_fourteen_days" model="hr.sv.isr.table">
+            <field name="name">Tabla ISR Catorcenal 2026</field>
+            <field name="code">isr_table_fourteen_days</field>
+            <field name="payment_frequency">fourteen_days</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="legal_reference">Ley de Impuesto sobre la Renta - El Salvador</field>
+        </record>
+        <record id="isr_bracket_fourteen_days_1" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_fourteen_days"/>
+            <field name="sequence">10</field>
+            <field name="name">Tramo I (Exento)</field>
+            <field name="from_amount">0.0</field>
+            <field name="to_amount">256.67</field>
+            <field name="excess_over">0.0</field>
+            <field name="fixed_fee">0.0</field>
+            <field name="rate">0.0</field>
+        </record>
+        <record id="isr_bracket_fourteen_days_2" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_fourteen_days"/>
+            <field name="sequence">20</field>
+            <field name="name">Tramo II (10%)</field>
+            <field name="from_amount">256.67</field>
+            <field name="to_amount">417.78</field>
+            <field name="excess_over">256.67</field>
+            <field name="fixed_fee">8.25</field>
+            <field name="rate">10.0</field>
+        </record>
+        <record id="isr_bracket_fourteen_days_3" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_fourteen_days"/>
+            <field name="sequence">30</field>
+            <field name="name">Tramo III (20%)</field>
+            <field name="from_amount">417.78</field>
+            <field name="to_amount">951.11</field>
+            <field name="excess_over">417.78</field>
+            <field name="fixed_fee">28.00</field>
+            <field name="rate">20.0</field>
+        </record>
+        <record id="isr_bracket_fourteen_days_4" model="hr.sv.isr.bracket">
+            <field name="table_id" ref="isr_table_fourteen_days"/>
+            <field name="sequence">40</field>
+            <field name="name">Tramo IV (30%)</field>
+            <field name="from_amount">951.11</field>
+            <field name="to_amount">0.0</field>
+            <field name="excess_over">951.11</field>
+            <field name="fixed_fee">134.67</field>
+            <field name="rate">30.0</field>
+        </record>
+    </data>
+</odoo>

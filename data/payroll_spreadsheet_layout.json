@@ -1,0 +1,333 @@
+{
+  "columns": {
+    "regular": {
+      "base": [
+        "base_wage",
+        "viaticos_amount",
+        "worked_days",
+        "extra_days",
+        "holiday_days",
+        "period_wage",
+        "daily_salary"
+      ],
+      "devengos": [
+        "production_amount",
+        "holiday_amount",
+        "vacation_amount",
+        "overtime_amount",
+        "night_overtime_amount",
+        "night_work_amount",
+        "weekly_rest_work_amount",
+        "bonus_amount",
+        "commission_amount",
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "isss_employee_amount",
+        "afp_employee_amount",
+        "income_tax_amount",
+        "loan_deduction_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    },
+    "professional_services": {
+      "base": [
+        "base_wage"
+      ],
+      "devengos": [
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "income_tax_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    },
+    "bonus": {
+      "base": [
+        "base_wage",
+        "daily_salary"
+      ],
+      "devengos": [
+        "bonus_amount",
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "income_tax_amount",
+        "loan_deduction_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    },
+    "vacation": {
+      "base": [
+        "base_wage",
+        "worked_days",
+        "daily_salary"
+      ],
+      "devengos": [
+        "vacation_amount",
+        "bonus_amount",
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "isss_employee_amount",
+        "afp_employee_amount",
+        "income_tax_amount",
+        "loan_deduction_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    },
+    "settlement": {
+      "base": [
+        "base_wage",
+        "worked_days",
+        "period_wage",
+        "daily_salary"
+      ],
+      "devengos": [
+        "vacation_amount",
+        "bonus_amount",
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "isss_employee_amount",
+        "afp_employee_amount",
+        "income_tax_amount",
+        "loan_deduction_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    },
+    "complementary": {
+      "base": [
+        "base_wage",
+        "period_wage"
+      ],
+      "devengos": [
+        "bonus_amount",
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "isss_employee_amount",
+        "afp_employee_amount",
+        "income_tax_amount",
+        "loan_deduction_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    },
+    "adjustment": {
+      "base": [
+        "base_wage",
+        "period_wage"
+      ],
+      "devengos": [
+        "bonus_amount",
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "isss_employee_amount",
+        "afp_employee_amount",
+        "income_tax_amount",
+        "loan_deduction_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    },
+    "retroactive": {
+      "base": [
+        "base_wage",
+        "period_wage"
+      ],
+      "devengos": [
+        "bonus_amount",
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "isss_employee_amount",
+        "afp_employee_amount",
+        "income_tax_amount",
+        "loan_deduction_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    },
+    "extraordinary": {
+      "base": [
+        "base_wage",
+        "period_wage"
+      ],
+      "devengos": [
+        "bonus_amount",
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "isss_employee_amount",
+        "afp_employee_amount",
+        "income_tax_amount",
+        "loan_deduction_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    },
+    "other": {
+      "base": [
+        "base_wage",
+        "period_wage"
+      ],
+      "devengos": [
+        "bonus_amount",
+        "other_income",
+        "total_earned"
+      ],
+      "descuentos": [
+        "isss_employee_amount",
+        "afp_employee_amount",
+        "income_tax_amount",
+        "loan_deduction_amount",
+        "other_withholdings_amount",
+        "other_deductions",
+        "total_deductions"
+      ],
+      "pago": [
+        "salary_advance_amount",
+        "payment_amount",
+        "outside_payment_amount",
+        "total_to_settle"
+      ]
+    }
+  },
+  "labels": {
+    "base_group": "BASE SALARIAL",
+    "devengos_group": "DEVENGOS",
+    "descuentos_group": "DESCUENTOS",
+    "pago_group": "PAGO",
+    "base_wage": "Sueldo Mensual",
+    "viaticos_amount": "Viático",
+    "worked_days": "Días Trab.",
+    "extra_days": "Días Extras",
+    "holiday_days": "Asueto (Días)",
+    "period_wage": "Valor",
+    "daily_salary": "Salario/Día",
+    "production_amount": "Producción $",
+    "holiday_amount": "Asueto $",
+    "vacation_amount": "Vacación $",
+    "overtime_amount": "Extra Diurna $",
+    "night_overtime_amount": "Extra Nocturna $",
+    "night_work_amount": "Nocturnidad $",
+    "weekly_rest_work_amount": "Descanso Trab. $",
+    "bonus_amount": "Bonos",
+    "commission_amount": "Comisiones",
+    "other_income": "Otros Ingresos",
+    "total_earned": "Total Devengado",
+    "isss_employee_amount": "ISSS",
+    "afp_employee_amount": "AFP",
+    "income_tax_amount": "Renta",
+    "loan_deduction_amount": "Préstamos",
+    "other_withholdings_amount": "Otras Ret.",
+    "other_deductions": "Otras Ded.",
+    "total_deductions": "Total Descuentos",
+    "salary_advance_amount": "Salario anticipado",
+    "payment_amount": "Pendiente de pago",
+    "outside_payment_amount": "Pago por Fuera",
+    "total_to_settle": "Total a Liquidar"
+  },
+  "overrides": {
+    "professional_services": {
+      "base_wage": "Honorarios",
+      "income_tax_amount": "Renta (10%)",
+      "base_group": "HONORARIOS",
+      "total_earned": "Total Honorarios"
+    },
+    "bonus": {
+      "bonus_amount": "Aguinaldo $",
+      "devengos_group": "AGUINALDO"
+    },
+    "vacation": {
+      "worked_days": "Días Vacación",
+      "devengos_group": "VACACIÓN"
+    },
+    "settlement": {
+      "worked_days": "Días Pend.",
+      "period_wage": "Salario Pend.",
+      "vacation_amount": "Vacación Prop.",
+      "bonus_amount": "Aguinaldo / Indemn.",
+      "devengos_group": "INDEMNIZACIÓN Y PROP."
+    }
+  }
+}

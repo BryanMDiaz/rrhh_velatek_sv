@@ -1,0 +1,93 @@
+.o_form_view.o_hr_prepayroll_form {
+    .o_form_sheet_bg {
+        max-width: none;
+    }
+
+    .o_form_sheet {
+        min-height: calc(100vh - 150px);
+    }
+
+    .o_hr_prepayroll_lines .o_list_renderer {
+        border: 1px solid var(--border-color, #dee2e6);
+        border-radius: 6px;
+    }
+
+    .o_hr_prepayroll_lines .o_list_table {
+        thead th,
+        tfoot td {
+            background-color: #e9eef5;
+            color: #253953;
+            font-weight: 700;
+        }
+
+        .o_data_row > td {
+            padding-top: 8px;
+            padding-bottom: 8px;
+
+            &.o_prepayroll_incident_value {
+                background-color: #fff1d6;
+                box-shadow: inset 3px 0 #d99131;
+                color: #6b3f13;
+                font-weight: 700;
+            }
+        }
+
+        thead th {
+            .text-truncate {
+                white-space: normal;
+            }
+
+            &.o_prepayroll_production {
+                background-color: #e9f1ea;
+            }
+
+            &.o_prepayroll_hours {
+                background-color: #e8edf7;
+            }
+
+            &.o_prepayroll_absences {
+                background-color: #f4ede4;
+            }
+
+            &.o_prepayroll_adjustments {
+                background-color: #eeebf5;
+            }
+        }
+
+        .o_prepayroll_section_start {
+            border-left: 2px solid #cad5e1;
+        }
+
+        th[data-name="employee_id"],
+        td[name="employee_id"] {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            border-right: 1px solid #d9e0ea;
+        }
+
+        td[name="employee_id"] {
+            background-color: var(--o-view-background-color, #fff);
+            white-space: normal;
+            font-weight: 600;
+        }
+
+        .o_prepayroll_department > td {
+            padding: 8px 12px;
+            background-color: #edf2f8;
+            color: #294667;
+            font-weight: 700;
+            border-top: 1px solid #d9e0ea;
+        }
+
+        .o_prepayroll_department_label {
+            position: sticky;
+            left: 12px;
+        }
+
+        td[name="preliminary_balance"] {
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+}

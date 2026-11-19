@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista Formulario de Planilla -->
+        <record id="hr_payroll_view_form" model="ir.ui.view">
+            <field name="name">hr.payroll.form</field>
+            <field name="model">hr.payroll</field>
+            <field name="arch" type="xml">
+                <form string="Planilla de Sueldos" class="o_hr_payroll_form">
+                    <header>
+                        <button name="action_load_employees" groups="hr.group_hr_user" string="Cargar Empleados" type="object" class="oe_highlight" invisible="state not in ('draft', 'computed')"/>
+                        <button name="action_compute" groups="rrhh_velatek_sv.group_hr_responsible" string="Calcular Planilla" type="object" class="oe_highlight" invisible="state not in ('draft', 'computed')"/>
+                        <button name="action_validate" groups="rrhh_velatek_sv.group_hr_responsible" string="Validar" type="object" class="oe_highlight" invisible="state != 'computed'"/>
+                        <button name="%(action_hr_payroll_payslip_wizard)d" string="Imprimir Boletas" type="action" class="oe_highlight" invisible="state not in ('validated', 'closed')" icon="fa-print"/>
+                        <button name="action_export_xlsx" string="Exportar a Excel" type="object" icon="fa-file-excel-o" invisible="not line_ids"/>
+                        <button name="action_close" groups="hr.group_hr_manager" string="Cerrar Período" type="object" class="oe_highlight" invisible="state != 'validated'"/>
+                        <button name="action_draft" groups="hr.group_hr_manager" string="Volver a Borrador" type="object" invisible="state in ('draft', 'closed')"/>
+                        <button name="action_cancel" groups="hr.group_hr_manager" string="Cancelar" type="object" invisible="state in ('closed', 'cancelled')"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,computed,validated,closed"/>
+                    </header>
+                    <sheet>
+                        <field name="warning_message" invisible="1"/>
+                        <div class="alert alert-warning mb-2" role="alert" invisible="not warning_message">
+                            <i class="fa fa-warning me-1" title="Advertencia"/>
+                            <field name="warning_message" readonly="1" class="d-inline"/>
+                        </div>
+
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_prepayroll" type="object" class="oe_stat_button" icon="fa-list-alt" invisible="not prepayroll_id">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">Ver Preplanilla</span>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Ej: Planilla Septiembre Quincena 2 - 2026" readonly="state != 'draft'"/>
+                            </h1>
+                            <h3>
+                                <field name="period_title" readonly="1" class="text-uppercase text-muted"/>
+                            </h3>
+                        </div>
+
+                        <group>
+                            <group string="Datos Operativos">
+                                <field name="company_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                                <field name="payroll_type" readonly="state != 'draft'"/>
+                                <field name="is_test" readonly="id" help="Active esta opción al crear el registro para simular el período."/>
+                                <field name="payment_frequency" readonly="state != 'draft'"/>
+                                <field name="prepayroll_id" domain="[('is_test', '=', is_test)]" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            </group>
+                            <group string="Período y Origen">
+                                <label for="date_start" string="Período"/>
+                                <div class="o_row">
+                                    <field name="date_start" widget="daterange" options="{'related_end_date': 'date_end'}" readonly="state != 'draft'"/>
+                                    <i class="fa fa-long-arrow-right mx-2" aria-label="Arrow icon" title="Arrow"/>
+                                    <field name="date_end" widget="daterange" options="{'related_start_date': 'date_start'}" readonly="state != 'draft'"/>
+                                </div>
+                                <field name="data_source"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <!-- PESTAÑA 1: VISTA FORMAL DE PLANILLA EMPRESARIAL (OWL WIDGET) -->
+                            <page string="Vista de Planilla">
+                                <field name="line_ids" widget="payroll_spreadsheet" class="o_payroll_sheet_widget" readonly="0"/>
+                            </page>
+
+                            <!-- PESTAÑA 2: DETALLE TÉCNICO DE LÍNEAS -->
+                            <page string="Detalle de Líneas">
+                                <field name="line_ids" class="o_payroll_detail_lines" readonly="state in ('validated', 'closed')">
+                                    <list editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="employee_id" readonly="1" width="285px"/>
+                                        <field name="contract_id" readonly="1"/>
+                                        <field name="department_id" readonly="1"/>
+                                        <field name="remuneration_mode" readonly="1"/>
+                                        <field name="base_wage" string="Sueldo Mensual" readonly="1"/>
+                                        <field name="viaticos_amount" string="Viático" readonly="state != 'draft'"/>
+                                        <field name="worked_days" string="Días Trab." readonly="state != 'draft'"/>
+                                        <field name="extra_days" string="Días Extras" readonly="state != 'draft'"/>
+                                        <field name="holiday_days" string="Asueto Días" readonly="state != 'draft'"/>
+                                        <field name="period_wage" string="Valor" readonly="state != 'draft'"/>
+                                        <field name="daily_salary" string="Salario/Día" readonly="1"/>
+                                        <field name="production_amount" string="Producción $" readonly="1"/>
+                                        <field name="holiday_amount" string="Asueto $" readonly="state != 'draft'"/>
+                                        <field name="vacation_amount" string="Vacación $" readonly="state != 'draft'"/>
+                                        <field name="overtime_amount" string="Extra Diurna $" readonly="1"/>
+                                        <field name="night_overtime_amount" string="Extra Nocturna $" readonly="1"/>
+                                        <field name="night_work_amount" string="Nocturnidad $" readonly="1"/>
+                                        <field name="sick_ordinary_amount" readonly="1" optional="hide" sum="Total"/>
+                                        <field name="sick_employer_amount" readonly="1" optional="hide" sum="Total"/>
+                                        <field name="sick_isss_amount" readonly="1" optional="hide" sum="Total"/>
+                                        <field name="total_earned" string="Total Devengado" class="fw-bold text-success"/>
+                                        <field name="isss_taxable_base" string="Base ISSS" optional="hide" readonly="state != 'draft'"/>
+                                        <field name="afp_taxable_base" string="Base AFP" optional="hide" readonly="state != 'draft'"/>
+                                        <field name="isr_taxable_base" string="Base ISR" optional="hide" readonly="state != 'draft'"/>
+                                        <field name="isss_employee_amount" string="ISSS" readonly="state != 'draft'"/>
+                                        <field name="afp_employee_amount" string="AFP" readonly="state != 'draft'"/>
+                                        <field name="income_tax_amount" string="Renta" readonly="state != 'draft'"/>
+                                        <field name="other_withholdings_amount" string="Otras Ret." readonly="state != 'draft'"/>
+                                        <field name="deduction_amount" string="Otras Ded." readonly="state != 'draft'"/>
+                                        <field name="loan_deduction_amount" string="Préstamos" readonly="1"/>
+                                        <field name="total_deductions" string="Total Descuentos" class="fw-bold text-danger"/>
+                                        <field name="net_before_advance" optional="show" readonly="1"/>
+                                        <field name="salary_advance_amount" optional="show" readonly="1"/>
+                                        <field name="payment_amount" string="Pendiente de pago" class="fw-bold"/>
+                                        <field name="outside_payment_amount" string="Pago por Fuera" readonly="state != 'draft'"/>
+                                        <field name="total_to_settle" string="Total a Liquidar" class="fw-bold text-primary"/>
+                                        <field name="source_type" readonly="1"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- PESTAÑA 3: AUTORIZACIONES Y NOTAS -->
+                            <page string="Autorizaciones y Notas">
+                                <group>
+                                    <group string="Responsabilidades y Firmas">
+                                        <field name="prepared_employee_id" readonly="state in ('validated', 'closed')"
+                                               domain="[('company_id', '=', company_id)]" options="{'no_create': True}"/>
+                                        <field name="reviewed_employee_id" readonly="state == 'closed'"
+                                               domain="[('company_id', '=', company_id)]" options="{'no_create': True}"/>
+                                        <field name="approved_employee_id" readonly="state == 'closed'"
+                                               domain="[('company_id', '=', company_id)]" options="{'no_create': True}"/>
+                                    </group>
+                                    <group string="Observaciones">
+                                        <field name="notes" placeholder="Notas internas de la planilla..." readonly="state == 'closed'"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista Árbol de Planilla -->
+        <record id="hr_payroll_view_tree" model="ir.ui.view">
+            <field name="name">hr.payroll.tree</field>
+            <field name="model">hr.payroll</field>
+            <field name="arch" type="xml">
+                <list string="Planillas de Sueldos" decoration-info="state=='draft'" decoration-primary="state=='computed'" decoration-warning="state=='validated'" decoration-success="state=='closed'" decoration-muted="state=='cancelled'">
+                    <field name="name"/>
+                    <field name="period_name" optional="show"/>
+                    <field name="is_test" optional="show"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="payroll_type"/>
+                    <field name="payment_frequency"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="data_source"/>
+                    <field name="state" widget="badge"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Vista Búsqueda de Planilla -->
+        <record id="hr_payroll_view_search" model="ir.ui.view">
+            <field name="name">hr.payroll.search</field>
+            <field name="model">hr.payroll</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Planillas">
+                    <field name="name"/>
+                    <field name="period_name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="prepayroll_id"/>
+                    <filter string="Mis Planillas" name="my_payrolls" domain="[('company_id', 'in', allowed_company_ids)]"/>
+                    <filter string="Ordinarias" name="regular" domain="[('payroll_type', '=', 'regular')]"/>
+                    <filter string="Borrador" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Calculadas" name="computed" domain="[('state', '=', 'computed')]"/>
+                    <filter string="Validadas" name="validated" domain="[('state', '=', 'validated')]"/>
+                    <filter string="Cerradas" name="closed" domain="[('state', '=', 'closed')]"/>
+                    <group expand="0" string="Agrupar Por">
+                        <filter string="Período de planilla" name="group_period" context="{'group_by': 'period_name'}"/>
+                        <filter string="Mes" name="group_month" context="{'group_by': 'date_start:month'}"/>
+                        <filter string="Compañía" name="group_company" context="{'group_by': 'company_id'}"/>
+                        <filter string="Tipo de Planilla" name="group_type" context="{'group_by': 'payroll_type'}"/>
+                        <filter string="Frecuencia" name="group_frequency" context="{'group_by': 'payment_frequency'}"/>
+                        <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción Ventana Planillas -->
+        <record id="action_hr_payroll" model="ir.actions.act_window">
+            <field name="name">Planillas de Sueldos</field>
+            <field name="res_model">hr.payroll</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="hr_payroll_view_search"/>
+            <field name="context">{'search_default_group_period': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ¡Crea tu primera Planilla de Sueldos!
+                </p>
+                <p>
+                    Puedes generar planillas desde una Preplanilla cerrada o crearlas de forma directa para casos especiales.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>
