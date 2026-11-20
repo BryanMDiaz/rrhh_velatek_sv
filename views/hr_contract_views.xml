@@ -19,6 +19,9 @@
                 <xpath expr="//group[@name='salary_info']" position="inside">
                     <group string="Remuneración y Producción" name="velatek_production_info">
                         <field name="velatek_remuneration_mode"/>
+                        <field name="sv_honorarium_isr_profile"/>
+                        <field name="sv_honorarium_isr_rate" invisible="sv_honorarium_isr_profile != 'verified'"/>
+                        <field name="sv_honorarium_isr_reference" invisible="sv_honorarium_isr_profile != 'verified'"/>
                         <field name="velatek_production_unit" invisible="velatek_remuneration_mode == 'fixed'"/>
                         <field name="velatek_production_rate" invisible="velatek_remuneration_mode == 'fixed'"/>
                     </group>
@@ -26,9 +29,33 @@
                         <field name="velatek_payment_frequency"/>
                         <field name="velatek_work_schedule_type"/>
                         <field name="velatek_analytic_account_id"/>
-                        <field name="velatek_work_location_id"/>
+                        <field name="velatek_work_location_id" domain="[('company_id', '=', company_id)]"/>
+                        <field name="velatek_minimum_wage_sector"/>
+                        <field name="velatek_rotating_shift"/>
                         <field name="velatek_contract_template_id"/>
                     </group>
+                </xpath>
+
+                <xpath expr="//notebook" position="inside">
+                    <page string="Cambios de salario y jornada" name="dated_terms">
+                        <group>
+                            <field name="velatek_current_wage"/>
+                            <field name="velatek_current_calendar_id"/>
+                        </group>
+                        <field name="velatek_terms_ids"
+                               context="{'default_wage': velatek_current_wage, 'default_calendar_id': velatek_current_calendar_id}"
+                               readonly="not id">
+                            <list editable="bottom">
+                                <field name="effective_from"/>
+                                <field name="wage"/>
+                                <field name="currency_id" column_invisible="1"/>
+                                <field name="calendar_id" domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
+                                <field name="hours_per_day" readonly="1"/>
+                                <field name="reason"/>
+                                <field name="document_id" domain="[('contract_id', '=', parent.id)]" options="{'no_create': True}"/>
+                            </list>
+                        </field>
+                    </page>
                 </xpath>
 
                 <xpath expr="//label[@for='wage']" position="attributes">

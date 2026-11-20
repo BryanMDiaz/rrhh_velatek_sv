@@ -92,13 +92,13 @@ class HrLoanTemplatePreviewWizard(models.TransientModel):
             self.preview_html = self._prepare_editable_html(self.loan_id.contract_html)
             return
 
-        company = self.template_id.company_id or self.env.company
         employee = self.employee_id or (self.loan_id.employee_id if self.loan_id else False)
         contract = self.contract_id or (self.loan_id.contract_id if self.loan_id else False)
         loan = self.loan_id
+        company = loan.company_id or contract.company_id or employee.company_id or self.template_id.company_id or self.env.company
 
         # Valores base de fallback si no hay empleado o préstamo seleccionado
-        c_name = company.name or "GRUPO 9, S.A. DE C.V."
+        c_name = company.name or "________________"
         rep = company.velatek_legal_representative_id
         rep_name = rep.name if rep else (company.name or "REPRESENTANTE LEGAL")
         rep_dui = rep.velatek_dui if rep else "00000000-0"

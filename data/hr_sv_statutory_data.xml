@@ -3,6 +3,7 @@
     <data noupdate="0">
         <!-- Parámetro ISSS -->
         <record id="isss_parameter_default" model="hr.sv.social.security.parameter">
+            <field name="company_id" eval="False"/>
             <field name="name">ISSS General 2026</field>
             <field name="code">isss_general</field>
             <field name="date_from">2000-01-01</field>
@@ -15,6 +16,7 @@
 
         <!-- Parámetro AFP -->
         <record id="afp_parameter_default" model="hr.sv.pension.parameter">
+            <field name="company_id" eval="False"/>
             <field name="name">AFP General 2026</field>
             <field name="code">afp_general</field>
             <field name="date_from">2023-01-01</field>
@@ -27,11 +29,12 @@
 
         <!-- Tabla ISR Mensual -->
         <record id="isr_table_monthly" model="hr.sv.isr.table">
+            <field name="company_id" eval="False"/>
             <field name="name">Tabla ISR Mensual 2026</field>
             <field name="code">isr_table_monthly</field>
             <field name="payment_frequency">monthly</field>
-            <field name="date_from">2000-01-01</field>
-            <field name="legal_reference">Ley de Impuesto sobre la Renta - El Salvador</field>
+            <field name="date_from">2025-05-08</field>
+            <field name="legal_reference">Decreto Ejecutivo 10 de 2025</field>
         </record>
         <record id="isr_bracket_monthly_1" model="hr.sv.isr.bracket">
             <field name="table_id" ref="isr_table_monthly"/>
@@ -76,11 +79,12 @@
 
         <!-- Tabla ISR Quincenal -->
         <record id="isr_table_biweekly" model="hr.sv.isr.table">
+            <field name="company_id" eval="False"/>
             <field name="name">Tabla ISR Quincenal 2026</field>
             <field name="code">isr_table_biweekly</field>
             <field name="payment_frequency">biweekly</field>
-            <field name="date_from">2000-01-01</field>
-            <field name="legal_reference">Ley de Impuesto sobre la Renta - El Salvador</field>
+            <field name="date_from">2025-05-08</field>
+            <field name="legal_reference">Decreto Ejecutivo 10 de 2025</field>
         </record>
         <record id="isr_bracket_biweekly_1" model="hr.sv.isr.bracket">
             <field name="table_id" ref="isr_table_biweekly"/>
@@ -99,7 +103,7 @@
             <field name="from_amount">275.00</field>
             <field name="to_amount">447.62</field>
             <field name="excess_over">275.00</field>
-            <field name="fixed_fee">8.84</field>
+            <field name="fixed_fee">8.83</field>
             <field name="rate">10.0</field>
         </record>
         <record id="isr_bracket_biweekly_3" model="hr.sv.isr.bracket">
@@ -119,17 +123,18 @@
             <field name="from_amount">1019.05</field>
             <field name="to_amount">0.0</field>
             <field name="excess_over">1019.05</field>
-            <field name="fixed_fee">144.29</field>
+            <field name="fixed_fee">144.28</field>
             <field name="rate">30.0</field>
         </record>
 
         <!-- Tabla ISR Semanal -->
         <record id="isr_table_weekly" model="hr.sv.isr.table">
+            <field name="company_id" eval="False"/>
             <field name="name">Tabla ISR Semanal 2026</field>
             <field name="code">isr_table_weekly</field>
             <field name="payment_frequency">weekly</field>
-            <field name="date_from">2000-01-01</field>
-            <field name="legal_reference">Ley de Impuesto sobre la Renta - El Salvador</field>
+            <field name="date_from">2025-05-08</field>
+            <field name="legal_reference">Decreto Ejecutivo 10 de 2025</field>
         </record>
         <record id="isr_bracket_weekly_1" model="hr.sv.isr.bracket">
             <field name="table_id" ref="isr_table_weekly"/>
@@ -174,11 +179,12 @@
 
         <!-- Tabla ISR Catorcenal -->
         <record id="isr_table_fourteen_days" model="hr.sv.isr.table">
+            <field name="company_id" eval="False"/>
             <field name="name">Tabla ISR Catorcenal 2026</field>
             <field name="code">isr_table_fourteen_days</field>
             <field name="payment_frequency">fourteen_days</field>
-            <field name="date_from">2000-01-01</field>
-            <field name="legal_reference">Ley de Impuesto sobre la Renta - El Salvador</field>
+            <field name="date_from">2025-05-08</field>
+            <field name="legal_reference">Configuración catorcenal interna. Verificar método de retención aplicable.</field>
         </record>
         <record id="isr_bracket_fourteen_days_1" model="hr.sv.isr.bracket">
             <field name="table_id" ref="isr_table_fourteen_days"/>

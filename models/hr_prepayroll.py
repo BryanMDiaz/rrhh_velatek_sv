@@ -2,7 +2,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from odoo.tools import format_amount, format_date
 from .operational_security import (
-    USER, RESPONSIBLE, MANAGER, require_group, check_create, check_write, check_edit,
+    USER, RESPONSIBLE, MANAGER, require_group, check_create, check_write, check_edit, check_workflow_write,
 )
 
 class HrPrepayroll(models.Model):
@@ -94,6 +94,10 @@ class HrPrepayroll(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
+        return self._write_operational_values(vals)
+
+    def _write_operational_values(self, vals, *, from_workflow=False):
+        check_workflow_write(self, vals, from_workflow)
         if 'is_test' in vals and any(record.is_test != bool(vals['is_test']) for record in self):
             raise ValidationError(_('Seleccione el modo de prueba al crear la preplanilla.'))
         if set(vals) - {'state'} and self.filtered(lambda prep: prep.state in ('validated', 'closed')):
@@ -150,21 +154,6 @@ class HrPrepayroll(models.Model):
             if overlapping:
                 raise ValidationError("Ya existe una preplanilla activa que se superpone con este período para la misma compañía y frecuencia.")
 
-    def _get_contract_period_wage(self, contract, days_to_pay, period_length):
-        """Convert the monthly contract wage to the prepayroll frequency."""
-        self.ensure_one()
-        frequency_factor = {
-            'monthly': 1.0,
-            'biweekly': 0.5,
-            'weekly': 7.0 / 30.0,
-            'fourteen_days': 14.0 / 30.0,
-        }.get(self.payment_frequency, period_length / 30.0)
-
-        period_wage = contract.wage * frequency_factor
-        if period_length and days_to_pay < period_length:
-            period_wage *= days_to_pay / period_length
-        return period_wage
-
     def action_load_employees(self):
         require_group(self, USER)
         self.ensure_one()
@@ -173,7 +162,7 @@ class HrPrepayroll(models.Model):
         
         # Obtener contratos activos en el periodo
         domain = [
-            ('state', '=', 'open'),
+            '|', ('state', '=', 'open'), '&', ('state', '=', 'close'), ('date_end', '!=', False),
             ('company_id', '=', self.company_id.id),
             '|', ('date_start', '<=', self.date_end), ('date_start', '=', False),
             '|', ('date_end', '>=', self.date_start), ('date_end', '=', False),
@@ -211,11 +200,8 @@ class HrPrepayroll(models.Model):
             else:
                 days_to_pay = 0
 
-            # Period length
-            period_length = (self.date_end - self.date_start).days + 1
-            
-            period_wage = self._get_contract_period_wage(
-                contract, days_to_pay, period_length,
+            base_wage, period_wage = contract._velatek_wage_for_period(
+                self.date_start, self.date_end, self.payment_frequency,
             )
             lines_to_create.append((0, 0, {
                 'employee_id': contract.employee_id.id,
@@ -223,7 +209,7 @@ class HrPrepayroll(models.Model):
                 'department_id': (contract.department_id or contract.employee_id.department_id).id,
                 'job_id': contract.job_id.id,
                 'remuneration_mode': contract.velatek_remuneration_mode,
-                'base_wage': contract.wage,
+                'base_wage': base_wage,
                 'days_to_pay': days_to_pay,
                 'period_wage': period_wage,
                 'production_unit': contract.velatek_production_unit,
@@ -233,17 +219,19 @@ class HrPrepayroll(models.Model):
         if lines_to_create:
             self.write({'line_ids': lines_to_create})
             
-        self.state = 'loaded'
+        self._write_operational_values({'state': 'loaded'}, from_workflow=True)
         self.action_update_data()
 
     def _refresh_line_contract_values(self):
-        period_length = (self.date_end - self.date_start).days + 1
         for line in self.line_ids:
             contract = line.contract_id
             department = contract.department_id or line.employee_id.department_id
+            base_wage, period_wage = contract._velatek_wage_for_period(
+                self.date_start, self.date_end, self.payment_frequency,
+            )
             values = {
-                'base_wage': contract.wage,
-                'period_wage': self._get_contract_period_wage(contract, line.days_to_pay, period_length),
+                'base_wage': base_wage,
+                'period_wage': period_wage,
                 'department_id': department.id,
             }
             changes = {
@@ -252,6 +240,17 @@ class HrPrepayroll(models.Model):
             }
             if changes:
                 line.write(changes)
+
+    def _period_incident_domain(self, line_employees, line_contracts):
+        self.ensure_one()
+        return [
+            ('employee_id', 'in', line_employees.ids),
+            ('contract_id', 'in', line_contracts.ids),
+            ('state', 'in', ('approved', 'processed') if self.is_test else ('approved',)),
+            '|',
+            '&', '&', ('date_from', '=', False), ('date', '>=', self.date_start), ('date', '<=', self.date_end),
+            '&', '&', ('date_from', '!=', False), ('date_from', '<=', self.date_end), ('date_to', '>=', self.date_start),
+        ]
 
     def action_update_data(self):
         require_group(self, USER)
@@ -296,14 +295,7 @@ class HrPrepayroll(models.Model):
             productions_by_key[key] |= prod
 
         # 3. Batch query: incidencias candidatas aprobadas
-        inc_domain = [
-            ('employee_id', 'in', line_employees.ids),
-            ('contract_id', 'in', line_contracts.ids),
-            ('state', 'in', ('approved', 'processed') if self.is_test else ('approved',)),
-            '|',
-            '&', '&', ('date_from', '=', False), ('date', '>=', self.date_start), ('date', '<=', self.date_end),
-            '&', '&', ('date_from', '!=', False), ('date_from', '<=', self.date_end), ('date_to', '>=', self.date_start),
-        ]
+        inc_domain = self._period_incident_domain(line_employees, line_contracts)
         all_candidate_incidents = self.env['hr.employee.incident'].search(inc_domain)
 
         incidents_by_key = {}
@@ -492,13 +484,13 @@ class HrPrepayroll(models.Model):
             line.night_work_amount = _sum_alloc('night_work', 'allocated_amount')
 
             line.holiday_work_hours = sum(
-                (a.allocated_hours + (a.allocated_days * (a.contract_id.resource_calendar_id.hours_per_day or 8.0)))
+                (a.allocated_hours + (a.allocated_days * (a.contract_id._velatek_terms_on(a.date_from)[2])))
                 for a in kept_allocations.filtered(lambda x: x.incident_id.incident_type == 'holiday_work')
             )
             line.holiday_work_amount = _sum_alloc('holiday_work', 'allocated_amount')
 
             line.weekly_rest_work_hours = sum(
-                (a.allocated_hours + (a.allocated_days * (a.contract_id.resource_calendar_id.hours_per_day or 8.0)))
+                (a.allocated_hours + (a.allocated_days * (a.contract_id._velatek_terms_on(a.date_from)[2])))
                 for a in kept_allocations.filtered(lambda x: x.incident_id.incident_type == 'weekly_rest_work')
             )
             line.weekly_rest_work_amount = _sum_alloc('weekly_rest_work', 'allocated_amount')
@@ -529,6 +521,11 @@ class HrPrepayroll(models.Model):
             line.viaticos_amount = _sum_alloc('viaticos', 'allocated_amount')
             line.other_income = _sum_alloc('other_income', 'allocated_amount')
             line.deduction_amount = _sum_alloc('deduction', 'allocated_amount')
+
+    @api.constrains('state')
+    def _check_minimum_wage_on_validation(self):
+        for period in self.filtered(lambda record: record.state in ('validated', 'closed')):
+            period.line_ids._validate_period_minimum_wages(period)
 
     def action_validate(self):
         require_group(self, RESPONSIBLE)
@@ -657,7 +654,7 @@ class HrPrepayroll(models.Model):
             formatted_errors = "\n".join(f"- {e}" for e in errors)
             raise ValidationError(f"No se puede validar la preplanilla:\n{formatted_errors}")
 
-        self.state = 'validated'
+        self._write_operational_values({'state': 'validated'}, from_workflow=True)
         
         # Reservar cuotas de préstamo
         installments = self.line_ids.mapped('loan_installment_ids')
@@ -673,6 +670,27 @@ class HrPrepayroll(models.Model):
         productions = self.line_ids.mapped('production_ids')
         allocations = self.env['hr.prepayroll.incident.allocation'].search([('prepayroll_id', '=', self.id)])
         incidents = allocations.mapped('incident_id')
+
+        if not self.is_test:
+            candidates = self.env['hr.employee.incident'].search(self._period_incident_domain(
+                self.line_ids.employee_id, self.line_ids.contract_id,
+            ))
+            pending = candidates - incidents
+            if pending:
+                allocated_elsewhere = self.env['hr.prepayroll.incident.allocation'].search([
+                    ('incident_id', 'in', pending.ids),
+                    ('prepayroll_id', '!=', self.id),
+                    ('prepayroll_id.is_test', '=', False),
+                    ('prepayroll_id.state', 'in', ('validated', 'closed')),
+                    ('date_from', '<=', self.date_end),
+                    ('date_to', '>=', self.date_start),
+                ]).incident_id
+                pending -= allocated_elsewhere
+            if pending or allocations.filtered(lambda allocation: allocation.incident_id.write_date > allocation.write_date):
+                raise ValidationError(_(
+                    'Hay incidencias aprobadas o modificadas después de consolidar. '
+                    'Vuelva a borrador, actualice los datos y valide de nuevo.'
+                ))
 
         for line in self.line_ids:
             for prod in line.production_ids:
@@ -696,7 +714,7 @@ class HrPrepayroll(models.Model):
                     raise ValidationError(f"La incidencia '{inc.display_name}' no coincide con el empleado/contrato de la línea.")
 
         if self.is_test:
-            self.state = 'closed'
+            self._write_operational_values({'state': 'closed'}, from_workflow=True)
             return
 
         if productions:
@@ -705,7 +723,7 @@ class HrPrepayroll(models.Model):
                 'processed_prepayroll_id': self.id,
             })
 
-        self.state = 'closed'
+        self._write_operational_values({'state': 'closed'}, from_workflow=True)
 
         if incidents:
             all_closed_allocs = self.env['hr.prepayroll.incident.allocation'].search([
@@ -743,7 +761,7 @@ class HrPrepayroll(models.Model):
             raise ValidationError("No se puede volver a borrador directamente una preplanilla cerrada.")
         if self.state != 'validated':
             raise ValidationError("Solo se puede volver a borrador desde el estado validado.")
-        self.state = 'draft'
+        self._write_operational_values({'state': 'draft'}, from_workflow=True)
 
         # Liberar cuotas de préstamo
         installments = self.line_ids.mapped('loan_installment_ids')
@@ -757,7 +775,7 @@ class HrPrepayroll(models.Model):
             raise ValidationError("Una preplanilla cerrada requiere un proceso de reversión.")
         if self.state == 'cancelled':
             return
-        self.state = 'cancelled'
+        self._write_operational_values({'state': 'cancelled'}, from_workflow=True)
 
         # Liberar cuotas de préstamo
         installments = self.line_ids.mapped('loan_installment_ids')
@@ -827,6 +845,8 @@ class HrPrepayroll(models.Model):
 
 class HrPrepayrollLine(models.Model):
     _name = 'hr.prepayroll.line'
+    _inherit = ['hr.sv.minimum.wage.review']
+    _check_company_auto = True
     _description = 'Línea de Preplanilla'
 
     prepayroll_id = fields.Many2one('hr.prepayroll', string='Preplanilla', ondelete='cascade', required=True)
@@ -926,11 +946,21 @@ class HrPrepayrollLine(models.Model):
     days_to_pay = fields.Float(string='Días del período')
     net_days_to_pay = fields.Float(string='Días a Pagar', compute='_compute_net_days_to_pay', store=True)
 
-    @api.depends('days_to_pay', 'absence_days', 'absence_hours', 'contract_id.resource_calendar_id.hours_per_day')
+    @api.depends(
+        'days_to_pay', 'absence_days', 'absence_hours', 'contract_id.resource_calendar_id.hours_per_day',
+        'allocation_ids.allocated_hours', 'allocation_ids.incident_id.absence_hours_per_day',
+    )
     def _compute_net_days_to_pay(self):
         for line in self:
             hours_per_day = line.contract_id.resource_calendar_id.hours_per_day or 8.0
-            line.net_days_to_pay = max(0.0, line.days_to_pay - line.absence_days - line.absence_hours / hours_per_day)
+            absences = line.allocation_ids.filtered(
+                lambda allocation: allocation.incident_id.incident_type in ('unpaid_leave', 'unjustified_absence', 'suspension')
+            )
+            partial_days = sum(
+                allocation.allocated_hours / (allocation.incident_id.absence_hours_per_day or hours_per_day)
+                for allocation in absences
+            ) if absences else line.absence_hours / hours_per_day
+            line.net_days_to_pay = max(0.0, line.days_to_pay - line.absence_days - partial_days)
 
     period_wage = fields.Monetary(string='Salario preliminar del período')
     

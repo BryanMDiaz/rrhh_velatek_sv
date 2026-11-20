@@ -1,6 +1,8 @@
-from odoo import models, fields, api
+from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
 import uuid
+
+from .hr_sv_minimum_wage import FREQUENCY_FACTORS, SECTORS
 
 class HrContract(models.Model):
     _inherit = 'hr.contract'
@@ -27,6 +29,103 @@ class HrContract(models.Model):
         ('other', 'Otra')
     ], string='Tipo de jornada', default='full_time')
 
+
+    velatek_minimum_wage_sector = fields.Selection(
+        SECTORS, string='Sector económico del contrato',
+        help='Si se deja vacío, se aplica el sector del centro de trabajo o de la compañía.',
+    )
+    velatek_rotating_shift = fields.Boolean(string='Horario rotativo')
+
+    def _minimum_wage_sector(self):
+        self.ensure_one()
+        location = self.velatek_work_location_id or self.employee_id.work_location_id
+        if location.company_id and location.company_id != self.company_id:
+            raise ValidationError(_('El centro de trabajo seleccionado debe pertenecer a la compañía del contrato.'))
+        sector = self.velatek_minimum_wage_sector or location.velatek_minimum_wage_sector or self.company_id.velatek_minimum_wage_sector
+        if not sector:
+            raise ValidationError(_('Configure el sector económico del contrato, del centro de trabajo o de la compañía.'))
+        return sector
+
+    def _check_minimum_wage_enabled(self, date):
+        self.ensure_one()
+        effective = self.company_id.velatek_minimum_wage_from
+        professional = self.env.ref('rrhh_velatek_sv.contract_type_professional_services', raise_if_not_found=False)
+        return effective and date >= effective and self.contract_type_id != professional
+
+    def _minimum_wage_in_company_currency(self, amount, date):
+        return self.env.ref('base.USD')._convert(amount, self.company_id.currency_id, self.company_id, date)
+
+    def _minimum_wage_requires_review(self, frequency):
+        return (self.velatek_work_schedule_type != 'full_time' or self.velatek_rotating_shift
+                or self.velatek_remuneration_mode != 'fixed' or frequency not in FREQUENCY_FACTORS)
+
+    @api.constrains(
+        'state', 'wage', 'date_start', 'date_end', 'company_id', 'employee_id', 'contract_type_id',
+        'velatek_minimum_wage_sector', 'velatek_work_location_id', 'velatek_work_schedule_type',
+        'velatek_rotating_shift', 'velatek_remuneration_mode', 'velatek_payment_frequency',
+    )
+    def _check_contract_minimum_wage(self):
+        for contract in self.filtered(lambda c: c.state == 'open' and c.date_start):
+            date = max(contract.date_start, fields.Date.context_today(contract))
+            if (contract.date_end and contract.date_end < date) or not contract._check_minimum_wage_enabled(date):
+                continue
+            sector = contract._minimum_wage_sector()
+            rates = self.env['hr.sv.minimum.wage']._rates_for_period(sector, date, date)
+            if not contract._minimum_wage_requires_review(contract.velatek_payment_frequency):
+                minimum = contract._minimum_wage_in_company_currency(rates.monthly_amount, date)
+                if contract.company_id.currency_id.compare_amounts(contract._velatek_terms_on(date)[0], minimum) < 0:
+                    raise ValidationError(_('El salario mensual es inferior al mínimo vigente de %(minimum).2f.', minimum=minimum))
+
+    def _validate_minimum_wage_amount(self, period, line):
+        self.ensure_one()
+        start, end, frequency = period.date_start, period.date_end, period.payment_frequency
+        fixed = line.period_wage
+        period_days = (end - start).days + 1
+        end = min(end, self.date_end) if self.date_end else end
+        if not self._check_minimum_wage_enabled(end):
+            return
+        first_paid = max(start, self.date_start) if self.date_start else start
+        if end < first_paid:
+            return
+        first_checked = max(first_paid, self.company_id.velatek_minimum_wage_from)
+        checked_days = (end - first_checked).days + 1
+        paid_days = (end - first_paid).days + 1
+        sector = self._minimum_wage_sector()
+        rates = self.env['hr.sv.minimum.wage']._rates_for_period(sector, first_checked, end)
+        currency = self.company_id.currency_id
+        if self._minimum_wage_requires_review(frequency):
+            remuneration = (fixed if self.velatek_remuneration_mode != 'production' else 0.0) + line.production_amount
+            minimum = line.minimum_wage_review_amount
+            days = line.minimum_wage_review_full_days
+            hours = line.minimum_wage_review_partial_hours
+            if (not line.minimum_wage_reviewed or not (line.minimum_wage_review_reference or '').strip()
+                    or min(days, hours, minimum) < 0 or (remuneration > 0 and not minimum)):
+                raise ValidationError(_(
+                    'Verifique el mínimo del período y registre el importe y la referencia del cálculo '
+                    'según la jornada, el sector y la modalidad salarial.'
+                ))
+            if days > checked_days or hours > 5 * (checked_days - days):
+                raise ValidationError(_('Las jornadas verificadas superan los días del período revisado.'))
+            if not (days or hours) and remuneration > 0 and sector not in ('coffee_harvest', 'sugar_harvest'):
+                raise ValidationError(_('Registre las jornadas o las horas ordinarias verificadas para comprobar el mínimo.'))
+            tariff_floor = self._minimum_wage_in_company_currency(
+                days * min(rates.mapped('daily_amount')) + hours * min(rates.mapped('hourly_amount')), end,
+            )
+            if currency.compare_amounts(minimum, tariff_floor) < 0:
+                raise ValidationError(_(
+                    'El mínimo verificado es inferior a la referencia de las jornadas y horas declaradas (%(amount).2f).',
+                    amount=tariff_floor,
+                ))
+        else:
+            minimum = self._minimum_wage_in_company_currency(sum(
+                rate.monthly_amount * ((min(end, rate.date_to or end) - max(first_checked, rate.date_from)).days + 1) for rate in rates
+            ) * FREQUENCY_FACTORS[frequency] / period_days, end)
+            remuneration = fixed * checked_days / paid_days
+        if currency.compare_amounts(remuneration, minimum) < 0:
+            raise ValidationError(_(
+                'La remuneración ordinaria de %(actual).2f es inferior al mínimo de %(minimum).2f para este período.',
+                actual=remuneration, minimum=minimum,
+            ))
 
     velatek_analytic_account_id = fields.Many2one('account.analytic.account', string='Centro de costo')
     velatek_work_location_id = fields.Many2one('hr.work.location', string='Ubicación de trabajo')

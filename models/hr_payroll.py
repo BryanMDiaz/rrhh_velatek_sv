@@ -1,8 +1,9 @@
 """Model for Payroll (Planilla) and Payroll Line (Línea de Planilla)."""
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, ValidationError
+from odoo.tools import float_compare
 from .operational_security import (
-    USER, RESPONSIBLE, MANAGER, check_edit, check_create, check_write, require_group,
+    USER, RESPONSIBLE, MANAGER, check_edit, check_create, check_write, require_group, check_workflow_write,
 )
 import calendar
 
@@ -41,6 +42,7 @@ class HrPayroll(models.Model):
         ('retroactive', 'Retroactivo'),
         ('settlement', 'Liquidación'),
         ('bonus', 'Aguinaldo'),
+        ('q25', 'Quincena 25'),
         ('vacation', 'Vacación'),
         ('extraordinary', 'Extraordinaria'),
         ('other', 'Otra'),
@@ -189,13 +191,15 @@ class HrPayroll(models.Model):
                 freq_str = freq_es.get(record.payment_frequency, 'PERÍODO')
             record.period_title = f"PLANILLA CORRESPONDIENTE AL MES DE {m} {freq_str} - {y}"
 
-    @api.depends('payroll_type', 'prepayroll_id')
+    @api.depends('payroll_type', 'prepayroll_id', 'is_test')
     def _compute_warning_message(self):
         for record in self:
             if record.payroll_type == 'regular' and not record.prepayroll_id:
                 record.warning_message = record.env._(
-                    "Esta planilla ordinaria no tiene una preplanilla asociada. "
-                    "La carga directa no importa incidencias ni producción. Para consolidarlas, utilice una preplanilla cerrada."
+                    "Esta planilla de prueba usa carga directa, que no incluye incidencias ni producción."
+                    if record.is_test else
+                    "La planilla ordinaria oficial requiere una preplanilla ordinaria cerrada del mismo período. "
+                    "Vincúlela y cargue sus líneas antes de calcular."
                 )
             else:
                 record.warning_message = False
@@ -262,15 +266,72 @@ class HrPayroll(models.Model):
                         payroll_name=existing.name,
                     ))
 
+    @api.constrains('state')
+    def _check_official_regular_payroll_origin(self):
+        for payroll in self.filtered(lambda record: (
+            record.payroll_type == 'regular' and not record.is_test
+            and record.state in ('computed', 'validated', 'closed')
+        )):
+            payroll._validate_official_regular_payroll_origin()
+
+    def _validate_official_regular_payroll_origin(self):
+        self.ensure_one()
+        prep = self.prepayroll_id
+        if (not prep or prep.state != 'closed' or prep.is_test or prep.prepayroll_type != 'regular'
+                or prep.company_id != self.company_id or prep.payment_frequency != self.payment_frequency
+                or prep.date_start != self.date_start or prep.date_end != self.date_end):
+            raise ValidationError(_(
+                'La planilla ordinaria oficial requiere una preplanilla ordinaria oficial cerrada '
+                'de la misma compañía, frecuencia y fechas exactas.'
+            ))
+        source_lines = self.line_ids.mapped('prepayroll_line_id')
+        if (not prep.line_ids or set(source_lines.ids) != set(prep.line_ids.ids)
+                or len(self.line_ids) != len(prep.line_ids)
+                or any(line.source_type != 'prepayroll' for line in self.line_ids)):
+            raise ValidationError(_('Cargue todas las líneas desde la preplanilla de origen, una vez por cada empleado y contrato.'))
+
+        for line in self.line_ids:
+            source_values = line.prepayroll_line_id._get_payroll_line_values()
+            for field, expected in source_values.items():
+                if field in ('sequence', 'department_id', 'job_id'):
+                    continue
+                actual = line[field]
+                kind = line._fields[field].type
+                if kind == 'many2one':
+                    different = (actual.id or False) != expected
+                elif kind == 'many2many':
+                    different = set(actual.ids) != set(expected[0][2])
+                elif kind == 'monetary':
+                    different = self.currency_id.compare_amounts(actual, expected)
+                elif kind == 'float':
+                    different = float_compare(actual, expected, precision_digits=6)
+                else:
+                    different = actual != expected
+                if different:
+                    raise ValidationError(_(
+                        '%(employee)s: «%(field)s» difiere de la preplanilla. Vuelva a cargar sus líneas.',
+                        employee=line.employee_id.display_name, field=line._fields[field].string,
+                    ))
+
     @api.model_create_multi
     def create(self, vals_list):
         check_create(self, vals_list)
         return super().create(vals_list)
 
+    def _operational_metadata_fields(self):
+        return set()
+
     def write(self, vals):
+        return self._write_operational_values(vals)
+
+    def _write_operational_values(self, vals, *, from_workflow=False):
+        check_workflow_write(self, vals, from_workflow)
         if 'is_test' in vals and any(record.is_test != bool(vals['is_test']) for record in self):
             raise ValidationError(_('Seleccione el modo de prueba al crear la planilla.'))
+        if {'reviewed_by_id', 'approved_by_id'}.intersection(vals) and not from_workflow and not self.env.su:
+            raise AccessError(_('Los responsables de revisión y autorización se registran al ejecutar la acción.'))
         allowed = {'state', 'reviewed_by_id', 'approved_by_id', 'reviewed_employee_id', 'approved_employee_id'}
+        allowed |= self._operational_metadata_fields()
         if set(vals) - allowed and self.filtered(lambda payroll: payroll.state in ('validated', 'closed')):
             raise ValidationError(_('La planilla está validada o cerrada. No puede modificar sus datos de pago.'))
         if {'reviewed_employee_id', 'approved_employee_id'} & vals.keys() and self.filtered(lambda payroll: payroll.state == 'closed'):
@@ -305,11 +366,13 @@ class HrPayroll(models.Model):
         if self.state not in ('draft', 'computed'):
             raise ValidationError(_("Solo se pueden cargar empleados en estado Borrador o Calculada."))
 
+        if self.payroll_type == 'q25':
+            raise ValidationError(_('Genere la Quincena 25 desde la ficha de prestaciones.'))
         if self.prepayroll_id:
             return self.action_load_from_prepayroll()
 
         domain = [
-            ('state', '=', 'open'),
+            '|', ('state', '=', 'open'), '&', ('state', '=', 'close'), ('date_end', '!=', False),
             ('company_id', '=', self.company_id.id),
             '|', ('date_start', '<=', self.date_end), ('date_start', '=', False),
             '|', ('date_end', '>=', self.date_start), ('date_end', '=', False),
@@ -352,19 +415,9 @@ class HrPayroll(models.Model):
             else:
                 days_to_pay = 0
 
-            period_length = (self.date_end - self.date_start).days + 1
-            
-            frequency = self.payment_frequency
-            frequency_factors = {
-                'monthly': 1.0,
-                'biweekly': 0.5,
-                'weekly': 7.0 / 30.0,
-                'fourteen_days': 14.0 / 30.0,
-            }
-            frequency_factor = frequency_factors.get(frequency, period_length / 30.0)
-            base_period_wage = contract.wage * frequency_factor
-            
-            period_wage = self.currency_id.round(base_period_wage * (days_to_pay / period_length)) if period_length > 0 else 0.0
+            base_wage, period_wage = contract._velatek_wage_for_period(
+                self.date_start, self.date_end, self.payment_frequency,
+            )
 
             key = (contract.employee_id.id, contract.id)
             candidate_installments = installments_by_key.get(key, self.env['hr.employee.loan.installment'])
@@ -377,7 +430,7 @@ class HrPayroll(models.Model):
                 'department_id': contract.department_id.id if contract.department_id else contract.employee_id.department_id.id,
                 'job_id': contract.job_id.id,
                 'remuneration_mode': contract.velatek_remuneration_mode or 'fixed',
-                'base_wage': contract.wage,
+                'base_wage': base_wage,
                 'days_to_pay': days_to_pay,
                 'worked_days': days_to_pay,
                 'period_wage': period_wage,
@@ -419,26 +472,69 @@ class HrPayroll(models.Model):
                 raise ValidationError(_("Solo se pueden calcular planillas en estado Borrador o Calculada."))
             if record.prepayroll_id and (not record.line_ids or any(line.source_type != 'prepayroll' for line in record.line_ids)):
                 record.action_load_from_prepayroll()
+            for line in record.line_ids.filtered(lambda line: record.payroll_type != 'q25' and line.source_type == 'manual' and line.contract_id.velatek_terms_ids):
+                base_wage, period_wage = line.contract_id._velatek_wage_for_period(
+                    record.date_start, record.date_end, record.payment_frequency,
+                )
+                line.write({'base_wage': base_wage, 'period_wage': period_wage})
             record.line_ids._compute_preliminary_totals()
-            record.state = 'computed'
+            record._write_operational_values({'state': 'computed'}, from_workflow=True)
+
+    @api.constrains('state', 'payroll_type', 'company_id', 'date_start', 'date_end', 'prepayroll_id', 'is_test')
+    def _check_q25_source(self):
+        for payroll in self:
+            if payroll.state not in ('computed', 'validated', 'closed'):
+                continue
+            # Payroll approvers need to verify the source without gaining access to other benefit records.
+            cases = self.env['hr.sv.benefit'].sudo().search([('payroll_id', '=', payroll.id)])
+            if not cases and payroll.payroll_type != 'q25':
+                continue
+            by_employee = {case.employee_id.id: case for case in cases}
+            if (not cases or payroll.payroll_type != 'q25' or payroll.prepayroll_id or payroll.is_test
+                    or len(by_employee) != len(cases) or len(payroll.line_ids) != len(cases)
+                    or set(payroll.line_ids.employee_id.ids) != set(by_employee)):
+                raise ValidationError(_('La Quincena 25 debe coincidir con las fichas que la originaron.'))
+            for line in payroll.line_ids:
+                case = by_employee[line.employee_id.id]
+                if (case.kind != 'q25' or case.company_id != payroll.company_id
+                        or case.contract_id != line.contract_id
+                        or (case.contract_id.date_end and case.contract_id.date_end < case.benefit_date)
+                        or case.benefit_date != payroll.date_start
+                        or case.benefit_date != payroll.date_end
+                        or payroll.currency_id.compare_amounts(case.q25_amount, line.bonus_amount)
+                        or payroll.currency_id.compare_amounts(case.q25_amount, line.total_earned)
+                        or payroll.currency_id.compare_amounts(case.q25_amount, line.total_to_settle)
+                        or line.loan_installment_ids or any(line[field] for field in (
+                            'total_deductions', 'salary_advance_amount', 'outside_payment_amount', 'period_wage',
+                            'production_amount', 'viaticos_amount', 'overtime_amount', 'night_overtime_amount',
+                            'night_work_amount', 'holiday_work_amount', 'holiday_amount', 'vacation_amount',
+                            'weekly_rest_work_amount', 'commission_amount', 'other_income', 'absence_amount',
+                            'sick_ordinary_amount', 'sick_employer_amount',
+                        ))):
+                    raise ValidationError(_('Cada persona de Quincena 25 debe recibir íntegro el importe de su ficha.'))
+
+    @api.constrains('state')
+    def _check_minimum_wage_on_validation(self):
+        for period in self.filtered(lambda record: record.state in ('validated', 'closed')):
+            period.line_ids._validate_period_minimum_wages(period)
 
     def action_validate(self):
         require_group(self, RESPONSIBLE)
         for record in self:
             if record.state != 'computed':
                 raise ValidationError(_("Solo se pueden validar planillas en estado Calculada."))
-            if not record.reviewed_by_id:
-                record.reviewed_by_id = self.env.user
-            record.state = 'validated'
+            record._write_operational_values({
+                'state': 'validated', 'reviewed_by_id': self.env.uid,
+            }, from_workflow=True)
 
     def action_close(self):
         require_group(self, MANAGER)
         for record in self:
             if record.state != 'validated':
                 raise ValidationError(_("Solo se pueden cerrar planillas en estado Validada."))
-            if not record.approved_by_id:
-                record.approved_by_id = self.env.user
-            record.state = 'closed'
+            record._write_operational_values({
+                'state': 'closed', 'approved_by_id': self.env.uid,
+            }, from_workflow=True)
             
             if record.is_test:
                 continue
@@ -466,14 +562,14 @@ class HrPayroll(models.Model):
         for record in self:
             if record.state == 'closed':
                 raise ValidationError(_("No se puede volver a borrador una planilla cerrada."))
-            record.state = 'draft'
+            record._write_operational_values({'state': 'draft'}, from_workflow=True)
 
     def action_cancel(self):
         require_group(self, MANAGER)
         for record in self:
             if record.state == 'closed':
                 raise ValidationError(_("No se puede cancelar una planilla cerrada."))
-            record.state = 'cancelled'
+            record._write_operational_values({'state': 'cancelled'}, from_workflow=True)
 
     def action_view_prepayroll(self):
         self.ensure_one()
@@ -491,6 +587,8 @@ class HrPayroll(models.Model):
 
 class HrPayrollLine(models.Model):
     _name = 'hr.payroll.line'
+    _inherit = ['hr.sv.minimum.wage.review']
+    _check_company_auto = True
     _description = 'Línea de Planilla'
     _order = 'department_id, sequence, id'
 
@@ -702,7 +800,7 @@ class HrPayrollLine(models.Model):
         'other_income', 'other_withholdings_amount', 'absence_amount', 'deduction_amount',
         'loan_deduction_amount', 'salary_advance_amount', 'sick_ordinary_amount', 'sick_employer_amount',
         'outside_payment_amount', 'payroll_id.date_start', 'payroll_id.date_end',
-        'payroll_id.company_id', 'payroll_id.payment_frequency', 'contract_id', 'prepayroll_line_id',
+        'payroll_id.company_id', 'payroll_id.payment_frequency', 'payroll_id.payroll_type', 'contract_id', 'prepayroll_line_id',
     )
     def _compute_preliminary_totals(self):
         # Optimizar búsquedas en batch
@@ -806,6 +904,9 @@ class HrPayrollLine(models.Model):
             line.afp_taxable_base = line.currency_id.round(native_base + afp_incident_base) if line.currency_id else (native_base + afp_incident_base)
             line.isr_taxable_base = line.currency_id.round(native_base + isr_incident_base) if line.currency_id else (native_base + isr_incident_base)
 
+            q25 = line.payroll_id.payroll_type == 'q25'
+            if q25:
+                line.isss_taxable_base = line.afp_taxable_base = line.isr_taxable_base = 0.0
             line.total_earned = earnings
 
             ref_date = (line.payroll_id and (line.payroll_id.date_end or line.payroll_id.date_start)) or fields.Date.today()
@@ -813,7 +914,7 @@ class HrPayrollLine(models.Model):
             freq = (line.payroll_id and line.payroll_id.payment_frequency) or 'monthly'
 
             # ISSS
-            if line.payroll_id and line.payroll_id.payroll_type in ('professional_services', 'bonus'):
+            if line.payroll_id and line.payroll_id.payroll_type in ('professional_services', 'bonus', 'q25'):
                 line.isss_parameter_id = False
                 line.isss_rate_snapshot = 0.0
                 line.isss_employer_rate_snapshot = 0.0
@@ -827,7 +928,7 @@ class HrPayrollLine(models.Model):
                 line.isss_employee_amount = isss_calc
 
             # AFP
-            if line.payroll_id and line.payroll_id.payroll_type in ('professional_services', 'bonus'):
+            if line.payroll_id and line.payroll_id.payroll_type in ('professional_services', 'bonus', 'q25'):
                 line.afp_parameter_id = False
                 line.afp_rate_snapshot = 0.0
                 line.afp_employer_rate_snapshot = 0.0
@@ -843,12 +944,16 @@ class HrPayrollLine(models.Model):
 
             # ISR
             taxable_base_isr = max(0.0, line.isr_taxable_base - (line.isss_employee_amount or 0.0) - (line.afp_employee_amount or 0.0))
-            if line.payroll_id and line.payroll_id.payroll_type == 'professional_services':
+            if q25:
+                line.isr_table_id = line.isr_bracket_id = False
+                line.income_tax_amount = line.isr_rate_snapshot = 0.0
+                line.isr_fixed_fee_snapshot = line.isr_excess_over_snapshot = 0.0
+            elif line.payroll_id and line.payroll_id.payroll_type == 'professional_services':
                 line.isr_table_id = False
                 line.isr_bracket_id = False
-                # Servicios Profesionales has a fixed 10% withholding
-                line.income_tax_amount = taxable_base_isr * 0.10
-                line.isr_rate_snapshot = 10.0
+                rate = line.contract_id._honorarium_tax_rate() if line.contract_id else 0.0
+                line.income_tax_amount = line.currency_id.round(taxable_base_isr * rate / 100.0)
+                line.isr_rate_snapshot = rate
                 line.isr_fixed_fee_snapshot = 0.0
                 line.isr_excess_over_snapshot = 0.0
             else:

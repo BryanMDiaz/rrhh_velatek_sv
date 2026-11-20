@@ -13,6 +13,13 @@
                   action="action_hr_employee_data_velatek"
                   sequence="8"/>
 
+        <menuitem id="menu_hr_contract_mtps_tracking"
+                  name="Presentación al MTPS"
+                  parent="hr.menu_hr_root"
+                  action="action_hr_contract_mtps_tracking"
+                  groups="hr.group_hr_user"
+                  sequence="5"/>
+
         <!-- Submenús de Operación Mensual -->
         <menuitem id="menu_hr_prepayroll"
                   name="Preplanillas"
@@ -25,6 +32,13 @@
                   parent="menu_hr_monthly_operation"
                   action="action_hr_payroll"
                   sequence="15"/>
+
+        <menuitem id="menu_hr_payroll_filing"
+                  name="Declaraciones y control fiscal"
+                  parent="menu_hr_monthly_operation"
+                  action="action_hr_payroll_filing_wizard"
+                  groups="hr.group_hr_manager"
+                  sequence="17"/>
 
         <menuitem id="menu_hr_production"
                   name="Producción"
@@ -87,6 +101,13 @@
                   sequence="10"/>
 
         <!-- Préstamos -->
+        <menuitem id="menu_hr_sv_minimum_wage"
+                  name="Salario mínimo de El Salvador"
+                  parent="menu_hr_configuration_payroll"
+                  action="action_hr_sv_minimum_wage"
+                  groups="hr.group_hr_manager"
+                  sequence="20"/>
+
         <menuitem id="menu_hr_configuration_loan"
                   name="Préstamos"
                   parent="hr.menu_human_resources_configuration"
@@ -103,5 +124,13 @@
                   parent="menu_hr_configuration_loan"
                   action="action_hr_employee_loan_template"
                   sequence="20"/>
+        <menuitem id="menu_hr_sv_benefits" name="Prestaciones y salida"
+                  parent="menu_hr_monthly_operation" groups="hr.group_hr_manager" sequence="85"/>
+        <menuitem id="menu_hr_sv_benefit" name="Cálculos de prestaciones"
+                  parent="menu_hr_sv_benefits" action="action_hr_sv_benefit" sequence="10"/>
+        <menuitem id="menu_hr_sv_vacation_cycle" name="Saldos de vacaciones"
+                  parent="menu_hr_sv_benefits" action="action_hr_sv_vacation_cycle" sequence="20"/>
+        <menuitem id="menu_hr_sv_q25_batch" name="Lotes de Quincena 25"
+                  parent="menu_hr_sv_benefits" action="action_hr_sv_q25_batch" sequence="30"/>
     </data>
 </odoo>

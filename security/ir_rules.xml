@@ -1,5 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="hr_payroll_payment_event_company_rule" model="ir.rule">
+        <field name="name">Movimientos de pago de planilla por compañía</field>
+        <field name="model_id" ref="model_hr_payroll_payment_event"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hr_sv_q25_batch_company_rule" model="ir.rule">
+        <field name="name">Quincena 25 por compañía</field>
+        <field name="model_id" ref="model_hr_sv_q25_batch"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hr_sv_q25_batch_line_company_rule" model="ir.rule">
+        <field name="name">Quincena 25 por compañía</field>
+        <field name="model_id" ref="model_hr_sv_q25_batch_line"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hr_sv_vacation_payment_allocation_rule_company" model="ir.rule">
+        <field name="name">Aplicaciones de vacaciones por compañía</field>
+        <field name="model_id" ref="model_hr_sv_vacation_payment_allocation"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hr_sv_benefit_rule_company" model="ir.rule">
+        <field name="name">Prestaciones por compañía</field>
+        <field name="model_id" ref="model_hr_sv_benefit"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hr_sv_vacation_cycle_rule_company" model="ir.rule">
+        <field name="name">Saldos de vacaciones por compañía</field>
+        <field name="model_id" ref="model_hr_sv_vacation_cycle"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hr_contract_terms_rule_company" model="ir.rule">
+        <field name="name">Vigencias contractuales: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_contract_terms"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hr_payroll_rule_company" model="ir.rule">
+        <field name="name">Planillas: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_payroll"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_payroll_line_rule_company" model="ir.rule">
+        <field name="name">Líneas de planilla: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_payroll_line"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_prepayroll_incident_allocation_rule_company" model="ir.rule">
+        <field name="name">Asignaciones de incidencias: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_prepayroll_incident_allocation"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_employee_loan_rule_company" model="ir.rule">
+        <field name="name">Préstamos: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_employee_loan"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_employee_loan_installment_rule_company" model="ir.rule">
+        <field name="name">Cuotas de préstamos: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_employee_loan_installment"/>
+        <field name="domain_force">[('loan_id.company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_employee_loan_type_rule_company" model="ir.rule">
+        <field name="name">Tipos de préstamo: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_employee_loan_type"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_employee_loan_template_rule_company" model="ir.rule">
+        <field name="name">Plantillas de préstamo: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_employee_loan_template"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_incident_reason_rule_company" model="ir.rule">
+        <field name="name">Motivos de incidencia: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_incident_reason"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_incident_concept_rule_company" model="ir.rule">
+        <field name="name">Conceptos de incidencia: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_incident_concept"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_sv_labor_rate_rule_company" model="ir.rule">
+        <field name="name">Tasas laborales: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_sv_labor_rate"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_sv_social_security_parameter_rule_company" model="ir.rule">
+        <field name="name">Parámetros ISSS: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_sv_social_security_parameter"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_sv_pension_parameter_rule_company" model="ir.rule">
+        <field name="name">Parámetros AFP: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_sv_pension_parameter"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_sv_isr_table_rule_company" model="ir.rule">
+        <field name="name">Tablas ISR: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_sv_isr_table"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="hr_sv_isr_bracket_rule_company" model="ir.rule">
+        <field name="name">Tramos ISR: compañías habilitadas</field>
+        <field name="model_id" ref="model_hr_sv_isr_bracket"/>
+        <field name="domain_force">['|', ('table_id.company_id', '=', False), ('table_id.company_id', 'in', company_ids)]</field>
+    </record>
+
     <data noupdate="1">
 
         <!-- ═══════════════════════════════════════════════════════════════

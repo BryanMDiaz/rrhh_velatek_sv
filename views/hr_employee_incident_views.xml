@@ -48,8 +48,8 @@
                                        readonly="state not in ('draft', 'to_approve')"
                                        help="Suba el certificado médico, acta, factura u otro comprobante de esta incidencia."/>
                                 <field name="sick_ordinary_daily" invisible="incident_type != 'sick_leave'"/>
-                                <field name="sick_employer_daily" invisible="incident_type != 'sick_leave'"/>
-                                <field name="sick_isss_daily" invisible="incident_type != 'sick_leave'"/>
+                                <field name="sick_employer_daily" invisible="incident_type != 'sick_leave'" readonly="sick_assisted"/>
+                                <field name="sick_isss_daily" invisible="incident_type != 'sick_leave'" readonly="sick_assisted"/>
                                 <field name="sick_employer_affects_isss" invisible="incident_type != 'sick_leave' or not sick_employer_daily"/>
                                 <field name="sick_employer_affects_afp" invisible="incident_type != 'sick_leave' or not sick_employer_daily"/>
                                 <field name="sick_employer_affects_isr" invisible="incident_type != 'sick_leave' or not sick_employer_daily"/>
@@ -98,6 +98,30 @@
                             </group>
                         </group>
                         <notebook>
+                            <page string="Marcaciones y jornada" groups="hr_attendance.group_hr_attendance_officer">
+                                <field name="attendance_reconciliation" nolabel="1"/>
+                            </page>
+                            <page string="Cálculo de incapacidad" invisible="incident_type != 'sick_leave'">
+                                <group>
+                                    <field name="sick_assisted" readonly="state not in ('draft', 'to_approve')"/>
+                                </group>
+                                <group invisible="not sick_assisted" readonly="state not in ('draft', 'to_approve')">
+                                    <group string="Cobertura del ISSS">
+                                        <field name="sick_episode_start"/>
+                                        <field name="sick_isss_eligibility"/>
+                                        <field name="sick_isss_covered_from" invisible="sick_isss_eligibility != 'confirmed'"/>
+                                        <field name="sick_isss_covered_to" invisible="sick_isss_eligibility != 'confirmed'"/>
+                                        <field name="sick_isss_daily_base" invisible="sick_isss_eligibility != 'confirmed'"/>
+                                    </group>
+                                    <group string="Prestación patronal">
+                                        <field name="sick_employer_entitlement"/>
+                                        <field name="sick_employer_base_daily" invisible="sick_employer_entitlement != 'confirmed'"/>
+                                        <field name="sick_employer_entitlement_rate" invisible="sick_employer_entitlement != 'confirmed'"/>
+                                    </group>
+                                </group>
+                                <button name="action_calculate_sick_settlement" type="object" string="Calcular importes"
+                                        class="btn-secondary" invisible="not sick_assisted or state not in ('draft', 'to_approve')"/>
+                            </page>
                             <page string="Notas">
                                 <field name="notes" placeholder="Detalles de la incidencia..." required="incident_type == 'other'"/>
                             </page>

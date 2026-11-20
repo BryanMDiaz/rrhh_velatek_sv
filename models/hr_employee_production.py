@@ -6,6 +6,7 @@ from .operational_security import (
 
 class HrEmployeeProduction(models.Model):
     _name = 'hr.employee.production'
+    _check_company_auto = True
     _description = 'Producción del Empleado'
     _order = 'date desc'
 

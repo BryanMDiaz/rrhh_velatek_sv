@@ -9,6 +9,7 @@ from .operational_security import (
 
 class HrEmployeeIncident(models.Model):
     _name = 'hr.employee.incident'
+    _check_company_auto = True
     _description = 'Incidencia del Empleado'
     _order = 'date desc'
 
@@ -307,7 +308,7 @@ class HrEmployeeIncident(models.Model):
             special_rate = self._get_labor_rate(day_context, date_ref, company)
             multiplier *= special_rate.get_factor()
 
-        hours_per_day = contract.resource_calendar_id.hours_per_day or 8.0
+        wage, _calendar, hours_per_day = contract._velatek_terms_on(date_ref)
         mode = contract.velatek_remuneration_mode or 'fixed'
 
         note_msg = "El valor de hora requiere determinación en nómina por remuneración variable."
@@ -319,9 +320,9 @@ class HrEmployeeIncident(models.Model):
 
         verified_hourly = vals.get('verified_hourly_rate', record.verified_hourly_rate if record else 0.0)
         if mode == 'fixed' or verified_hourly > 0:
-            hourly_rate = contract.wage / 30.0 / hours_per_day if mode == 'fixed' else verified_hourly
+            hourly_rate = wage / 30.0 / hours_per_day if mode == 'fixed' else verified_hourly
             vals.update({
-                'overtime_base_wage': contract.wage,
+                'overtime_base_wage': wage,
                 'overtime_hours_per_day': hours_per_day,
                 'overtime_hourly_rate': hourly_rate,
                 'overtime_multiplier': multiplier,
@@ -334,35 +335,13 @@ class HrEmployeeIncident(models.Model):
                 vals['notes'] = new_notes
 
             vals.update({
-                'overtime_base_wage': contract.wage if mode == 'mixed' else 0.0,
+                'overtime_base_wage': wage if mode == 'mixed' else 0.0,
                 'overtime_hours_per_day': hours_per_day,
                 'overtime_hourly_rate': 0.0,
                 'overtime_multiplier': multiplier,
                 'amount': 0.0,
             })
         return vals
-
-    def _determine_shift_type_and_hours(self, contract, incident_type):
-        calendar = contract.resource_calendar_id
-        if not calendar:
-            if incident_type == 'night_work':
-                return 'nighttime', 7.0
-            return 'daytime', 8.0
-        
-        hours_per_day = calendar.hours_per_day or 8.0
-        is_night = False
-        
-        for att in calendar.attendance_ids:
-            if att.hour_from >= 19.0 or att.hour_to <= 6.0 or (att.hour_from < 6.0 and att.hour_to > 0):
-                is_night = True
-                break
-                
-        if incident_type == 'night_work':
-            return 'nighttime', min(hours_per_day, 7.0)
-                
-        if is_night:
-            return 'nighttime', hours_per_day
-        return 'daytime', hours_per_day
 
     @api.model
     def _prepare_night_work_values(self, vals, record=None):
@@ -382,7 +361,8 @@ class HrEmployeeIncident(models.Model):
         rate_factor = rate_rec.get_factor()
         rate_percentage = rate_rec.value if rate_rec.rate_type == 'percentage' and rate_rec.value > 1.0 else (rate_factor * 100.0)
 
-        shift_type, hours_per_day = self._determine_shift_type_and_hours(contract, incident_type)
+        wage, calendar, historical_hours = contract._velatek_terms_on(date_ref)
+        hours_per_day = min(historical_hours, 7.0)
         
         ordinary_night_hours = min(quantity_hours, hours_per_day)
         night_overtime_hours = quantity_hours - ordinary_night_hours if quantity_hours > ordinary_night_hours else 0.0
@@ -399,17 +379,16 @@ class HrEmployeeIncident(models.Model):
 
         # Art. 168: surcharge over equivalent daytime work. Art. 161
         # limits shift duration; it does not change the daytime wage divisor.
-        calendar = contract.resource_calendar_id
-        daytime_hours = calendar.hours_per_day or 8.0
+        daytime_hours = historical_hours
         if any(att.hour_from >= 19.0 or att.hour_to <= 6.0 or (att.hour_from < 6.0 and att.hour_to > 0) for att in calendar.attendance_ids):
             daytime_hours = 8.0
         verified_hourly = vals.get('verified_hourly_rate', record.verified_hourly_rate if record else 0.0)
         if mode == 'fixed' or verified_hourly > 0:
-            daily_rate = contract.wage / 30.0
+            daily_rate = wage / 30.0
             hourly_rate = daily_rate / daytime_hours if mode == 'fixed' else verified_hourly
             surcharge_amount = ordinary_night_hours * hourly_rate * rate_factor
             vals.update({
-                'night_work_base_wage': contract.wage,
+                'night_work_base_wage': wage,
                 'night_work_hours_per_day': daytime_hours,
                 'night_work_hourly_rate': hourly_rate,
                 'night_work_percentage': rate_percentage,
@@ -422,7 +401,7 @@ class HrEmployeeIncident(models.Model):
                 vals['notes'] = new_notes
 
             vals.update({
-                'night_work_base_wage': contract.wage if mode == 'mixed' else 0.0,
+                'night_work_base_wage': wage if mode == 'mixed' else 0.0,
                 'night_work_hours_per_day': daytime_hours,
                 'night_work_hourly_rate': 0.0,
                 'night_work_percentage': rate_percentage,
@@ -448,7 +427,7 @@ class HrEmployeeIncident(models.Model):
         rate_rec = self._get_labor_rate('holiday_work', date_ref, company)
         multiplier = rate_rec.get_factor()
 
-        hours_per_day = contract.resource_calendar_id.hours_per_day or 8.0
+        wage, _calendar, hours_per_day = contract._velatek_terms_on(date_ref)
         mode = contract.velatek_remuneration_mode or 'fixed'
         note_msg = "El valor de hora requiere determinación en nómina por remuneración variable."
 
@@ -459,11 +438,11 @@ class HrEmployeeIncident(models.Model):
 
         verified_hourly = vals.get('verified_hourly_rate', record.verified_hourly_rate if record else 0.0)
         if mode == 'fixed' or verified_hourly > 0:
-            daily_rate = contract.wage / 30.0 if mode == 'fixed' else verified_hourly * hours_per_day
+            daily_rate = wage / 30.0 if mode == 'fixed' else verified_hourly * hours_per_day
             hourly_rate = daily_rate / hours_per_day
             calculated_amount = (quantity_days * daily_rate * multiplier) + (quantity_hours * hourly_rate * multiplier)
             vals.update({
-                'holiday_work_base_wage': contract.wage,
+                'holiday_work_base_wage': wage,
                 'holiday_work_hours_per_day': hours_per_day,
                 'holiday_work_daily_rate': daily_rate,
                 'holiday_work_hourly_rate': hourly_rate,
@@ -476,7 +455,7 @@ class HrEmployeeIncident(models.Model):
                 vals['notes'] = new_notes
 
             vals.update({
-                'holiday_work_base_wage': contract.wage if mode == 'mixed' else 0.0,
+                'holiday_work_base_wage': wage if mode == 'mixed' else 0.0,
                 'holiday_work_hours_per_day': hours_per_day,
                 'holiday_work_daily_rate': 0.0,
                 'holiday_work_hourly_rate': 0.0,
@@ -502,7 +481,7 @@ class HrEmployeeIncident(models.Model):
         rate_rec = self._get_labor_rate('weekly_rest_work', date_ref, company)
         multiplier = rate_rec.get_factor()
 
-        hours_per_day = contract.resource_calendar_id.hours_per_day or 8.0
+        wage, _calendar, hours_per_day = contract._velatek_terms_on(date_ref)
         mode = contract.velatek_remuneration_mode or 'fixed'
         note_msg = "El valor de hora requiere determinación en nómina por remuneración variable."
 
@@ -513,11 +492,11 @@ class HrEmployeeIncident(models.Model):
 
         verified_hourly = vals.get('verified_hourly_rate', record.verified_hourly_rate if record else 0.0)
         if mode == 'fixed' or verified_hourly > 0:
-            daily_rate = contract.wage / 30.0 if mode == 'fixed' else verified_hourly * hours_per_day
+            daily_rate = wage / 30.0 if mode == 'fixed' else verified_hourly * hours_per_day
             hourly_rate = daily_rate / hours_per_day
             calculated_amount = (quantity_days * daily_rate * multiplier) + (quantity_hours * hourly_rate * multiplier)
             vals.update({
-                'weekly_rest_work_base_wage': contract.wage,
+                'weekly_rest_work_base_wage': wage,
                 'weekly_rest_work_hours_per_day': hours_per_day,
                 'weekly_rest_work_daily_rate': daily_rate,
                 'weekly_rest_work_hourly_rate': hourly_rate,
@@ -530,7 +509,7 @@ class HrEmployeeIncident(models.Model):
                 vals['notes'] = new_notes
 
             vals.update({
-                'weekly_rest_work_base_wage': contract.wage if mode == 'mixed' else 0.0,
+                'weekly_rest_work_base_wage': wage if mode == 'mixed' else 0.0,
                 'weekly_rest_work_hours_per_day': hours_per_day,
                 'weekly_rest_work_daily_rate': 0.0,
                 'weekly_rest_work_hourly_rate': 0.0,
@@ -558,8 +537,8 @@ class HrEmployeeIncident(models.Model):
 
         if day_count_mode == 'work_schedule':
             calendar = False
-            if contract and contract.resource_calendar_id:
-                calendar = contract.resource_calendar_id
+            if contract and contract._velatek_terms_on(date_from)[1]:
+                calendar = contract._velatek_terms_on(date_from)[1]
             elif employee and employee.resource_calendar_id:
                 calendar = employee.resource_calendar_id
             elif self.env.company.resource_calendar_id:
@@ -622,11 +601,13 @@ class HrEmployeeIncident(models.Model):
         if not contract:
             return vals
 
-        hours_per_day = contract.resource_calendar_id.hours_per_day or 8.0
-        daily_rate = contract.wage / 30.0
+        if date_from and date_to and any(date_from < term.effective_from <= date_to for term in contract.velatek_terms_ids):
+            raise ValidationError(_('Divida la incidencia en tramos cuando cambie el salario o la jornada.'))
+        wage, _calendar, hours_per_day = contract._velatek_terms_on(date_from or vals.get('date') or (record.date if record else None))
+        daily_rate = wage / 30.0
         hourly_rate = daily_rate / hours_per_day
         vals.update({
-            'absence_base_wage': contract.wage,
+            'absence_base_wage': wage,
             'absence_hours_per_day': hours_per_day,
             'absence_total_hours': (quantity_days * hours_per_day) + quantity_hours,
             'absence_daily_rate': daily_rate,
@@ -982,6 +963,13 @@ class HrEmployeeIncident(models.Model):
         for incident in self:
             date = incident.date
             has_support = incident.support_file or incident.attachment_id
+            if incident.state == 'approved':
+                expected = incident._dated_amount_values().get('amount', incident.amount)
+                if incident.currency_id.compare_amounts(incident.amount, expected):
+                    raise ValidationError(_(
+                        'El importe ya no coincide con el salario u horario vigente en la fecha de la incidencia. '
+                        'Vuelva a borrador, revise el cálculo y apruébela nuevamente.'
+                    ))
             if incident.incident_type == 'holiday_work' and date:
                 holy_week = (easter(date.year) - date).days in (1, 2, 3)
                 national = (date.month, date.day) in national_holidays or holy_week
@@ -996,7 +984,9 @@ class HrEmployeeIncident(models.Model):
             )
             if needs_rest and date:
                 rest_date = incident.compensatory_rest_date
-                week_end = date + timedelta(days=13 - date.weekday())
+                week_start = int(incident.company_id.velatek_work_week_start or '0')
+                day_in_week = (date.weekday() - week_start) % 7
+                week_end = date + timedelta(days=13 - day_in_week)
                 if not rest_date or not date < rest_date <= week_end:
                     raise ValidationError(_('Registre un descanso compensatorio posterior al día trabajado, '
                                             'dentro de la misma semana laboral o de la siguiente (arts. 176 y 194).'))
@@ -1141,11 +1131,29 @@ class HrEmployeeIncident(models.Model):
 
     # ─── State transitions ────────────────────────────────────────────────────
 
+    def _dated_amount_values(self):
+        self.ensure_one()
+        if not self.contract_id.velatek_terms_ids:
+            return {}
+        calculation = {
+            'overtime': self._prepare_overtime_values,
+            'night_work': self._prepare_night_work_values,
+            'holiday_work': self._prepare_holiday_work_values,
+            'weekly_rest_work': self._prepare_weekly_rest_work_values,
+            'unpaid_leave': self._prepare_absence_values,
+            'unjustified_absence': self._prepare_absence_values,
+            'suspension': self._prepare_absence_values,
+        }.get(self.incident_type)
+        return calculation({}, record=self) if calculation else {}
+
     def action_submit(self):
         require_group(self, USER)
         for record in self:
             if record.state != 'draft':
                 raise ValidationError(_("Solo se pueden enviar a aprobación incidencias en estado Borrador."))
+            calculated = record._dated_amount_values()
+            if calculated:
+                record.write(calculated)
         self.write({'state': 'to_approve'})
 
     def action_approve(self):

@@ -13,6 +13,7 @@
                         <button name="action_validate" groups="rrhh_velatek_sv.group_hr_responsible" string="Validar" type="object" class="oe_highlight" invisible="state != 'computed'"/>
                         <button name="%(action_hr_payroll_payslip_wizard)d" string="Imprimir Boletas" type="action" class="oe_highlight" invisible="state not in ('validated', 'closed')" icon="fa-print"/>
                         <button name="action_export_xlsx" string="Exportar a Excel" type="object" icon="fa-file-excel-o" invisible="not line_ids"/>
+                        <button name="action_open_payment_fiscal" groups="hr.group_hr_manager" string="Registrar pago y fecha fiscal" type="object" invisible="state != 'closed' or is_test"/>
                         <button name="action_close" groups="hr.group_hr_manager" string="Cerrar Período" type="object" class="oe_highlight" invisible="state != 'validated'"/>
                         <button name="action_draft" groups="hr.group_hr_manager" string="Volver a Borrador" type="object" invisible="state in ('draft', 'closed')"/>
                         <button name="action_cancel" groups="hr.group_hr_manager" string="Cancelar" type="object" invisible="state in ('closed', 'cancelled')"/>
@@ -91,6 +92,11 @@
                                         <field name="overtime_amount" string="Extra Diurna $" readonly="1"/>
                                         <field name="night_overtime_amount" string="Extra Nocturna $" readonly="1"/>
                                         <field name="night_work_amount" string="Nocturnidad $" readonly="1"/>
+                                        <field name="minimum_wage_reviewed" optional="hide"/>
+                                        <field name="minimum_wage_review_amount" optional="hide"/>
+                                        <field name="minimum_wage_review_full_days" optional="hide"/>
+                                        <field name="minimum_wage_review_partial_hours" optional="hide"/>
+                                        <field name="minimum_wage_review_reference" optional="hide"/>
                                         <field name="sick_ordinary_amount" readonly="1" optional="hide" sum="Total"/>
                                         <field name="sick_employer_amount" readonly="1" optional="hide" sum="Total"/>
                                         <field name="sick_isss_amount" readonly="1" optional="hide" sum="Total"/>
@@ -116,6 +122,37 @@
                             </page>
 
                             <!-- PESTAÑA 3: AUTORIZACIONES Y NOTAS -->
+                            <page string="Pago y fecha fiscal" groups="hr.group_hr_manager" invisible="state != 'closed' or is_test">
+                                <group>
+                                    <group>
+                                        <field name="fiscal_recognition_date"/>
+                                        <field name="payment_due_total"/>
+                                        <field name="payment_verified_amount"/>
+                                        <field name="payment_pending_amount"/>
+                                        <field name="payment_tracking"/>
+                                    </group>
+                                    <group>
+                                        <field name="payment_date"/>
+                                        <field name="payment_reference"/>
+                                        <field name="payment_verified_by_id"/>
+                                        <field name="payment_proof_name" invisible="1"/>
+                                        <field name="payment_proof" filename="payment_proof_name"/>
+                                    </group>
+                                </group>
+                                <field name="payment_event_ids" readonly="1" nolabel="1">
+                                    <list>
+                                        <field name="currency_id" column_invisible="1"/>
+                                        <field name="payment_date"/>
+                                        <field name="state"/>
+                                        <field name="amount"/>
+                                        <field name="reference"/>
+                                        <field name="move_id" groups="account.group_account_readonly"/>
+                                        <field name="rejection_reason" optional="hide"/>
+                                        <field name="proof_name" column_invisible="1"/>
+                                        <field name="proof" filename="proof_name"/>
+                                    </list>
+                                </field>
+                            </page>
                             <page string="Autorizaciones y Notas">
                                 <group>
                                     <group string="Responsabilidades y Firmas">

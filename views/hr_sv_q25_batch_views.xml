@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_sv_q25_batch_list" model="ir.ui.view">
+        <field name="name">hr.sv.q25.batch.list</field>
+        <field name="model">hr.sv.q25.batch</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="year"/>
+                <field name="company_id"/>
+                <field name="payment_date"/>
+                <field name="payroll_id"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_hr_sv_q25_batch_form" model="ir.ui.view">
+        <field name="name">hr.sv.q25.batch.form</field>
+        <field name="model">hr.sv.q25.batch</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_assess" type="object" string="Evaluar personal" class="oe_highlight"/>
+                    <button name="action_generate" type="object" string="Generar planilla del lote"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="company_id" readonly="line_ids"/>
+                        <field name="payment_date" readonly="payroll_id and payroll_state != 'cancelled'"/>
+                        <field name="payroll_id"/>
+                        <field name="payroll_state" invisible="1"/>
+                    </group>
+                    <field name="line_ids">
+                        <list editable="bottom" create="0" delete="0">
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="employee_id"/>
+                            <field name="assessment" widget="badge" decoration-success="assessment == 'eligible'"
+                                   decoration-warning="assessment == 'review'"/>
+                            <field name="reason"/>
+                            <field name="payment_status"/>
+                            <field name="expected_amount" sum="Devengado de enero"/>
+                            <field name="january_paid" sum="Pagado en planilla"/>
+                            <field name="settlement_paid" sum="Pagado en liquidaciones"/>
+                            <field name="settlement_pending" sum="Pendiente en liquidaciones"/>
+                            <field name="contract_id" optional="hide"/>
+                            <field name="service_start" optional="hide"/>
+                            <field name="nominal" optional="hide"/>
+                            <field name="january_case_id" optional="hide"/>
+                            <field name="settlement_id" optional="hide"/>
+                            <field name="verified_nominal" optional="hide" readonly="january_case_id and payment_status in ('payroll', 'paid')"/>
+                            <field name="reviewed_service_start" optional="hide" readonly="january_case_id and payment_status in ('payroll', 'paid')"/>
+                            <field name="verified_days" optional="hide" readonly="january_case_id and payment_status in ('payroll', 'paid')"/>
+                            <field name="leave_resolution" optional="hide" readonly="january_case_id and payment_status in ('payroll', 'paid')"/>
+                            <field name="review_reference" optional="hide" readonly="january_case_id and payment_status in ('payroll', 'paid')"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_hr_sv_q25_batch" model="ir.actions.act_window">
+        <field name="name">Lotes de Quincena 25</field>
+        <field name="res_model">hr.sv.q25.batch</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <record id="minimum_wage_2025_commerce_services" model="hr.sv.minimum.wage">
+        <field name="name">Comercio y servicios</field>
+        <field name="sector">commerce_services</field>
+        <field name="date_from">2025-06-01</field>
+        <field name="monthly_amount">408.80</field>
+        <field name="daily_amount">13.440</field>
+        <field name="hourly_amount">1.680</field>
+        <field name="legal_reference">Decretos Ejecutivos 11 y 12 de 2025, Diario Oficial del 23 y 26 de mayo de 2025</field>
+    </record>
+    <record id="minimum_wage_2025_textile" model="hr.sv.minimum.wage">
+        <field name="name">Maquila textil y confección</field>
+        <field name="sector">textile</field>
+        <field name="date_from">2025-06-01</field>
+        <field name="monthly_amount">402.32</field>
+        <field name="daily_amount">13.227</field>
+        <field name="hourly_amount">1.653</field>
+        <field name="legal_reference">Decretos Ejecutivos 11 y 12 de 2025, Diario Oficial del 23 y 26 de mayo de 2025</field>
+    </record>
+    <record id="minimum_wage_2025_industry" model="hr.sv.minimum.wage">
+        <field name="name">Industria</field>
+        <field name="sector">industry</field>
+        <field name="date_from">2025-06-01</field>
+        <field name="monthly_amount">408.80</field>
+        <field name="daily_amount">13.440</field>
+        <field name="hourly_amount">1.680</field>
+        <field name="legal_reference">Decretos Ejecutivos 11 y 12 de 2025, Diario Oficial del 23 y 26 de mayo de 2025</field>
+    </record>
+    <record id="minimum_wage_2025_sugar_mill" model="hr.sv.minimum.wage">
+        <field name="name">Ingenios azucareros</field>
+        <field name="sector">sugar_mill</field>
+        <field name="date_from">2025-06-01</field>
+        <field name="monthly_amount">408.80</field>
+        <field name="daily_amount">13.440</field>
+        <field name="hourly_amount">1.680</field>
+        <field name="legal_reference">Decretos Ejecutivos 11 y 12 de 2025, Diario Oficial del 23 y 26 de mayo de 2025</field>
+    </record>
+    <record id="minimum_wage_2025_agroindustry" model="hr.sv.minimum.wage">
+        <field name="name">Agroindustria</field>
+        <field name="sector">agroindustry</field>
+        <field name="date_from">2025-06-01</field>
+        <field name="monthly_amount">408.80</field>
+        <field name="daily_amount">13.440</field>
+        <field name="hourly_amount">1.680</field>
+        <field name="legal_reference">Decretos Ejecutivos 11 y 12 de 2025, Diario Oficial del 23 y 26 de mayo de 2025</field>
+    </record>
+    <record id="minimum_wage_2025_coffee_processing" model="hr.sv.minimum.wage">
+        <field name="name">Beneficios de café</field>
+        <field name="sector">coffee_processing</field>
+        <field name="date_from">2025-06-01</field>
+        <field name="monthly_amount">305.23</field>
+        <field name="daily_amount">10.035</field>
+        <field name="hourly_amount">1.254</field>
+        <field name="legal_reference">Decretos Ejecutivos 11 y 12 de 2025, Diario Oficial del 23 y 26 de mayo de 2025</field>
+    </record>
+    <record id="minimum_wage_2025_agriculture" model="hr.sv.minimum.wage">
+        <field name="name">Agropecuario, pesca y otras actividades agrícolas</field>
+        <field name="sector">agriculture</field>
+        <field name="date_from">2025-06-01</field>
+        <field name="monthly_amount">272.53</field>
+        <field name="daily_amount">8.960</field>
+        <field name="hourly_amount">1.120</field>
+        <field name="legal_reference">Decretos Ejecutivos 11 y 12 de 2025, Diario Oficial del 23 y 26 de mayo de 2025</field>
+    </record>
+    <record id="minimum_wage_2025_sugar_harvest" model="hr.sv.minimum.wage">
+        <field name="name">Recolección de caña de azúcar</field>
+        <field name="sector">sugar_harvest</field>
+        <field name="date_from">2025-06-01</field>
+        <field name="monthly_amount">305.23</field>
+        <field name="daily_amount">10.035</field>
+        <field name="hourly_amount">1.254</field>
+        <field name="legal_reference">Decretos Ejecutivos 11 y 12 de 2025, Diario Oficial del 23 y 26 de mayo de 2025</field>
+    </record>
+    <record id="minimum_wage_2025_coffee_harvest" model="hr.sv.minimum.wage">
+        <field name="name">Recolección de café</field>
+        <field name="sector">coffee_harvest</field>
+        <field name="date_from">2025-06-01</field>
+        <field name="monthly_amount">272.53</field>
+        <field name="daily_amount">8.960</field>
+        <field name="hourly_amount">1.120</field>
+        <field name="legal_reference">Decretos Ejecutivos 11 y 12 de 2025, Diario Oficial del 23 y 26 de mayo de 2025</field>
+    </record>
+</odoo>

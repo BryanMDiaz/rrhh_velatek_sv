@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError
 
 class HrPrepayrollIncidentAllocation(models.Model):
     _name = 'hr.prepayroll.incident.allocation'
+    _check_company_auto = True
     _description = 'Asignación Parcial de Incidencia a Preplanilla'
     _order = 'date_from, id'
 

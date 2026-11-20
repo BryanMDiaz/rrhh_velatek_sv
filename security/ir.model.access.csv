@@ -63,3 +63,17 @@ access_hr_loan_additional_wizard_hr,hr.loan.additional.wizard.hr,model_hr_loan_a
 access_hr_payroll_payslip_wizard_hr,hr.payroll.payslip.wizard.hr,model_hr_payroll_payslip_wizard,hr.group_hr_user,1,1,1,1
 access_hr_loan_template_preview_wizard_hr,hr.loan.template.preview.wizard.hr,model_hr_loan_template_preview_wizard,hr.group_hr_user,1,1,1,1
 access_hr_loan_print_confirm_wizard_hr,hr.loan.print.confirm.wizard.hr,model_hr_loan_print_confirm_wizard,hr.group_hr_user,1,1,1,1
+access_hr_sv_minimum_wage_user,hr.sv.minimum.wage.user,model_hr_sv_minimum_wage,base.group_user,1,0,0,0
+access_hr_sv_minimum_wage_manager,hr.sv.minimum.wage.manager,model_hr_sv_minimum_wage,hr.group_hr_manager,1,1,1,0
+access_hr_contract_terms_user,hr.contract.terms.user,model_hr_contract_terms,hr.group_hr_user,1,0,0,0
+access_hr_contract_terms_manager,hr.contract.terms.manager,model_hr_contract_terms,hr.group_hr_manager,1,1,1,1
+access_hr_contract_payroll_operation_read,hr.contract.payroll.operation.read,hr_contract.model_hr_contract,hr.group_hr_user,1,0,0,0
+access_hr_payroll_filing_wizard_manager,hr.payroll.filing.wizard.manager,model_hr_payroll_filing_wizard,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_payment_fiscal_wizard_manager,hr.payroll.payment.fiscal.wizard.manager,model_hr_payroll_payment_fiscal_wizard,hr.group_hr_manager,1,1,1,1
+access_hr_sv_benefit_manager,hr_sv_benefit.manager,model_hr_sv_benefit,hr.group_hr_manager,1,1,1,1
+access_hr_sv_vacation_cycle_manager,hr_sv_vacation_cycle.manager,model_hr_sv_vacation_cycle,hr.group_hr_manager,1,1,1,1
+access_hr_sv_vacation_payment_allocation_manager,hr_sv_vacation_payment_allocation.manager,model_hr_sv_vacation_payment_allocation,hr.group_hr_manager,1,0,0,0
+access_hr_sv_q25_batch_manager,hr.sv.q25.batch.manager,model_hr_sv_q25_batch,hr.group_hr_manager,1,1,1,0
+access_hr_sv_q25_batch_line_manager,hr.sv.q25.batch.line.manager,model_hr_sv_q25_batch_line,hr.group_hr_manager,1,1,0,0
+access_hr_payroll_payment_event_manager,hr.payroll.payment.event.manager,model_hr_payroll_payment_event,hr.group_hr_manager,1,0,0,0
+access_hr_payroll_isr_review_line_manager,hr.payroll.isr.review.line.manager,model_hr_payroll_isr_review_line,hr.group_hr_manager,1,1,1,1

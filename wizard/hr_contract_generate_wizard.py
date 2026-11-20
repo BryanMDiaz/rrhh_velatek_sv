@@ -89,12 +89,15 @@ class HrContractGenerateWizard(models.TransientModel):
     template_id = fields.Many2one('hr.contract.template', string='Plantilla', required=True, domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
     company_id = fields.Many2one('res.company', related='contract_id.company_id')
     signature_date = fields.Date(string='Fecha de Firma', default=fields.Date.context_today, required=True)
+    effective_terms_id = fields.Many2one('hr.contract.terms', string='Cambio contractual vigente desde')
     preview_html = fields.Html(string='Vista Previa (Editable)', sanitize=False)
     generated_name = fields.Char(string='Nombre del documento')
     warning_message = fields.Text(string='Advertencias', readonly=True)
 
-    @api.onchange('contract_id', 'template_id', 'signature_date')
+    @api.onchange('contract_id', 'template_id', 'signature_date', 'effective_terms_id')
     def _onchange_template(self):
+        if self.effective_terms_id.contract_id and self.effective_terms_id.contract_id != self.contract_id:
+            self.effective_terms_id = False
         self.generated_name = (
             f"Contrato - {self.contract_id.employee_id.name} - v{self.template_id.version}"
             if self.template_id and self.contract_id else False
@@ -139,7 +142,9 @@ class HrContractGenerateWizard(models.TransientModel):
         work_location = contract.velatek_work_location_id or employee.work_location_id
         work_address = work_location.address_id or employee.address_id
         job = contract.job_id or employee.job_id
-        calendar = contract.resource_calendar_id or employee.resource_calendar_id
+        effective_date = self.effective_terms_id.effective_from or self.signature_date
+        wage, calendar, _hours = contract._velatek_terms_on(effective_date)
+        calendar = calendar or employee.resource_calendar_id
         def format_address(*parts):
             components = {}
             for part in filter(None, parts):
@@ -166,7 +171,7 @@ class HrContractGenerateWizard(models.TransientModel):
             return dict(options).get(record[field_name], '')
 
         currency = contract.currency_id.name
-        fixed_pay = f"{currency} {contract.wage:,.2f} mensuales" if contract.wage > 0 else ''
+        fixed_pay = f"{currency} {wage:,.2f} mensuales" if wage > 0 else ''
         unit = selection_label(contract, 'velatek_production_unit')
         production_pay = (
             f"{currency} {contract.velatek_production_rate:,.2f} por {unit.lower()}"
@@ -249,8 +254,9 @@ class HrContractGenerateWizard(models.TransientModel):
             'contract.date_end': contract.date_end.strftime('%d/%m/%Y') if contract.date_end else 'indefinido',
             'contract.fixed_end_date': contract.date_end.strftime('%d/%m/%Y') if contract.date_end else '',
             'contract.contract_type': contract.contract_type_id.name if contract.contract_type_id else '',
-            'contract.wage': f"{contract.wage:,.2f}",
-            'contract.wage_words': monto_a_letras(contract.wage),
+            'contract.wage': f"{wage:,.2f}",
+            'contract.wage_words': monto_a_letras(wage),
+            'contract.terms_effective_from': self.effective_terms_id.effective_from.strftime('%d/%m/%Y') if self.effective_terms_id else '',
             'contract.agreed_pay': agreed_pay,
             'contract.payment_frequency': dict(contract._fields['velatek_payment_frequency'].selection).get(contract.velatek_payment_frequency, ''),
             'contract.remuneration_mode': dict(contract._fields['velatek_remuneration_mode'].selection).get(contract.velatek_remuneration_mode, ''),
@@ -272,7 +278,7 @@ class HrContractGenerateWizard(models.TransientModel):
             'signature_date': self.signature_date.strftime('%d/%m/%Y') if self.signature_date else '',
             'signature_date_words': fecha_a_letras(self.signature_date),
         })
-        safe_dict.update(self._get_schedule_values(calendar, employee, contract.date_start))
+        safe_dict.update(self._get_schedule_values(calendar, employee, effective_date or contract.date_start))
 
         return safe_dict
 
@@ -335,6 +341,8 @@ class HrContractGenerateWizard(models.TransientModel):
         self.ensure_one()
         if self.env.context.get('contract_preview_only'):
             raise UserError("Usa «Generar contrato» para guardar el documento.")
+        if self.effective_terms_id.contract_id and self.effective_terms_id.contract_id != self.contract_id:
+            raise UserError('Seleccione una vigencia del mismo contrato.')
         if not self.preview_html:
             self._render_preview()
         
@@ -344,6 +352,7 @@ class HrContractGenerateWizard(models.TransientModel):
             'template_id': self.template_id.id,
             'template_version': self.template_id.version,
             'signature_date': self.signature_date,
+            'mtps_document_type': 'amendment' if self.effective_terms_id else 'original',
             'content_snapshot': self.preview_html,
             'state': 'generated',
         })

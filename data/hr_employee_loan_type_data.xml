@@ -3,6 +3,7 @@
     <data noupdate="1">
         
         <record id="loan_type_personal" model="hr.employee.loan.type">
+            <field name="company_id" eval="False"/>
             <field name="name">Préstamo Personal</field>
             <field name="code">PERS</field>
             <field name="max_installments">24</field>
@@ -11,6 +12,7 @@
         </record>
 
         <record id="loan_type_anticipo" model="hr.employee.loan.type">
+            <field name="company_id" eval="False"/>
             <field name="name">Anticipo de Salario</field>
             <field name="code">ANTI</field>
             <field name="max_installments">1</field>
@@ -19,6 +21,7 @@
         </record>
 
         <record id="loan_type_salud" model="hr.employee.loan.type">
+            <field name="company_id" eval="False"/>
             <field name="name">Préstamo de Salud</field>
             <field name="code">SALUD</field>
             <field name="max_installments">12</field>

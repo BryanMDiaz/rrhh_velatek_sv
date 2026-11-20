@@ -77,6 +77,11 @@
                                         <field name="paid_leave_hours" class="o_prepayroll_absences" sum="Total" optional="show" string="H. permiso" width="112px"/>
                                         <field name="sick_leave_days" class="o_prepayroll_absences" sum="Total" optional="show" string="Días incapacidad" width="112px"/>
                                         <field name="sick_leave_hours" class="o_prepayroll_absences" sum="Total" optional="show" string="H. incapacidad" width="112px"/>
+                                        <field name="minimum_wage_reviewed" optional="hide"/>
+                                        <field name="minimum_wage_review_amount" optional="hide"/>
+                                        <field name="minimum_wage_review_full_days" optional="hide"/>
+                                        <field name="minimum_wage_review_partial_hours" optional="hide"/>
+                                        <field name="minimum_wage_review_reference" optional="hide"/>
                                         <field name="sick_ordinary_amount" readonly="1" optional="hide" sum="Total"/>
                                         <field name="sick_employer_amount" readonly="1" optional="hide" sum="Total"/>
                                         <field name="sick_isss_amount" readonly="1" optional="hide" sum="Total"/>

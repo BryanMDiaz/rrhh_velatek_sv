@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_sv_benefit_list" model="ir.ui.view">
+        <field name="name">hr.sv.benefit.list</field>
+        <field name="model">hr.sv.benefit</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="benefit_date"/>
+                <field name="employee_id"/>
+                <field name="kind"/>
+                <field name="exit_reason" optional="hide"/>
+                <field name="total_amount"/>
+                <field name="calculated"/>
+                <field name="payroll_id"/>
+                <field name="paid_by_id" optional="show"/>
+                <field name="payment_date" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_hr_sv_benefit_form" model="ir.ui.view">
+        <field name="name">hr.sv.benefit.form</field>
+        <field name="model">hr.sv.benefit</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_calculate" type="object" string="Calcular" class="oe_highlight" invisible="payroll_id or paid_by_id"/>
+                    <button name="action_generate_q25_payroll" type="object" string="Generar planilla de Quincena 25" class="oe_highlight"
+                            invisible="kind != 'q25' or not calculated or payroll_id"/>
+                    <button name="action_confirm_payment" type="object" string="Confirmar pago registrado" class="oe_highlight"
+                            invisible="kind == 'q25' or not calculated or paid_by_id"
+                            confirm="La confirmación aplicará los saldos y dejará fijado el cálculo. ¿Continuar?"/>
+                </header>
+                <sheet>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="calculated" invisible="1"/>
+                    <group>
+                        <group>
+                            <field name="kind" readonly="payroll_id or paid_by_id"/>
+                            <field name="contract_id" readonly="payroll_id or paid_by_id"/>
+                            <field name="employee_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="benefit_date" readonly="payroll_id or paid_by_id"/>
+                            <field name="service_start" readonly="payroll_id or paid_by_id"/>
+                        </group>
+                        <group>
+                            <field name="eligibility_confirmed" readonly="payroll_id or paid_by_id"/>
+                            <field name="evidence" readonly="payroll_id or paid_by_id"/>
+                            <field name="verified_daily_base" readonly="paid_by_id" invisible="kind == 'q25'"/>
+                            <field name="verified_ordinary_monthly" invisible="kind not in ('q25', 'settlement')" readonly="payroll_id or paid_by_id"/>
+                            <field name="q25_verified_days" invisible="kind != 'q25'" readonly="payroll_id"/>
+                            <field name="vacation_days_requested" readonly="paid_by_id" invisible="kind != 'vacation'"/>
+                            <field name="bonus_already_paid" readonly="paid_by_id" invisible="kind not in ('bonus', 'settlement')"/>
+                            <field name="payroll_id" invisible="not payroll_id"/>
+                        </group>
+                    </group>
+                    <group string="Datos de la salida laboral" invisible="kind != 'settlement'">
+                        <group>
+                            <field name="exit_reason" readonly="paid_by_id" required="kind == 'settlement'"/>
+                            <field name="first_payroll_day" readonly="paid_by_id" required="kind == 'settlement'"/>
+                            <field name="last_payroll_day" readonly="paid_by_id" required="kind == 'settlement'"/>
+                            <field name="salary_already_paid" readonly="paid_by_id"/>
+                            <field name="q25_already_paid" readonly="paid_by_id"/>
+                        </group>
+                        <group>
+                            <field name="fixed_term_due" readonly="paid_by_id" invisible="exit_reason != 'fixed_dismissal'"/>
+                            <field name="resignation_eligible" readonly="paid_by_id" invisible="exit_reason != 'resignation'"/>
+                            <field name="agreed_payment" readonly="paid_by_id" invisible="exit_reason != 'agreement'"/>
+                            <field name="proportional_entitlement" readonly="paid_by_id"/>
+                        </group>
+                    </group>
+                    <group string="Resultado del cálculo" invisible="not calculated">
+                        <group>
+                            <field name="years"/>
+                            <field name="days_remaining"/>
+                            <field name="wage_snapshot"/>
+                            <field name="last_payable_days" invisible="kind != 'settlement'"/>
+                            <field name="last_salary_amount" invisible="kind != 'settlement'"/>
+                            <field name="vacation_balance_days" invisible="kind not in ('vacation', 'settlement')"/>
+                            <field name="vacation_proportional_days" invisible="kind != 'settlement'"/>
+                        </group>
+                        <group>
+                            <field name="vacation_amount" invisible="kind not in ('vacation', 'settlement')"/>
+                            <field name="bonus_amount" invisible="kind not in ('bonus', 'settlement')"/>
+                            <field name="bonus_cycle_end" invisible="not bonus_cycle_end"/>
+                            <field name="severance_amount" invisible="kind != 'settlement'"/>
+                            <field name="q25_amount" invisible="kind not in ('q25', 'settlement')"/>
+                            <field name="q25_january_paid" invisible="kind != 'settlement' or not q25_january_paid"/>
+                            <field name="q25_january_amount" invisible="kind != 'settlement' or not q25_january_amount"/>
+                            <field name="total_amount"/>
+                        </group>
+                    </group>
+                    <group string="Confirmación del pago" invisible="kind == 'q25' or not calculated">
+                        <group>
+                            <field name="payment_date" readonly="paid_by_id"/>
+                            <field name="payment_reference" readonly="paid_by_id"/>
+                        </group>
+                        <group>
+                            <field name="payment_amount" readonly="paid_by_id"/>
+                            <field name="paid_by_id" invisible="not paid_by_id"/>
+                        </group>
+                    </group>
+                    <group string="Ciclos de vacaciones aplicados" invisible="not vacation_allocation_ids">
+                        <field name="vacation_allocation_ids" readonly="1" nolabel="1">
+                            <list>
+                                <field name="cycle_start"/>
+                                <field name="cycle_end"/>
+                                <field name="days"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_hr_sv_benefit" model="ir.actions.act_window">
+        <field name="name">Cálculos de prestaciones</field>
+        <field name="res_model">hr.sv.benefit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_hr_sv_vacation_cycle_list" model="ir.ui.view">
+        <field name="name">hr.sv.vacation.cycle.list</field>
+        <field name="model">hr.sv.vacation.cycle</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="contract_id"/>
+                <field name="cycle_start"/>
+                <field name="cycle_end"/>
+                <field name="worked_days"/>
+                <field name="taken_days"/>
+                <field name="settled_days"/>
+                <field name="confirmed_days"/>
+                <field name="balance_days"/>
+                <field name="evidence"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+    <record id="action_hr_sv_vacation_cycle" model="ir.actions.act_window">
+        <field name="name">Saldos de vacaciones</field>
+        <field name="res_model">hr.sv.vacation.cycle</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

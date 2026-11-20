@@ -397,6 +397,11 @@ class HrPrepayrollLinePayrollValues(models.Model):
             'paid_leave_days': self.paid_leave_days,
             'paid_leave_hours': self.paid_leave_hours,
             'sick_leave_days': self.sick_leave_days,
+            'minimum_wage_reviewed': self.minimum_wage_reviewed,
+            'minimum_wage_review_amount': self.minimum_wage_review_amount,
+            'minimum_wage_review_full_days': self.minimum_wage_review_full_days,
+            'minimum_wage_review_partial_hours': self.minimum_wage_review_partial_hours,
+            'minimum_wage_review_reference': self.minimum_wage_review_reference,
             'sick_leave_hours': self.sick_leave_hours,
             'sick_ordinary_amount': self.sick_ordinary_amount,
             'sick_employer_amount': self.sick_employer_amount,
@@ -418,11 +423,11 @@ class HrPrepayrollLinePayrollValues(models.Model):
 class HrPrepayrollAdvancePeriod(models.Model):
     _inherit = 'hr.prepayroll'
 
-    def write(self, values):
+    def _write_operational_values(self, values, *, from_workflow=False):
         protected = {'date_start', 'date_end', 'company_id', 'payment_frequency', 'prepayroll_type'}
         if protected.intersection(values) or values.get('state') == 'cancelled':
             if self.env['hr.employee.loan'].search_count([
                 ('advance_prepayroll_id', 'in', self.ids), ('state', 'in', ['active', 'paid']),
             ]):
                 raise ValidationError(_('La quincena tiene un anticipo entregado. Conserve su período y compañía; no se puede cancelar ni trasladar el pago.'))
-        return super().write(values)
+        return super()._write_operational_values(values, from_workflow=from_workflow)

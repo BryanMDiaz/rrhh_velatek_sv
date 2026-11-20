@@ -9,9 +9,25 @@
                 <page string="Representante Legal (Velatek)" name="velatek_legal_rep">
                     <group>
                         <field name="velatek_legal_representative_id" context="{'default_is_company': False}"/>
+                        <field name="velatek_work_week_start"/>
+                        <field name="sv_spu_employer_number"/>
+                        <field name="velatek_minimum_wage_sector"/>
+                        <field name="velatek_minimum_wage_from"/>
                     </group>
                 </page>
             </xpath>
+        </field>
+    </record>
+
+    <record id="hr_work_location_form_minimum_wage" model="ir.ui.view">
+        <field name="name">hr.work.location.form.minimum.wage</field>
+        <field name="model">hr.work.location</field>
+        <field name="inherit_id" ref="hr.hr_work_location_form_view"/>
+        <field name="arch" type="xml">
+            <field name="address_id" position="after">
+                <field name="velatek_minimum_wage_sector"/>
+                <field name="sv_spu_work_center"/>
+            </field>
         </field>
     </record>
 

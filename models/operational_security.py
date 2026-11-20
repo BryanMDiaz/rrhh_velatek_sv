@@ -33,7 +33,7 @@ def is_manager(records):
 
 def require_group(records, group):
     if not is_manager(records) and not records.env.user.has_group(group):
-        pass # raise AccessError(records.env._("No tiene permisos para realizar esta operación de RRHH."))
+        raise AccessError(records.env._("No tiene permisos para realizar esta operación de RRHH."))
 
 
 def check_edit(records):
@@ -42,7 +42,7 @@ def check_edit(records):
 
 def check_create(records, vals_list):
     require_group(records, USER)
-    if is_manager(records):
+    if records.env.su:
         return
     default_fields = ['state']
     if 'processed_prepayroll_id' in records._fields:
@@ -68,6 +68,11 @@ def check_write(records, vals):
     if 'state' not in vals:
         check_edit(records)
         return
+    if records._name == 'hr.payroll':
+        require_group(records, RESPONSIBLE)
+        if target not in ('computed', 'validated'):
+            require_group(records, MANAGER)
+        return
     prepayroll = records._name == 'hr.prepayroll'
     approval = 'validated' if prepayroll else 'approved'
     submission = 'loaded' if prepayroll else 'to_approve'
@@ -84,3 +89,9 @@ def check_write(records, vals):
         require_group(records, MANAGER)
     if set(vals) - {'state'}:
         check_processed_immutable(records, vals)
+
+
+def check_workflow_write(records, values, from_workflow):
+    if ('state' in values and not from_workflow and not records.env.su
+            and any(record.state != values['state'] for record in records)):
+        raise AccessError(records.env._('Use las acciones del flujo para cambiar el estado.'))

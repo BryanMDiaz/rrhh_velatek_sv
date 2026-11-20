@@ -1,3 +1,4 @@
+from . import hr_sv_minimum_wage
 from . import hr_employee
 from . import hr_employee_beneficiary
 from . import hr_afp
@@ -25,3 +26,9 @@ from . import hr_employee_loan
 from . import hr_employee_loan_installment
 from . import hr_employee_loan_template
 from . import hr_salary_advance
+from . import hr_contract_terms
+from . import hr_incident_attendance
+from . import hr_incident_sick_settlement
+from . import hr_payroll_fiscal
+from . import hr_sv_benefit
+from . import hr_sv_q25_batch
